@@ -206,6 +206,18 @@ mod tests {
             iter.collect::<Vec<u8>>().as_bstr(),
             b"ABC\xFF\xFEXYZ".as_bstr()
         );
+
+        // The bytes \xF0\x9F\x87 could lead to a valid UTF-8 sequence, but 3 of
+        // them on their own are invalid. Only one replacement codepoint is
+        // substituted, which demonstrates the "substitution of maximal
+        // subparts" strategy.
+        //
+        // See: https://docs.rs/bstr/0.2.*/bstr/#handling-of-invalid-utf-8
+        let iter = Uppercase::from(&b"aB\xF0\x9F\x87Yz"[..]);
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            b"AB\xF0\x9F\x87YZ".as_bstr()
+        );
     }
 
     #[test]
