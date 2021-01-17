@@ -81,13 +81,8 @@ impl<'a> Iterator for Lowercase<'a> {
         }
 
         if let Some(ch) = self.lowercase.as_mut().and_then(Iterator::next) {
-            let mut lowercase = ch.to_lowercase();
-            let ch = lowercase
-                .next()
-                .expect("ToLowercase yields at least one char");
             let enc = ch.encode_utf8(&mut self.next_bytes);
             self.next_range = 1..enc.len();
-            self.lowercase = Some(lowercase);
             return Some(self.next_bytes[0]);
         }
 
@@ -215,5 +210,19 @@ mod tests {
         let s = "�".as_bytes();
         let iter = Lowercase::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "�".as_bytes().as_bstr());
+    }
+
+    #[test]
+    fn dz_titlecase() {
+        let s = "ǅ".as_bytes();
+        let iter = Lowercase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǆ".as_bytes().as_bstr());
+    }
+
+    #[test]
+    fn latin_capital_i_with_dot_above() {
+        let s = "İ".as_bytes();
+        let iter = Lowercase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>(), [105_u8, 204, 135]);
     }
 }
