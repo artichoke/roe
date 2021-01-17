@@ -122,30 +122,31 @@ impl<'a> FusedIterator for Lowercase<'a> {}
 #[cfg(test)]
 mod tests {
     use alloc::vec::Vec;
+    use bstr::ByteSlice;
 
     use super::Lowercase;
 
     #[test]
     fn lowercase_utf8_string_empty() {
         let iter = Lowercase::from(&b""[..]);
-        assert_eq!(iter.collect::<Vec<_>>(), b"");
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"".as_bstr());
     }
 
     #[test]
     fn lowercase_utf8_string_ascii() {
         let iter = Lowercase::from(&b"abc"[..]);
-        assert_eq!(iter.collect::<Vec<_>>(), b"abc");
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"abc".as_bstr());
 
         let iter = Lowercase::from(&b"aBC"[..]);
-        assert_eq!(iter.collect::<Vec<_>>(), b"abc");
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"abc".as_bstr());
 
         let iter = Lowercase::from(&b"ABC"[..]);
-        assert_eq!(iter.collect::<Vec<_>>(), b"abc");
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"abc".as_bstr());
 
         let iter = Lowercase::from(&b"aBC, 123, ABC, baby you and me girl"[..]);
         assert_eq!(
-            iter.collect::<Vec<_>>(),
-            b"abc, 123, abc, baby you and me girl"
+            iter.collect::<Vec<_>>().as_bstr(),
+            b"abc, 123, abc, baby you and me girl".as_bstr()
         );
     }
 
@@ -153,45 +154,65 @@ mod tests {
     fn lowercase_utf8_string_utf8() {
         let s = "ß".as_bytes();
         let iter = Lowercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "ß".as_bytes());
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ß".as_bytes().as_bstr());
 
         let s = "Αύριο".as_bytes();
         let iter = Lowercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "αύριο".as_bytes());
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            "αύριο".as_bytes().as_bstr()
+        );
 
         let s = "Έτος".as_bytes();
         let iter = Lowercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "έτος".as_bytes());
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            "έτος".as_bytes().as_bstr()
+        );
 
         // two-byte characters
         // https://github.com/minimaxir/big-list-of-naughty-strings/blob/894882e7/blns.txt#L198-L200
         let s = "𐐜 𐐔𐐇𐐝𐐀𐐡𐐇𐐓 𐐙𐐊𐐡𐐝𐐓/𐐝𐐇𐐗𐐊𐐤𐐔 𐐒𐐋𐐗 𐐒𐐌 𐐜 𐐡𐐀𐐖𐐇𐐤𐐓𐐝 𐐱𐑂 𐑄 𐐔𐐇𐐝𐐀𐐡𐐇𐐓 𐐏𐐆𐐅𐐤𐐆𐐚𐐊𐐡𐐝𐐆𐐓𐐆".as_bytes();
         let iter = Lowercase::from(s);
         assert_eq!(
-            iter.collect::<Vec<_>>(),
-            "𐑄 𐐼𐐯𐑅𐐨𐑉𐐯𐐻 𐑁𐐲𐑉𐑅𐐻/𐑅𐐯𐐿𐐲𐑌𐐼 𐐺𐐳𐐿 𐐺𐐴 𐑄 𐑉𐐨𐐾𐐯𐑌𐐻𐑅 𐐱𐑂 𐑄 𐐼𐐯𐑅𐐨𐑉𐐯𐐻 𐐷𐐮𐐭𐑌𐐮𐑂𐐲𐑉𐑅𐐮𐐻𐐮".as_bytes()
+            iter.collect::<Vec<_>>().as_bstr(),
+            "𐑄 𐐼𐐯𐑅𐐨𐑉𐐯𐐻 𐑁𐐲𐑉𐑅𐐻/𐑅𐐯𐐿𐐲𐑌𐐼 𐐺𐐳𐐿 𐐺𐐴 𐑄 𐑉𐐨𐐾𐐯𐑌𐐻𐑅 𐐱𐑂 𐑄 𐐼𐐯𐑅𐐨𐑉𐐯𐐻 𐐷𐐮𐐭𐑌𐐮𐑂𐐲𐑉𐑅𐐮𐐻𐐮"
+                .as_bytes()
+                .as_bstr()
         );
 
         // Change length when lowercased
         // https://github.com/minimaxir/big-list-of-naughty-strings/blob/894882e7/blns.txt#L226-L232
         let s = "ZȺȾ".as_bytes();
         let iter = Lowercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "zⱥⱦ".as_bytes());
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            "zⱥⱦ".as_bytes().as_bstr()
+        );
     }
 
     #[test]
     fn lowercase_utf8_string_invalid_utf8() {
         let iter = Lowercase::from(&b"\xFF\xFE"[..]);
-        assert_eq!(iter.collect::<Vec<u8>>(), &b"\xFF\xFE"[..]);
+        assert_eq!(iter.collect::<Vec<u8>>().as_bstr(), b"\xFF\xFE".as_bstr());
 
         let iter = Lowercase::from(&b"ABC\xFF\xFEXYZ"[..]);
-        assert_eq!(iter.collect::<Vec<u8>>(), &b"abc\xFF\xFExyz"[..]);
+        assert_eq!(
+            iter.collect::<Vec<u8>>().as_bstr(),
+            b"abc\xFF\xFExyz".as_bstr()
+        );
+
+        let iter = Lowercase::from(&b"abc\xFF\xFEXYZ"[..]);
+        assert_eq!(
+            iter.collect::<Vec<u8>>().as_bstr(),
+            b"abc\xFF\xFExyz".as_bstr()
+        );
     }
 
     #[test]
     fn lowercase_utf8_string_unicode_replacement_character() {
         let s = "�".as_bytes();
         let iter = Lowercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "�".as_bytes());
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "�".as_bytes().as_bstr());
     }
 }
