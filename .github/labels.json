@@ -5,14 +5,14 @@
     "description": "Area: CI build infrastructure."
   },
   {
+    "name": "A-capitalize",
+    "color": "f7e101",
+    "description": "Area: Capitalize case mapping."
+  },
+  {
     "name": "A-crate-features",
     "color": "f7e101",
     "description": "Area: Compile-time features or attributes."
-  },
-  {
-    "name": "A-decode",
-    "color": "f7e101",
-    "description": "Area: Core decoder implementation."
   },
   {
     "name": "A-deps",
@@ -20,9 +20,9 @@
     "description": "Area: Source and library dependencies."
   },
   {
-    "name": "A-encode",
+    "name": "A-lowercase",
     "color": "f7e101",
-    "description": "Area: Core encoder implementation."
+    "description": "Area: Lowercase case mapping."
   },
   {
     "name": "A-performance",
@@ -43,6 +43,16 @@
     "name": "A-security",
     "color": "f7e101",
     "description": "Area: security vulnerabilities and unsoundness issues."
+  },
+  {
+    "name": "A-titlecase",
+    "color": "f7e101",
+    "description": "Area: Titlecase case mapping."
+  },
+  {
+    "name": "A-uppercase",
+    "color": "f7e101",
+    "description": "Area: Uppercase case mapping."
   },
   {
     "name": "C-bug",
