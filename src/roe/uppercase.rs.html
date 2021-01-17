@@ -266,6 +266,18 @@
 <span id="263">263</span>
 <span id="264">264</span>
 <span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">char</span>::<span class="ident">ToUppercase</span>;
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">fmt</span>;
@@ -474,6 +486,18 @@
         <span class="macro">assert_eq</span><span class="macro">!</span>(
             <span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(),
             <span class="string">b&quot;ABC\xFF\xFEXYZ&quot;</span>.<span class="ident">as_bstr</span>()
+        );
+
+        <span class="comment">// The bytes \xF0\x9F\x87 could lead to a valid UTF-8 sequence, but 3 of</span>
+        <span class="comment">// them on their own are invalid. Only one replacement codepoint is</span>
+        <span class="comment">// substituted, which demonstrates the &quot;substitution of maximal</span>
+        <span class="comment">// subparts&quot; strategy.</span>
+        <span class="comment">//</span>
+        <span class="comment">// See: https://docs.rs/bstr/0.2.*/bstr/#handling-of-invalid-utf-8</span>
+        <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Uppercase</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="string">b&quot;aB\xF0\x9F\x87Yz&quot;</span>[..]);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(),
+            <span class="string">b&quot;AB\xF0\x9F\x87YZ&quot;</span>.<span class="ident">as_bstr</span>()
         );
     }
 
