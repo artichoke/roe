@@ -236,14 +236,17 @@ mod tests {
     fn latin_capital_i_with_dot_above() {
         let s = "İ".as_bytes();
         let iter = Lowercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), [105_u8, 204, 135]);
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            [105_u8, 204, 135].as_bstr()
+        );
     }
 
     #[test]
     fn case_map_to_two_chars() {
         let s = "İ".as_bytes();
         let iter = Lowercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "i\u{307}".as_bytes());
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "i\u{307}".as_bytes());
     }
 
     #[test]
