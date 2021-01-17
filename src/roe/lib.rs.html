@@ -55,8 +55,8 @@
 <span class="comment">// This function treats the given slice as a conventionally UTF-8 string. UTF-8</span>
 <span class="comment">// byte sequences are converted to their Unicode lowercase equivalents. Invalid</span>
 <span class="comment">// UTF-8 byte sequences are yielded as is.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lowercase</span>(<span class="ident">slice</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Lowercase</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
-    <span class="ident">Lowercase</span>::<span class="ident">from</span>(<span class="ident">slice</span>)
+<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">lowercase</span>(<span class="ident">slice</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Lowercase</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
+    <span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="ident">slice</span>)
 }
 
 <span class="comment">// Returns an iterator that yields a copy of the bytes in the given slice with</span>
@@ -65,8 +65,8 @@
 <span class="comment">// This function treats the given slice as a conventionally UTF-8 string. UTF-8</span>
 <span class="comment">// byte sequences are converted to their Unicode uppercase equivalents. Invalid</span>
 <span class="comment">// UTF-8 byte sequences are yielded as is.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">uppercase</span>(<span class="ident">slice</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Uppercase</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
-    <span class="ident">Uppercase</span>::<span class="ident">from</span>(<span class="ident">slice</span>)
+<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">uppercase</span>(<span class="ident">slice</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Uppercase</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
+    <span class="ident">Uppercase</span>::<span class="ident">with_slice</span>(<span class="ident">slice</span>)
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "roe";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

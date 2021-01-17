@@ -299,6 +299,25 @@
 <span id="296">296</span>
 <span id="297">297</span>
 <span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">char</span>::<span class="ident">ToUppercase</span>;
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">fmt</span>;
@@ -345,12 +364,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Uppercase</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">slice</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">slice</span>,
-            <span class="ident">next_bytes</span>: [<span class="number">0</span>; <span class="number">4</span>],
-            <span class="ident">next_range</span>: <span class="number">0</span>..<span class="number">0</span>,
-            <span class="ident">uppercase</span>: <span class="prelude-val">None</span>,
-        }
+        <span class="self">Self</span>::<span class="ident">with_slice</span>(<span class="ident">slice</span>)
     }
 }
 
@@ -367,6 +381,30 @@
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">slice</span>: <span class="kw-2">&amp;</span>[],
+            <span class="ident">next_bytes</span>: [<span class="number">0</span>; <span class="number">4</span>],
+            <span class="ident">next_range</span>: <span class="number">0</span>..<span class="number">0</span>,
+            <span class="ident">uppercase</span>: <span class="prelude-val">None</span>,
+        }
+    }
+
+    <span class="doccomment">/// Create a new uppercase iterator with the given byte slice.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use roe::Uppercase;</span>
+    <span class="doccomment">/// let mut uppercase = Uppercase::with_slice(b&quot;abcXYZ&quot;);</span>
+    <span class="doccomment">/// assert_eq!(uppercase.next(), Some(b&#39;A&#39;));</span>
+    <span class="doccomment">/// assert_eq!(uppercase.next(), Some(b&#39;B&#39;));</span>
+    <span class="doccomment">/// assert_eq!(uppercase.next(), Some(b&#39;C&#39;));</span>
+    <span class="doccomment">/// assert_eq!(uppercase.next(), Some(b&#39;X&#39;));</span>
+    <span class="doccomment">/// assert_eq!(uppercase.next(), Some(b&#39;Y&#39;));</span>
+    <span class="doccomment">/// assert_eq!(uppercase.next(), Some(b&#39;Z&#39;));</span>
+    <span class="doccomment">/// assert_eq!(uppercase.next(), None);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">with_slice</span>(<span class="ident">slice</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">slice</span>,
             <span class="ident">next_bytes</span>: [<span class="number">0</span>; <span class="number">4</span>],
             <span class="ident">next_range</span>: <span class="number">0</span>..<span class="number">0</span>,
             <span class="ident">uppercase</span>: <span class="prelude-val">None</span>,
