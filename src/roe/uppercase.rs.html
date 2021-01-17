@@ -223,6 +223,15 @@
 <span id="220">220</span>
 <span id="221">221</span>
 <span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">char</span>::<span class="ident">ToUppercase</span>;
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">fmt</span>;
@@ -307,13 +316,8 @@
         }
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">ch</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">uppercase</span>.<span class="ident">as_mut</span>().<span class="ident">and_then</span>(<span class="ident">Iterator</span>::<span class="ident">next</span>) {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">uppercase</span> <span class="op">=</span> <span class="ident">ch</span>.<span class="ident">to_uppercase</span>();
-            <span class="kw">let</span> <span class="ident">ch</span> <span class="op">=</span> <span class="ident">uppercase</span>
-                .<span class="ident">next</span>()
-                .<span class="ident">expect</span>(<span class="string">&quot;ToUppercase yields at least one char&quot;</span>);
             <span class="kw">let</span> <span class="ident">enc</span> <span class="op">=</span> <span class="ident">ch</span>.<span class="ident">encode_utf8</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">next_bytes</span>);
             <span class="self">self</span>.<span class="ident">next_range</span> <span class="op">=</span> <span class="number">1</span>..<span class="ident">enc</span>.<span class="ident">len</span>();
-            <span class="self">self</span>.<span class="ident">uppercase</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">uppercase</span>);
             <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">next_bytes</span>[<span class="number">0</span>]);
         }
 
@@ -354,13 +358,13 @@
     <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Uppercase</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">uppercase_utf8_string_empty</span>() {
+    <span class="kw">fn</span> <span class="ident">empty</span>() {
         <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Uppercase</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="string">b&quot;&quot;</span>[..]);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">b&quot;&quot;</span>.<span class="ident">as_bstr</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">uppercase_utf8_string_ascii</span>() {
+    <span class="kw">fn</span> <span class="ident">ascii</span>() {
         <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Uppercase</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="string">b&quot;abc&quot;</span>[..]);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">b&quot;ABC&quot;</span>.<span class="ident">as_bstr</span>());
 
@@ -378,7 +382,7 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">uppercase_utf8_string_utf8</span>() {
+    <span class="kw">fn</span> <span class="ident">utf8</span>() {
         <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="string">&quot;ß&quot;</span>.<span class="ident">as_bytes</span>();
         <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Uppercase</span>::<span class="ident">from</span>(<span class="ident">s</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(
@@ -422,7 +426,7 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">uppercase_utf8_string_invalid_utf8</span>() {
+    <span class="kw">fn</span> <span class="ident">invalid_utf8</span>() {
         <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Uppercase</span>::<span class="ident">from</span>(<span class="kw-2">&amp;</span><span class="string">b&quot;\xFF\xFE&quot;</span>[..]);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">b&quot;\xFF\xFE&quot;</span>.<span class="ident">as_bstr</span>());
 
@@ -440,10 +444,24 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">uppercase_utf8_string_unicode_replacement_character</span>() {
+    <span class="kw">fn</span> <span class="ident">unicode_replacement_character</span>() {
         <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="string">&quot;�&quot;</span>.<span class="ident">as_bytes</span>();
         <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Uppercase</span>::<span class="ident">from</span>(<span class="ident">s</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">&quot;�&quot;</span>.<span class="ident">as_bytes</span>().<span class="ident">as_bstr</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">dz_titlecase</span>() {
+        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="string">&quot;ǅ&quot;</span>.<span class="ident">as_bytes</span>();
+        <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Uppercase</span>::<span class="ident">from</span>(<span class="ident">s</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">&quot;Ǆ&quot;</span>.<span class="ident">as_bytes</span>().<span class="ident">as_bstr</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">latin_small_i_with_dot_above</span>() {
+        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="string">&quot;i̇&quot;</span>.<span class="ident">as_bytes</span>();
+        <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Uppercase</span>::<span class="ident">from</span>(<span class="ident">s</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>(), [<span class="number">73_u8</span>, <span class="number">204</span>, <span class="number">135</span>]);
     }
 }
 </pre></div>
