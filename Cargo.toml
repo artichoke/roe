@@ -1,0 +1,35 @@
+[package]
+name = "roe"
+version = "0.1.0" # remember to set `html_root_url` in `src/lib.rs`.
+authors = ["Ryan Lopopolo <rjl@hyperbo.la>"]
+license = "MIT"
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/artichoke/roe"
+documentation = "https://docs.rs/roe"
+homepage = "https://github.com/artichoke/roe"
+description = "Unicode case conversion"
+keywords = ["capitalize", "case", "lowercase", "unicode", "uppercase"]
+categories = ["encoding", "internationalization", "no-std", "text-processing"]
+include = ["src/**/*", "tests/**/*", "LICENSE", "README.md"]
+
+[features]
+default = ["std"]
+# Enable dependency on `std`, the Rust standard library. This feature enables
+# `std::error::Error` implementations on the error types in `boba`.
+std = ["alloc"]
+# Enable a dependency on `alloc`, The Rust collections library. This feature
+# enables APIs that depend on `Vec` and `String`.
+alloc = []
+
+[dependencies]
+# `no_std` mode was fixed in https://github.com/BurntSushi/bstr/commit/83e8f27e
+bstr = { version = "0.2.4", default-features = false }
+
+[dev-dependencies]
+version-sync = "0.9"
+
+[package.metadata.docs.rs]
+# This sets the default target to `x86_64-unknown-linux-gnu` and only builds
+# that target. `boba` has the same API and code on all targets.
+targets = ["x86_64-unknown-linux-gnu"]
