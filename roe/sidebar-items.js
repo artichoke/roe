@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["lowercase",""]],"struct":[["Lowercase","An iterator that yields the lowercase equivalent of a conventionally UTF-8 byte string."]]});

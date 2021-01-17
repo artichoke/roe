@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["bstr"] = [{"text":"impl Display for BStr","synthetic":false,"types":[]},{"text":"impl Display for Utf8Error","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
