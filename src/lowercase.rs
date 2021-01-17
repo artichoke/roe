@@ -96,12 +96,17 @@ impl<'a> Iterator for Lowercase<'a> {
 
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(idx) = self.next_range.next() {
+            debug_assert!(self.next_bytes.get(idx).is_some());
+
             return Some(self.next_bytes[idx]);
         }
 
         if let Some(ch) = self.lowercase.as_mut().and_then(Iterator::next) {
             let enc = ch.encode_utf8(&mut self.next_bytes);
+
             self.next_range = 1..enc.len();
+            debug_assert!(self.next_bytes.get(self.next_range.clone()).is_some());
+
             return Some(self.next_bytes[0]);
         }
 
@@ -116,14 +121,20 @@ impl<'a> Iterator for Lowercase<'a> {
                     .next()
                     .expect("ToLowercase yields at least one char");
                 let enc = ch.encode_utf8(&mut self.next_bytes);
+
                 self.next_range = 1..enc.len();
+                debug_assert!(self.next_bytes.get(self.next_range.clone()).is_some());
+
                 self.lowercase = Some(lowercase);
                 Some(self.next_bytes[0])
             }
             (None, size) => {
                 let (bytes, remainder) = self.slice.split_at(size);
                 self.slice = remainder;
+
                 // Invalid byte sequences are at most three bytes.
+                debug_assert!(self.next_bytes.get(..bytes.len()).is_some());
+
                 self.next_bytes[..bytes.len()].copy_from_slice(bytes);
                 self.next_range = 1..bytes.len();
                 Some(self.next_bytes[0])
