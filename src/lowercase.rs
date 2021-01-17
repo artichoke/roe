@@ -109,6 +109,7 @@ impl<'a> Iterator for Lowercase<'a> {
             (None, size) => {
                 let (bytes, remainder) = self.slice.split_at(size);
                 self.slice = remainder;
+                // Invalid byte sequences are at most three bytes.
                 self.next_bytes[..bytes.len()].copy_from_slice(bytes);
                 self.next_range = 1..bytes.len();
                 Some(self.next_bytes[0])
