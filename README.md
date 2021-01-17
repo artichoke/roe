@@ -39,9 +39,9 @@ assert_eq!(roe::upercase(b"xexax").collect::<Vec<_>>(), b"XEXAX");
 
 ## Crate Features
 
-roe is `no_std` compatible with a required dependency on the [`alloc`] crate.
+`roe` is `no_std` compatible with an optional dependency on the [`alloc`] crate.
 
-roe has several Cargo features, all of which are enabled by default:
+`roe` has several Cargo features, all of which are enabled by default:
 
 - **std** - Adds a dependency on [`std`], the Rust Standard Library. This
   feature enables [`std::error::Error`] implementations on error types in this
