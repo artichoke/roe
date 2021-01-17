@@ -238,40 +238,61 @@ mod tests {
     fn latin_small_i_with_dot_above() {
         let s = "i̇".as_bytes();
         let iter = Uppercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), [73_u8, 204, 135]);
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            [73_u8, 204, 135].as_bstr()
+        );
     }
 
     #[test]
     fn case_map_to_two_chars() {
         let s = "և".as_bytes();
         let iter = Uppercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "ԵՒ".as_bytes());
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            "ԵՒ".as_bytes().as_bstr()
+        );
 
         let s = "ẙ".as_bytes();
         let iter = Uppercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "Y\u{30a}".as_bytes());
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            "Y\u{30a}".as_bytes().as_bstr()
+        );
 
         let s = "ᾂ".as_bytes();
         let iter = Uppercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "ἊΙ".as_bytes());
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            "ἊΙ".as_bytes().as_bstr()
+        );
 
         let s = "ﬗ".as_bytes();
         let iter = Uppercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "ՄԽ".as_bytes());
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            "ՄԽ".as_bytes().as_bstr()
+        );
     }
 
     #[test]
     fn case_map_to_three_chars() {
         let s = "ﬃ".as_bytes();
         let iter = Uppercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), b"FFI");
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"FFI".as_bstr());
 
         let s = "ὖ".as_bytes();
         let iter = Uppercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "Υ\u{313}\u{342}".as_bytes());
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            "Υ\u{313}\u{342}".as_bytes().as_bstr()
+        );
 
         let s = "ῷ".as_bytes();
         let iter = Uppercase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>(), "Ω\u{342}Ι".as_bytes());
+        assert_eq!(
+            iter.collect::<Vec<_>>().as_bstr(),
+            "Ω\u{342}Ι".as_bytes().as_bstr()
+        );
     }
 }
