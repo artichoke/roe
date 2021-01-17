@@ -43,12 +43,7 @@ impl<'a> Default for Uppercase<'a> {
 
 impl<'a> From<&'a [u8]> for Uppercase<'a> {
     fn from(slice: &'a [u8]) -> Self {
-        Self {
-            slice,
-            next_bytes: [0; 4],
-            next_range: 0..0,
-            uppercase: None,
-        }
+        Self::with_slice(slice)
     }
 }
 
@@ -65,6 +60,30 @@ impl<'a> Uppercase<'a> {
     pub const fn new() -> Self {
         Self {
             slice: &[],
+            next_bytes: [0; 4],
+            next_range: 0..0,
+            uppercase: None,
+        }
+    }
+
+    /// Create a new uppercase iterator with the given byte slice.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use roe::Uppercase;
+    /// let mut uppercase = Uppercase::with_slice(b"abcXYZ");
+    /// assert_eq!(uppercase.next(), Some(b'A'));
+    /// assert_eq!(uppercase.next(), Some(b'B'));
+    /// assert_eq!(uppercase.next(), Some(b'C'));
+    /// assert_eq!(uppercase.next(), Some(b'X'));
+    /// assert_eq!(uppercase.next(), Some(b'Y'));
+    /// assert_eq!(uppercase.next(), Some(b'Z'));
+    /// assert_eq!(uppercase.next(), None);
+    /// ```
+    pub const fn with_slice(slice: &'a [u8]) -> Self {
+        Self {
+            slice,
             next_bytes: [0; 4],
             next_range: 0..0,
             uppercase: None,
