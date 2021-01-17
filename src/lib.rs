@@ -18,8 +18,8 @@ pub use uppercase::Uppercase;
 // This function treats the given slice as a conventionally UTF-8 string. UTF-8
 // byte sequences are converted to their Unicode lowercase equivalents. Invalid
 // UTF-8 byte sequences are yielded as is.
-pub fn lowercase(slice: &[u8]) -> Lowercase<'_> {
-    Lowercase::from(slice)
+pub const fn lowercase(slice: &[u8]) -> Lowercase<'_> {
+    Lowercase::with_slice(slice)
 }
 
 // Returns an iterator that yields a copy of the bytes in the given slice with
@@ -28,6 +28,6 @@ pub fn lowercase(slice: &[u8]) -> Lowercase<'_> {
 // This function treats the given slice as a conventionally UTF-8 string. UTF-8
 // byte sequences are converted to their Unicode uppercase equivalents. Invalid
 // UTF-8 byte sequences are yielded as is.
-pub fn uppercase(slice: &[u8]) -> Uppercase<'_> {
-    Uppercase::from(slice)
+pub const fn uppercase(slice: &[u8]) -> Uppercase<'_> {
+    Uppercase::with_slice(slice)
 }

@@ -43,12 +43,7 @@ impl<'a> Default for Lowercase<'a> {
 
 impl<'a> From<&'a [u8]> for Lowercase<'a> {
     fn from(slice: &'a [u8]) -> Self {
-        Self {
-            slice,
-            next_bytes: [0; 4],
-            next_range: 0..0,
-            lowercase: None,
-        }
+        Self::with_slice(slice)
     }
 }
 
@@ -65,6 +60,30 @@ impl<'a> Lowercase<'a> {
     pub const fn new() -> Self {
         Self {
             slice: &[],
+            next_bytes: [0; 4],
+            next_range: 0..0,
+            lowercase: None,
+        }
+    }
+
+    /// Create a new lowercase iterator with the given byte slice.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use roe::Lowercase;
+    /// let mut lowercase = Lowercase::with_slice(b"abcXYZ");
+    /// assert_eq!(lowercase.next(), Some(b'a'));
+    /// assert_eq!(lowercase.next(), Some(b'b'));
+    /// assert_eq!(lowercase.next(), Some(b'c'));
+    /// assert_eq!(lowercase.next(), Some(b'x'));
+    /// assert_eq!(lowercase.next(), Some(b'y'));
+    /// assert_eq!(lowercase.next(), Some(b'z'));
+    /// assert_eq!(lowercase.next(), None);
+    /// ```
+    pub const fn with_slice(slice: &'a [u8]) -> Self {
+        Self {
+            slice,
             next_bytes: [0; 4],
             next_range: 0..0,
             lowercase: None,
