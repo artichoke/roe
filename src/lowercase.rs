@@ -119,6 +119,7 @@ impl<'a> FusedIterator for Lowercase<'a> {}
 mod tests {
     use alloc::vec::Vec;
     use bstr::ByteSlice;
+    use core::char;
 
     use super::Lowercase;
 
@@ -224,5 +225,26 @@ mod tests {
         let s = "İ".as_bytes();
         let iter = Lowercase::from(s);
         assert_eq!(iter.collect::<Vec<_>>(), [105_u8, 204, 135]);
+    }
+
+    #[test]
+    fn case_map_to_two_chars() {
+        let s = "İ".as_bytes();
+        let iter = Lowercase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>(), "i\u{307}".as_bytes());
+    }
+
+    #[test]
+    fn case_map_to_three_chars() {
+        // there are no such characters
+        for ch in '\0'..char::MAX {
+            if ch.to_lowercase().count() == 3 {
+                panic!(
+                    "Expected no characters that downcase to three characters, found: '{}', which expands to: {:?}",
+                    ch,
+                    ch.to_lowercase().collect::<Vec<_>>()
+                );
+            }
+        }
     }
 }
