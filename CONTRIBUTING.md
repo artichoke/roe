@@ -6,8 +6,8 @@
 Artichoke aspires to be a Ruby 2.6.3-compatible implementation of the Ruby
 programming language. [There is lots to do].
 
-roe is used to implement Unicode case mapping routines for the
-[`Symbol`] and [`String`] classes in Artichoke's implementation of Ruby Core.
+roe is used to implement Unicode case mapping routines for the [`Symbol`] and
+[`String`] classes in Artichoke's implementation of Ruby Core.
 
 If Artichoke does not run Ruby source code in the same way that MRI does, it is
 a bug and we would appreciate if you [filed an issue so we can fix it]. [File
@@ -30,9 +30,8 @@ configuring several dependencies.
 
 ### Rust Toolchain
 
-roe depends on Rust and several compiler plugins for linting and
-formatting. roe is guaranteed to build on the latest stable release of the
-Rust compiler.
+roe depends on Rust and several compiler plugins for linting and formatting. roe
+is guaranteed to build on the latest stable release of the Rust compiler.
 
 #### Installation
 
@@ -44,8 +43,7 @@ brew install rustup-init
 rustup-init
 ```
 
-Once you have rustup, you can install the Rust toolchain needed to compile
-roe:
+Once you have rustup, you can install the Rust toolchain needed to compile roe:
 
 ```sh
 rustup toolchain install stable
@@ -74,8 +72,8 @@ cargo build
 roe requires a recent Ruby 2.x and [bundler] 2.x. The
 [`.ruby-version`](.ruby-version) file in this repository specifies Ruby 2.6.3.
 
-roe uses [`rake`](Rakefile) as a task runner. You can see the available
-tasks by running:
+roe uses [`rake`](Rakefile) as a task runner. You can see the available tasks by
+running:
 
 ```console
 $ bundle exec rake --tasks
@@ -97,8 +95,8 @@ rake release:markdown_link_check  # Check for broken links in markdown files
 rake test                         # Run Focaccia unit tests
 ```
 
-To lint Ruby sources, roe uses [RuboCop]. RuboCop runs as part of the
-`lint` task. To run RuboCop by itself, invoke the `lint:rubocop` task.
+To lint Ruby sources, roe uses [RuboCop]. RuboCop runs as part of the `lint`
+task. To run RuboCop by itself, invoke the `lint:rubocop` task.
 
 ```console
 $ bundle exec rake lint
