@@ -285,6 +285,17 @@
 <span id="282">282</span>
 <span id="283">283</span>
 <span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">char</span>::<span class="ident">ToLowercase</span>;
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">fmt</span>;
@@ -384,12 +395,17 @@
 
     <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">idx</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">next_range</span>.<span class="ident">next</span>() {
+            <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">next_bytes</span>.<span class="ident">get</span>(<span class="ident">idx</span>).<span class="ident">is_some</span>());
+
             <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">next_bytes</span>[<span class="ident">idx</span>]);
         }
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">ch</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">lowercase</span>.<span class="ident">as_mut</span>().<span class="ident">and_then</span>(<span class="ident">Iterator</span>::<span class="ident">next</span>) {
             <span class="kw">let</span> <span class="ident">enc</span> <span class="op">=</span> <span class="ident">ch</span>.<span class="ident">encode_utf8</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">next_bytes</span>);
+
             <span class="self">self</span>.<span class="ident">next_range</span> <span class="op">=</span> <span class="number">1</span>..<span class="ident">enc</span>.<span class="ident">len</span>();
+            <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">next_bytes</span>.<span class="ident">get</span>(<span class="self">self</span>.<span class="ident">next_range</span>.<span class="ident">clone</span>()).<span class="ident">is_some</span>());
+
             <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">next_bytes</span>[<span class="number">0</span>]);
         }
 
@@ -404,14 +420,20 @@
                     .<span class="ident">next</span>()
                     .<span class="ident">expect</span>(<span class="string">&quot;ToLowercase yields at least one char&quot;</span>);
                 <span class="kw">let</span> <span class="ident">enc</span> <span class="op">=</span> <span class="ident">ch</span>.<span class="ident">encode_utf8</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">next_bytes</span>);
+
                 <span class="self">self</span>.<span class="ident">next_range</span> <span class="op">=</span> <span class="number">1</span>..<span class="ident">enc</span>.<span class="ident">len</span>();
+                <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">next_bytes</span>.<span class="ident">get</span>(<span class="self">self</span>.<span class="ident">next_range</span>.<span class="ident">clone</span>()).<span class="ident">is_some</span>());
+
                 <span class="self">self</span>.<span class="ident">lowercase</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">lowercase</span>);
                 <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">next_bytes</span>[<span class="number">0</span>])
             }
             (<span class="prelude-val">None</span>, <span class="ident">size</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> (<span class="ident">bytes</span>, <span class="ident">remainder</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">slice</span>.<span class="ident">split_at</span>(<span class="ident">size</span>);
                 <span class="self">self</span>.<span class="ident">slice</span> <span class="op">=</span> <span class="ident">remainder</span>;
+
                 <span class="comment">// Invalid byte sequences are at most three bytes.</span>
+                <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">next_bytes</span>.<span class="ident">get</span>(..<span class="ident">bytes</span>.<span class="ident">len</span>()).<span class="ident">is_some</span>());
+
                 <span class="self">self</span>.<span class="ident">next_bytes</span>[..<span class="ident">bytes</span>.<span class="ident">len</span>()].<span class="ident">copy_from_slice</span>(<span class="ident">bytes</span>);
                 <span class="self">self</span>.<span class="ident">next_range</span> <span class="op">=</span> <span class="number">1</span>..<span class="ident">bytes</span>.<span class="ident">len</span>();
                 <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">next_bytes</span>[<span class="number">0</span>])
