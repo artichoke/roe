@@ -123,13 +123,13 @@ mod tests {
     use super::Uppercase;
 
     #[test]
-    fn uppercase_utf8_string_empty() {
+    fn empty() {
         let iter = Uppercase::from(&b""[..]);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"".as_bstr());
     }
 
     #[test]
-    fn uppercase_utf8_string_ascii() {
+    fn ascii() {
         let iter = Uppercase::from(&b"abc"[..]);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"ABC".as_bstr());
 
@@ -147,7 +147,7 @@ mod tests {
     }
 
     #[test]
-    fn uppercase_utf8_string_utf8() {
+    fn utf8() {
         let s = "ß".as_bytes();
         let iter = Uppercase::from(s);
         assert_eq!(
@@ -191,7 +191,7 @@ mod tests {
     }
 
     #[test]
-    fn uppercase_utf8_string_invalid_utf8() {
+    fn invalid_utf8() {
         let iter = Uppercase::from(&b"\xFF\xFE"[..]);
         assert_eq!(iter.collect::<Vec<u8>>().as_bstr(), b"\xFF\xFE".as_bstr());
 
@@ -209,7 +209,7 @@ mod tests {
     }
 
     #[test]
-    fn uppercase_utf8_string_unicode_replacement_character() {
+    fn unicode_replacement_character() {
         let s = "�".as_bytes();
         let iter = Uppercase::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "�".as_bytes().as_bstr());
