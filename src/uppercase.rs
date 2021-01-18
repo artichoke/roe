@@ -16,7 +16,7 @@ use bstr::ByteSlice;
 /// [bytes]: u8
 /// [`uppercase`]: crate::uppercase()
 #[derive(Clone)]
-#[must_use = "Uppercase is a Iterator and must be consumed"]
+#[must_use = "Uppercase is a Iterator and must be used"]
 pub struct Uppercase<'a> {
     slice: &'a [u8],
     next_bytes: [u8; 4],
