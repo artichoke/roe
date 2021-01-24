@@ -133,6 +133,22 @@ impl<'a> Iterator for Lowercase<'a> {
             Inner::Ascii(ref mut iter) => iter.next(),
         }
     }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        match self.iter {
+            Inner::Empty => (0, Some(0)),
+            Inner::Full(ref iter) => iter.size_hint(),
+            Inner::Ascii(ref iter) => iter.size_hint(),
+        }
+    }
+
+    fn count(self) -> usize {
+        match self.iter {
+            Inner::Empty => 0,
+            Inner::Full(iter) => iter.count(),
+            Inner::Ascii(iter) => iter.count(),
+        }
+    }
 }
 
 impl<'a> FusedIterator for Lowercase<'a> {}
@@ -154,5 +170,103 @@ mod tests {
 
         let iter = Lowercase::with_ascii_slice(b"");
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"".as_bstr());
+    }
+
+    #[test]
+    fn size_hint() {
+        assert_eq!(Lowercase::new().size_hint(), (0, Some(0)));
+
+        assert_eq!(Lowercase::with_slice(b"abc, xyz").size_hint(), (8, Some(8)));
+        assert_eq!(
+            Lowercase::with_slice(b"abc, \xFF\xFE, xyz").size_hint(),
+            (12, Some(144))
+        );
+        assert_eq!(
+            Lowercase::with_slice("�".as_bytes()).size_hint(),
+            (3, Some(36))
+        );
+        assert_eq!(
+            Lowercase::with_slice("Έτος".as_bytes()).size_hint(),
+            (8, Some(96))
+        );
+        assert_eq!(
+            Lowercase::with_slice("ZȺȾ".as_bytes()).size_hint(),
+            (5, Some(60))
+        );
+
+        let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
+        utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
+        assert_eq!(
+            Lowercase::with_slice(&utf8_with_invalid_bytes).size_hint(),
+            (10, Some(120))
+        );
+
+        assert_eq!(
+            Lowercase::with_ascii_slice(b"abc, xyz").size_hint(),
+            (8, Some(8))
+        );
+        assert_eq!(
+            Lowercase::with_ascii_slice(b"abc, \xFF\xFE, xyz").size_hint(),
+            (12, Some(12))
+        );
+        assert_eq!(
+            Lowercase::with_ascii_slice("�".as_bytes()).size_hint(),
+            (3, Some(3))
+        );
+        assert_eq!(
+            Lowercase::with_ascii_slice("Έτος".as_bytes()).size_hint(),
+            (8, Some(8))
+        );
+        assert_eq!(
+            Lowercase::with_ascii_slice("ZȺȾ".as_bytes()).size_hint(),
+            (5, Some(5))
+        );
+
+        let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
+        utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
+        assert_eq!(
+            Lowercase::with_ascii_slice(&utf8_with_invalid_bytes).size_hint(),
+            (10, Some(10))
+        );
+    }
+
+    #[test]
+    fn count() {
+        assert_eq!(Lowercase::new().count(), 0);
+
+        assert_eq!(Lowercase::with_slice(b"abc, xyz").count(), 8);
+        assert_eq!(Lowercase::with_slice(b"abc, \xFF\xFE, xyz").count(), 12);
+        assert_eq!(Lowercase::with_slice("�".as_bytes()).count(), 3);
+        assert_eq!(Lowercase::with_slice("Έτος".as_bytes()).count(), 8);
+        assert_eq!(Lowercase::with_slice("ZȺȾ".as_bytes()).count(), 7);
+
+        let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
+        utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
+        assert_eq!(Lowercase::with_slice(&utf8_with_invalid_bytes).count(), 10);
+
+        assert_eq!(Lowercase::with_ascii_slice(b"abc, xyz").count(), 8);
+        assert_eq!(
+            Lowercase::with_ascii_slice(b"abc, \xFF\xFE, xyz").count(),
+            12
+        );
+        assert_eq!(Lowercase::with_ascii_slice("�".as_bytes()).count(), 3);
+        assert_eq!(Lowercase::with_ascii_slice("Έτος".as_bytes()).count(), 8);
+        assert_eq!(Lowercase::with_ascii_slice("ZȺȾ".as_bytes()).count(), 5);
+
+        let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
+        utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
+        assert_eq!(
+            Lowercase::with_ascii_slice(&utf8_with_invalid_bytes).count(),
+            10
+        );
+    }
+
+    #[test]
+    fn size_hint_covers_count() {
+        let iter = Lowercase::new();
+        let (min, max) = iter.size_hint();
+        let count = iter.count();
+        assert!(min <= count);
+        assert!(count <= max.unwrap());
     }
 }
