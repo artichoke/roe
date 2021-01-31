@@ -1,4 +1,10 @@
 #![no_std]
+// Enable feature callouts in generated documentation:
+// https://doc.rust-lang.org/beta/unstable-book/language-features/doc-cfg.html
+//
+// This approach is borrowed from tokio.
+#![cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_alias))]
 
 #[cfg(any(feature = "alloc", test))]
 extern crate alloc;
@@ -10,9 +16,13 @@ use core::convert::{TryFrom, TryInto};
 use core::fmt;
 use core::str::FromStr;
 
+mod ascii;
 mod lowercase;
 mod uppercase;
 
+pub use ascii::{make_ascii_lowercase, make_ascii_titlecase, make_ascii_uppercase};
+#[cfg(feature = "alloc")]
+pub use ascii::{to_ascii_lowercase, to_ascii_titlecase, to_ascii_uppercase};
 pub use lowercase::Lowercase;
 pub use uppercase::Uppercase;
 

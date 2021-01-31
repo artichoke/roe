@@ -33,3 +33,4 @@ version-sync = "0.9"
 # This sets the default target to `x86_64-unknown-linux-gnu` and only builds
 # that target. `boba` has the same API and code on all targets.
 targets = ["x86_64-unknown-linux-gnu"]
+rustdoc-args = ["--cfg", "docsrs"]
