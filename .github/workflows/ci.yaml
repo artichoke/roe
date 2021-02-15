@@ -45,6 +45,9 @@ jobs:
       - name: Test with no default features
         run: cargo test --no-default-features
 
+      - name: Test with alloc feature
+        run: cargo test --no-default-features --features alloc
+
   rust-minimal-versions:
     name: Compile with minimum dependency versions
     runs-on: ubuntu-latest
