@@ -30,6 +30,7 @@ use alloc::vec::Vec;
 /// [`String#upcase!`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-upcase-21
 /// [slice-primitive]: https://doc.rust-lang.org/std/primitive.u8.html#method.make_ascii_uppercase
 #[inline]
+#[allow(clippy::module_name_repetitions)]
 pub fn make_ascii_uppercase<T: AsMut<[u8]>>(slice: &mut T) {
     let slice = slice.as_mut();
     slice.make_ascii_uppercase();
@@ -62,6 +63,7 @@ pub fn make_ascii_uppercase<T: AsMut<[u8]>>(slice: &mut T) {
 #[inline]
 #[cfg(feature = "alloc")]
 #[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
+#[allow(clippy::module_name_repetitions)]
 pub fn to_ascii_uppercase<T: AsRef<[u8]>>(slice: T) -> Vec<u8> {
     let slice = slice.as_ref();
     slice.to_ascii_uppercase()

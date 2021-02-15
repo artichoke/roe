@@ -21,20 +21,30 @@ and uppercase forms. This crate is used to implement [`String#capitalize`],
 
 This crate depends on [`bstr`].
 
+## Status
+
+This crate is currently a _work in progress_. When the API is complete, Roe will
+support lowercase, uppercase, titlecase, and case folding iterators for
+conventionally UTF-8 byte slices.
+
+Roe will implement support for full, Turkic, ASCII, and case folding transforms.
+
 ## Usage
 
 Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-roe = "0.1"
+roe = "0.0.1"
 ```
 
 Then convert case like:
 
 ```rust
-assert_eq!(roe::lowercase("Pineapple").collect::<Vec<_>>(), b"pineapple");
-assert_eq!(roe::upercase(b"xexax").collect::<Vec<_>>(), b"XEXAX");
+use roe::{LowercaseMode, UppercaseMode};
+
+assert_eq!(roe::lowercase(b"Artichoke Ruby", LowercaseMode::Ascii).collect::<Vec<_>>(), b"artichoke ruby");
+assert_eq!(roe::uppercase("Αύριο".as_bytes(), UppercaseMode::Full).collect::<Vec<_>>(), "ΑΎΡΙΟ".as_bytes());
 ```
 
 ## Crate Features
@@ -47,8 +57,8 @@ assert_eq!(roe::upercase(b"xexax").collect::<Vec<_>>(), b"XEXAX");
   feature enables [`std::error::Error`] implementations on error types in this
   crate. Enabling the **std** feature also enables the **alloc** feature.
 - **alloc** - Adds a dependency on [`alloc`], the Rust allocation and
-  collections library. This feature enables APIs that depend on [`Vec`] and
-  [`String`].
+  collections library. This feature enables APIs that allocate [`String`] or
+  [`Vec`].
 
 ## License
 
@@ -69,10 +79,8 @@ assert_eq!(roe::upercase(b"xexax").collect::<Vec<_>>(), b"XEXAX");
 [`symbol#upcase`]: https://ruby-doc.org/core-2.6.3/Symbol.html#method-i-upcase
 [artichoke ruby]: https://github.com/artichoke/artichoke
 [`bstr`]: https://crates.io/crates/bstr
-[`alloc`]: https://doc.rust-lang.org/stable/alloc/index.html
-[`std`]: https://doc.rust-lang.org/stable/std/index.html
-[`std::error::error`]:
-  https://doc.rust-lang.org/stable/std/error/trait.Error.html
-[`vec`]: https://doc.rust-lang.org/stable/alloc/vec/struct.Vec.html
+[`alloc`]: https://doc.rust-lang.org/alloc/index.html
+[`std`]: https://doc.rust-lang.org/std/index.html
+[`std::error::error`]: https://doc.rust-lang.org/std/error/trait.Error.html
 [`string`]: https://doc.rust-lang.org/stable/alloc/string/struct.String.html
-[cargo-fuzz]: https://crates.io/crates/cargo-fuzz
+[`vec`]: https://doc.rust-lang.org/stable/alloc/vec/struct.Vec.html

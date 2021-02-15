@@ -30,6 +30,7 @@ use alloc::vec::Vec;
 /// [`String#downcase!`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-downcase-21
 /// [slice-primitive]: https://doc.rust-lang.org/std/primitive.slice.html#method.make_ascii_lowercase
 #[inline]
+#[allow(clippy::module_name_repetitions)]
 pub fn make_ascii_lowercase<T: AsMut<[u8]>>(mut slice: T) {
     let slice = slice.as_mut();
     slice.make_ascii_lowercase();
@@ -62,6 +63,7 @@ pub fn make_ascii_lowercase<T: AsMut<[u8]>>(mut slice: T) {
 #[inline]
 #[cfg(feature = "alloc")]
 #[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
+#[allow(clippy::module_name_repetitions)]
 pub fn to_ascii_lowercase<T: AsRef<[u8]>>(slice: T) -> Vec<u8> {
     let slice = slice.as_ref();
     slice.to_ascii_lowercase()
