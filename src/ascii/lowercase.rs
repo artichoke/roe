@@ -31,7 +31,7 @@ use alloc::vec::Vec;
 /// [slice-primitive]: https://doc.rust-lang.org/std/primitive.slice.html#method.make_ascii_lowercase
 #[inline]
 #[allow(clippy::module_name_repetitions)]
-pub fn make_ascii_lowercase<T: AsMut<[u8]>>(mut slice: T) {
+pub fn make_ascii_lowercase<T: AsMut<[u8]>>(slice: &mut T) {
     let slice = slice.as_mut();
     slice.make_ascii_lowercase();
 }
