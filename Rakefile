@@ -17,7 +17,7 @@ namespace :lint do
     FileList['**/{build,lib,main}.rs'].each do |root|
       FileUtils.touch(root)
     end
-    sh 'cargo clippy --workspace --all-features'
+    sh 'cargo clippy --workspace --all-features --all-targets'
   end
 
   desc 'Lint Rust sources with Clippy restriction pass (unenforced lints)'

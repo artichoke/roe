@@ -1,6 +1,7 @@
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
-#![allow(clippy::cast_possible_truncation)]
+#![cfg_attr(test, allow(clippy::non_ascii_literal))]
+#![cfg_attr(test, allow(clippy::shadow_unrelated))]
 #![warn(clippy::cargo)]
 #![allow(unknown_lints)]
 #![warn(missing_docs, broken_intra_doc_links)]
