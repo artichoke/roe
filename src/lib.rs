@@ -42,8 +42,14 @@
 //!
 //! ```
 //! # use roe::{LowercaseMode, UppercaseMode};
-//! assert_eq!(roe::lowercase(b"Artichoke Ruby", LowercaseMode::Ascii).collect::<Vec<_>>(), b"artichoke ruby");
-//! assert_eq!(roe::uppercase("Αύριο".as_bytes(), UppercaseMode::Full).collect::<Vec<_>>(), "ΑΎΡΙΟ".as_bytes());
+//! assert_eq!(
+//!     roe::lowercase(b"Artichoke Ruby", LowercaseMode::Ascii).collect::<Vec<_>>(),
+//!     b"artichoke ruby"
+//! );
+//! assert_eq!(
+//!     roe::uppercase("Αύριο".as_bytes(), UppercaseMode::Full).collect::<Vec<_>>(),
+//!     "ΑΎΡΙΟ".as_bytes()
+//! );
 //! ```
 //!
 //!
@@ -72,7 +78,7 @@
 //! [`Vec`]: https://doc.rust-lang.org/alloc/vec/struct.Vec.html
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/roe/0.0.1")]
+#![doc(html_root_url = "https://docs.rs/roe/0.0.2")]
 
 #[cfg(any(feature = "alloc", test))]
 extern crate alloc;

@@ -35,7 +35,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-roe = "0.0.1"
+roe = "0.0.2"
 ```
 
 Then convert case like:
@@ -43,8 +43,14 @@ Then convert case like:
 ```rust
 use roe::{LowercaseMode, UppercaseMode};
 
-assert_eq!(roe::lowercase(b"Artichoke Ruby", LowercaseMode::Ascii).collect::<Vec<_>>(), b"artichoke ruby");
-assert_eq!(roe::uppercase("Αύριο".as_bytes(), UppercaseMode::Full).collect::<Vec<_>>(), "ΑΎΡΙΟ".as_bytes());
+assert_eq!(
+    roe::lowercase(b"Artichoke Ruby", LowercaseMode::Ascii).collect::<Vec<_>>(),
+    b"artichoke ruby"
+);
+assert_eq!(
+    roe::uppercase("Αύριο".as_bytes(), UppercaseMode::Full).collect::<Vec<_>>(),
+    "ΑΎΡΙΟ".as_bytes()
+);
 ```
 
 ## Crate Features
