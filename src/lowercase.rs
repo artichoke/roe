@@ -4,6 +4,7 @@ mod ascii;
 mod full;
 
 #[derive(Debug, Clone)]
+#[allow(variant_size_differences)]
 enum Inner<'a> {
     Empty,
     Full(full::Lowercase<'a>),

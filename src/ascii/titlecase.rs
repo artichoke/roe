@@ -4,7 +4,7 @@ use alloc::vec::Vec;
 /// Converts the given slice to its ASCII title case equivalent in-place.
 ///
 /// ASCII letters 'a' to 'z' are mapped to 'A' to 'Z' in the first byte;
-/// subsequent bytes with ASCII letters 'A' to 'Z' are mapped to 'a' to 'z;
+/// subsequent bytes with ASCII letters 'A' to 'Z' are mapped to 'a' to 'z';
 /// non-ASCII letters are unchanged.
 ///
 /// This function can be used to implement [`String#capitalize!`] for ASCII
@@ -40,6 +40,7 @@ use alloc::vec::Vec;
 ///
 /// [`String#capitalize!`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-capitalize-21
 #[inline]
+#[allow(clippy::module_name_repetitions)]
 pub fn make_ascii_titlecase<T: AsMut<[u8]>>(slice: &mut T) {
     let slice = slice.as_mut();
     if let Some((head, tail)) = slice.split_first_mut() {
@@ -52,7 +53,7 @@ pub fn make_ascii_titlecase<T: AsMut<[u8]>>(slice: &mut T) {
 /// mapped to its ASCII title case equivalent.
 ///
 /// ASCII letters 'a' to 'z' are mapped to 'A' to 'Z' in the first byte;
-/// subsequent bytes with ASCII letters 'A' to 'Z' are mapped to 'a' to 'z;
+/// subsequent bytes with ASCII letters 'A' to 'Z' are mapped to 'a' to 'z';
 /// non-ASCII letters are unchanged.
 ///
 /// This function can be used to implement [`String#capitalize`] and
@@ -76,6 +77,7 @@ pub fn make_ascii_titlecase<T: AsMut<[u8]>>(slice: &mut T) {
 #[inline]
 #[cfg(feature = "alloc")]
 #[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
+#[allow(clippy::module_name_repetitions)]
 pub fn to_ascii_titlecase<T: AsRef<[u8]>>(slice: T) -> Vec<u8> {
     let slice = slice.as_ref();
     let mut titlecase = slice.to_ascii_lowercase();
