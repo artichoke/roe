@@ -8,7 +8,6 @@ ignore = []
 unlicensed = "deny"
 allow = [
   "MIT",
-  "Zlib",
 ]
 deny = []
 copyleft = "deny"
