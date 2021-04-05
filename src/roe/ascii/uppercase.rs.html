@@ -165,13 +165,13 @@
     <span class="kw">fn</span> <span class="ident">make_ascii_uppercase_empty</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="kw-2">*</span><span class="string">b&quot;&quot;</span>;
         <span class="kw">super</span>::<span class="ident">make_ascii_uppercase</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>, <span class="kw-2">*</span><span class="string">b&quot;&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">buf</span>, <span class="kw-2">*</span><span class="string">b&quot;&quot;</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
     <span class="kw">fn</span> <span class="ident">to_ascii_uppercase_empty</span>() {
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw">super</span>::<span class="ident">to_ascii_uppercase</span>(<span class="string">&quot;&quot;</span>), <span class="string">b&quot;&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::<span class="ident">to_ascii_uppercase</span>(<span class="string">&quot;&quot;</span>), <span class="string">b&quot;&quot;</span>);
     }
 }
 </pre></div>

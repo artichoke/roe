@@ -441,68 +441,68 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">empty</span>() {
         <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Lowercase</span>::<span class="ident">new</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">b&quot;&quot;</span>.<span class="ident">as_bstr</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">b&quot;&quot;</span>.<span class="ident">as_bstr</span>());
 
         <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">b&quot;&quot;</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">b&quot;&quot;</span>.<span class="ident">as_bstr</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">b&quot;&quot;</span>.<span class="ident">as_bstr</span>());
 
         <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">b&quot;&quot;</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">b&quot;&quot;</span>.<span class="ident">as_bstr</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">iter</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">as_bstr</span>(), <span class="string">b&quot;&quot;</span>.<span class="ident">as_bstr</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">size_hint</span>() {
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">new</span>().<span class="ident">size_hint</span>(), (<span class="number">0</span>, <span class="prelude-val">Some</span>(<span class="number">0</span>)));
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">new</span>().<span class="ident">size_hint</span>(), (<span class="number">0</span>, <span class="prelude-val">Some</span>(<span class="number">0</span>)));
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">b&quot;abc, xyz&quot;</span>).<span class="ident">size_hint</span>(), (<span class="number">8</span>, <span class="prelude-val">Some</span>(<span class="number">8</span>)));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">b&quot;abc, xyz&quot;</span>).<span class="ident">size_hint</span>(), (<span class="number">8</span>, <span class="prelude-val">Some</span>(<span class="number">8</span>)));
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">b&quot;abc, \xFF\xFE, xyz&quot;</span>).<span class="ident">size_hint</span>(),
             (<span class="number">12</span>, <span class="prelude-val">Some</span>(<span class="number">144</span>))
         );
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">&quot;�&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">size_hint</span>(),
             (<span class="number">3</span>, <span class="prelude-val">Some</span>(<span class="number">36</span>))
         );
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">&quot;Έτος&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">size_hint</span>(),
             (<span class="number">8</span>, <span class="prelude-val">Some</span>(<span class="number">96</span>))
         );
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">&quot;ZȺȾ&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">size_hint</span>(),
             (<span class="number">5</span>, <span class="prelude-val">Some</span>(<span class="number">60</span>))
         );
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">utf8_with_invalid_bytes</span> <span class="op">=</span> <span class="string">b&quot;\xFF\xFE&quot;</span>.<span class="ident">to_vec</span>();
         <span class="ident">utf8_with_invalid_bytes</span>.<span class="ident">extend_from_slice</span>(<span class="string">&quot;Έτος&quot;</span>.<span class="ident">as_bytes</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="kw-2">&amp;</span><span class="ident">utf8_with_invalid_bytes</span>).<span class="ident">size_hint</span>(),
             (<span class="number">10</span>, <span class="prelude-val">Some</span>(<span class="number">120</span>))
         );
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">b&quot;abc, xyz&quot;</span>).<span class="ident">size_hint</span>(),
             (<span class="number">8</span>, <span class="prelude-val">Some</span>(<span class="number">8</span>))
         );
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">b&quot;abc, \xFF\xFE, xyz&quot;</span>).<span class="ident">size_hint</span>(),
             (<span class="number">12</span>, <span class="prelude-val">Some</span>(<span class="number">12</span>))
         );
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">&quot;�&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">size_hint</span>(),
             (<span class="number">3</span>, <span class="prelude-val">Some</span>(<span class="number">3</span>))
         );
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">&quot;Έτος&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">size_hint</span>(),
             (<span class="number">8</span>, <span class="prelude-val">Some</span>(<span class="number">8</span>))
         );
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">&quot;ZȺȾ&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">size_hint</span>(),
             (<span class="number">5</span>, <span class="prelude-val">Some</span>(<span class="number">5</span>))
         );
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">utf8_with_invalid_bytes</span> <span class="op">=</span> <span class="string">b&quot;\xFF\xFE&quot;</span>.<span class="ident">to_vec</span>();
         <span class="ident">utf8_with_invalid_bytes</span>.<span class="ident">extend_from_slice</span>(<span class="string">&quot;Έτος&quot;</span>.<span class="ident">as_bytes</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="kw-2">&amp;</span><span class="ident">utf8_with_invalid_bytes</span>).<span class="ident">size_hint</span>(),
             (<span class="number">10</span>, <span class="prelude-val">Some</span>(<span class="number">10</span>))
         );
@@ -510,30 +510,30 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">count</span>() {
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">new</span>().<span class="ident">count</span>(), <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">new</span>().<span class="ident">count</span>(), <span class="number">0</span>);
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">b&quot;abc, xyz&quot;</span>).<span class="ident">count</span>(), <span class="number">8</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">b&quot;abc, \xFF\xFE, xyz&quot;</span>).<span class="ident">count</span>(), <span class="number">12</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">&quot;�&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">3</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">&quot;Έτος&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">8</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">&quot;ZȺȾ&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">7</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">b&quot;abc, xyz&quot;</span>).<span class="ident">count</span>(), <span class="number">8</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">b&quot;abc, \xFF\xFE, xyz&quot;</span>).<span class="ident">count</span>(), <span class="number">12</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">&quot;�&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">3</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">&quot;Έτος&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">8</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="string">&quot;ZȺȾ&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">7</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">utf8_with_invalid_bytes</span> <span class="op">=</span> <span class="string">b&quot;\xFF\xFE&quot;</span>.<span class="ident">to_vec</span>();
         <span class="ident">utf8_with_invalid_bytes</span>.<span class="ident">extend_from_slice</span>(<span class="string">&quot;Έτος&quot;</span>.<span class="ident">as_bytes</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="kw-2">&amp;</span><span class="ident">utf8_with_invalid_bytes</span>).<span class="ident">count</span>(), <span class="number">10</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_slice</span>(<span class="kw-2">&amp;</span><span class="ident">utf8_with_invalid_bytes</span>).<span class="ident">count</span>(), <span class="number">10</span>);
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">b&quot;abc, xyz&quot;</span>).<span class="ident">count</span>(), <span class="number">8</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">b&quot;abc, xyz&quot;</span>).<span class="ident">count</span>(), <span class="number">8</span>);
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">b&quot;abc, \xFF\xFE, xyz&quot;</span>).<span class="ident">count</span>(),
             <span class="number">12</span>
         );
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">&quot;�&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">3</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">&quot;Έτος&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">8</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">&quot;ZȺȾ&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">5</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">&quot;�&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">3</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">&quot;Έτος&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">8</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="string">&quot;ZȺȾ&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">count</span>(), <span class="number">5</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">utf8_with_invalid_bytes</span> <span class="op">=</span> <span class="string">b&quot;\xFF\xFE&quot;</span>.<span class="ident">to_vec</span>();
         <span class="ident">utf8_with_invalid_bytes</span>.<span class="ident">extend_from_slice</span>(<span class="string">&quot;Έτος&quot;</span>.<span class="ident">as_bytes</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">Lowercase</span>::<span class="ident">with_ascii_slice</span>(<span class="kw-2">&amp;</span><span class="ident">utf8_with_invalid_bytes</span>).<span class="ident">count</span>(),
             <span class="number">10</span>
         );
@@ -544,8 +544,8 @@
         <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Lowercase</span>::<span class="ident">new</span>();
         <span class="kw">let</span> (<span class="ident">min</span>, <span class="ident">max</span>) <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">size_hint</span>();
         <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">count</span>();
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">min</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">count</span>);
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">count</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">max</span>.<span class="ident">unwrap</span>());
+        <span class="macro">assert!</span>(<span class="ident">min</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">count</span>);
+        <span class="macro">assert!</span>(<span class="ident">count</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">max</span>.<span class="ident">unwrap</span>());
     }
 }
 </pre></div>
