@@ -20,16 +20,16 @@
 <span class="kw">mod</span> <span class="ident">titlecase</span>;
 <span class="kw">mod</span> <span class="ident">uppercase</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">lowercase</span>::<span class="ident">make_ascii_lowercase</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">titlecase</span>::<span class="ident">make_ascii_titlecase</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">uppercase</span>::<span class="ident">make_ascii_uppercase</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">lowercase::make_ascii_lowercase</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">titlecase::make_ascii_titlecase</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">uppercase::make_ascii_uppercase</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">lowercase</span>::<span class="ident">to_ascii_lowercase</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">lowercase::to_ascii_lowercase</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">titlecase</span>::<span class="ident">to_ascii_titlecase</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">titlecase::to_ascii_titlecase</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">uppercase</span>::<span class="ident">to_ascii_uppercase</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">uppercase::to_ascii_uppercase</span>;
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="roe" data-search-js="../../search-index.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

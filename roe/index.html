@@ -20,11 +20,11 @@ transforms.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="macro">assert_eq!</span>(
-    <span class="ident">roe</span>::<span class="ident">lowercase</span>(<span class="string">b&quot;Artichoke Ruby&quot;</span>, <span class="ident">LowercaseMode</span>::<span class="ident">Ascii</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
+    <span class="ident">roe::lowercase</span>(<span class="string">b&quot;Artichoke Ruby&quot;</span>, <span class="ident">LowercaseMode::Ascii</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
     <span class="string">b&quot;artichoke ruby&quot;</span>
 );
 <span class="macro">assert_eq!</span>(
-    <span class="ident">roe</span>::<span class="ident">uppercase</span>(<span class="string">&quot;Αύριο&quot;</span>.<span class="ident">as_bytes</span>(), <span class="ident">UppercaseMode</span>::<span class="ident">Full</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
+    <span class="ident">roe::uppercase</span>(<span class="string">&quot;Αύριο&quot;</span>.<span class="ident">as_bytes</span>(), <span class="ident">UppercaseMode::Full</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
     <span class="string">&quot;ΑΎΡΙΟ&quot;</span>.<span class="ident">as_bytes</span>()
 );</pre></div>
 <p>Roe provides fast path routines that assume the byte slice is ASCII-only.</p>

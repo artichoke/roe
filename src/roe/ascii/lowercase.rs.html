@@ -89,7 +89,7 @@
 <span id="86">86</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">alloc</span>::<span class="ident">vec</span>::<span class="ident">Vec</span>;
+<span class="kw">use</span> <span class="ident">alloc::vec::Vec</span>;
 
 <span class="doccomment">/// Converts the given slice to its ASCII lower case equivalent in-place.</span>
 <span class="doccomment">///</span>
@@ -120,7 +120,7 @@
 <span class="doccomment">/// [`String#downcase!`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-downcase-21</span>
 <span class="doccomment">/// [slice-primitive]: https://doc.rust-lang.org/std/primitive.slice.html#method.make_ascii_lowercase</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">module_name_repetitions</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::module_name_repetitions</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_ascii_lowercase</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsMut</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">slice</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span>) {
     <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="ident">slice</span>.<span class="ident">as_mut</span>();
     <span class="ident">slice</span>.<span class="ident">make_ascii_lowercase</span>();
@@ -153,7 +153,7 @@
 <span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)))]</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">module_name_repetitions</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::module_name_repetitions</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_ascii_lowercase</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">slice</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="ident">slice</span>.<span class="ident">as_ref</span>();
     <span class="ident">slice</span>.<span class="ident">to_ascii_lowercase</span>()
@@ -164,14 +164,14 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">make_ascii_lowercase_empty</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="kw-2">*</span><span class="string">b&quot;&quot;</span>;
-        <span class="kw">super</span>::<span class="ident">make_ascii_lowercase</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
+        <span class="kw">super</span><span class="ident">::make_ascii_lowercase</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">buf</span>, <span class="kw-2">*</span><span class="string">b&quot;&quot;</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
     <span class="kw">fn</span> <span class="ident">to_ascii_lowercase_empty</span>() {
-        <span class="macro">assert_eq!</span>(<span class="kw">super</span>::<span class="ident">to_ascii_lowercase</span>(<span class="string">&quot;&quot;</span>), <span class="string">b&quot;&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="kw">super</span><span class="ident">::to_ascii_lowercase</span>(<span class="string">&quot;&quot;</span>), <span class="string">b&quot;&quot;</span>);
     }
 }
 </pre></div>
