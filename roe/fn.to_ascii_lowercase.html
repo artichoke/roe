@@ -7,11 +7,11 @@ mapped to its ASCII lower case equivalent.</p>
 unchanged.</p>
 <p>This function can be used to implement <a href="https://ruby-doc.org/core-2.6.3/String.html#method-i-downcase"><code>String#downcase</code></a> and
 <a href="https://ruby-doc.org/core-2.6.3/Symbol.html#method-i-downcase"><code>Symbol#downcase</code></a> for ASCII strings in Ruby.</p>
-<p>To lowercase the value in-place, use <a href="../roe/fn.make_ascii_lowercase.html" title="make_ascii_lowercase"><code>make_ascii_lowercase</code></a>.</p>
+<p>To lowercase the value in-place, use <a href="fn.make_ascii_lowercase.html" title="make_ascii_lowercase"><code>make_ascii_lowercase</code></a>.</p>
 <p>See also <a href="https://doc.rust-lang.org/std/primitive.slice.html#method.to_ascii_lowercase"><code>&lt;[u8]&gt;::to_ascii_lowercase</code></a>.</p>
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="macro">assert_eq!</span>(<span class="ident">to_ascii_lowercase</span>(<span class="string">&quot;ABCxyz&quot;</span>), <span class="kw-2">&amp;</span><span class="string">b&quot;abcxyz&quot;</span>[..]);
 <span class="macro">assert_eq!</span>(<span class="ident">to_ascii_lowercase</span>(<span class="string">&quot;1234%&amp;*&quot;</span>), <span class="kw-2">&amp;</span><span class="string">b&quot;1234%&amp;*&quot;</span>[..]);</pre></div>
-</div></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="roe" data-search-js="../search-index.js"></div>
+</div></section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="roe" data-search-index-js="../search-index.js" data-search-js="../search.js"></div>
     <script src="../main.js"></script></body></html>
