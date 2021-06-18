@@ -161,7 +161,7 @@ impl InvalidCaseMappingMode {
     /// assert_eq!(MESSAGE, "invalid option");
     /// ```
     #[must_use]
-    #[allow(clippy::clippy::unused_self)]
+    #[allow(clippy::unused_self)]
     pub const fn message(self) -> &'static str {
         "invalid option"
     }
