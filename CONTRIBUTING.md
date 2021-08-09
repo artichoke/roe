@@ -78,6 +78,7 @@ running:
 ```console
 $ bundle exec rake --tasks
 rake build                        # Build Rust workspace
+rake bundle:audit                 # Checks the Gemfile.lock for insecure dependencies
 rake doc                          # Generate Rust API documentation
 rake doc:open                     # Generate Rust API documentation and open it in a web browser
 rake fmt                          # Format sources
@@ -92,7 +93,7 @@ rake lint:clippy:restriction      # Lint Rust sources with Clippy restriction pa
 rake lint:rubocop                 # Run RuboCop
 rake lint:rubocop:auto_correct    # Auto-correct RuboCop offenses
 rake release:markdown_link_check  # Check for broken links in markdown files
-rake test                         # Run Focaccia unit tests
+rake test                         # Run Roe unit tests
 ```
 
 To lint Ruby sources, roe uses [RuboCop]. RuboCop runs as part of the `lint`
