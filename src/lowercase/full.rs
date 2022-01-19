@@ -261,13 +261,12 @@ mod tests {
     fn case_map_to_three_chars() {
         // there are no such characters
         for ch in '\0'..char::MAX {
-            if ch.to_lowercase().count() == 3 {
-                panic!(
-                    "Expected no characters that downcase to three characters, found: '{}', which expands to: {:?}",
-                    ch,
-                    ch.to_lowercase().collect::<Vec<_>>()
-                );
-            }
+            assert!(
+                ch.to_lowercase().count() < 3,
+                "Expected no characters that downcase to three or more characters, found: '{}', which expands to: {:?}",
+                ch,
+                ch.to_lowercase().collect::<Vec<_>>()
+            );
         }
     }
 
