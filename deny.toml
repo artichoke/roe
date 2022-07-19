@@ -7,7 +7,9 @@ ignore = []
 [licenses]
 unlicensed = "deny"
 allow = [
+  "Apache-2.0",
   "MIT",
+  "Unicode-DFS-2016",
 ]
 deny = []
 copyleft = "deny"
