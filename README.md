@@ -74,15 +74,15 @@ assert_eq!(
 [conventionally utf-8 binary strings]:
   https://docs.rs/bstr/0.2.*/bstr/#when-should-i-use-byte-strings
 [`string#capitalize`]:
-  https://ruby-doc.org/core-2.6.3/String.html#method-i-capitalize
+  https://ruby-doc.org/core-3.1.2/String.html#method-i-capitalize
 [`symbol#capitalize`]:
-  https://ruby-doc.org/core-2.6.3/Symbol.html#method-i-capitalize
+  https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-capitalize
 [`string#downcase`]:
-  https://ruby-doc.org/core-2.6.3/String.html#method-i-downcase
+  https://ruby-doc.org/core-3.1.2/String.html#method-i-downcase
 [`symbol#downcase`]:
-  https://ruby-doc.org/core-2.6.3/Symbol.html#method-i-downcase
-[`string#upcase`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-upcase
-[`symbol#upcase`]: https://ruby-doc.org/core-2.6.3/Symbol.html#method-i-upcase
+  https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-downcase
+[`string#upcase`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-upcase
+[`symbol#upcase`]: https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-upcase
 [artichoke ruby]: https://github.com/artichoke/artichoke
 [`bstr`]: https://crates.io/crates/bstr
 [`alloc`]: https://doc.rust-lang.org/alloc/index.html
