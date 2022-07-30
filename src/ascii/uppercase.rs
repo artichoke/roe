@@ -27,7 +27,7 @@ use alloc::vec::Vec;
 /// assert_eq!(buf, *b"1234%&*");
 /// ```
 ///
-/// [`String#upcase!`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-upcase-21
+/// [`String#upcase!`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-upcase-21
 /// [slice-primitive]: https://doc.rust-lang.org/std/primitive.u8.html#method.make_ascii_uppercase
 #[inline]
 #[allow(clippy::module_name_repetitions)]
@@ -57,8 +57,8 @@ pub fn make_ascii_uppercase<T: AsMut<[u8]>>(slice: &mut T) {
 /// assert_eq!(to_ascii_uppercase("1234%&*"), &b"1234%&*"[..]);
 /// ```
 ///
-/// [`String#upcase`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-upcase
-/// [`Symbol#upcase`]: https://ruby-doc.org/core-2.6.3/Symbol.html#method-i-upcase
+/// [`String#upcase`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-upcase
+/// [`Symbol#upcase`]: https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-upcase
 /// [slice-primitive]: https://doc.rust-lang.org/std/primitive.slice.html#method.to_ascii_uppercase
 #[inline]
 #[cfg(feature = "alloc")]

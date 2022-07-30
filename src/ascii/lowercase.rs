@@ -27,7 +27,7 @@ use alloc::vec::Vec;
 /// assert_eq!(buf, *b"1234%&*");
 /// ```
 ///
-/// [`String#downcase!`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-downcase-21
+/// [`String#downcase!`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-downcase-21
 /// [slice-primitive]: https://doc.rust-lang.org/std/primitive.slice.html#method.make_ascii_lowercase
 #[inline]
 #[allow(clippy::module_name_repetitions)]
@@ -57,8 +57,8 @@ pub fn make_ascii_lowercase<T: AsMut<[u8]>>(slice: &mut T) {
 /// assert_eq!(to_ascii_lowercase("1234%&*"), &b"1234%&*"[..]);
 /// ```
 ///
-/// [`String#downcase`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-downcase
-/// [`Symbol#downcase`]: https://ruby-doc.org/core-2.6.3/Symbol.html#method-i-downcase
+/// [`String#downcase`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-downcase
+/// [`Symbol#downcase`]: https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-downcase
 /// [slice-primitive]: https://doc.rust-lang.org/std/primitive.slice.html#method.to_ascii_lowercase
 #[inline]
 #[cfg(feature = "alloc")]

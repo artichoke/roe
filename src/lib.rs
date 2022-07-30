@@ -130,7 +130,7 @@ pub use uppercase::Uppercase;
 /// let mode: Result<LowercaseMode, InvalidCaseMappingMode> = "full".try_into();
 /// ```
 ///
-/// [Ruby `ArgumentError` Exception class]: https://ruby-doc.org/core-2.6.3/ArgumentError.html
+/// [Ruby `ArgumentError` Exception class]: https://ruby-doc.org/core-3.1.2/ArgumentError.html
 #[derive(Default, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct InvalidCaseMappingMode {
     _private: (),

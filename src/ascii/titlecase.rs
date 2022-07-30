@@ -38,7 +38,7 @@ use alloc::vec::Vec;
 /// assert_eq!(buf, *b"Abc, xyz");
 /// ```
 ///
-/// [`String#capitalize!`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-capitalize-21
+/// [`String#capitalize!`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-capitalize-21
 #[inline]
 #[allow(clippy::module_name_repetitions)]
 pub fn make_ascii_titlecase<T: AsMut<[u8]>>(slice: &mut T) {
@@ -72,8 +72,8 @@ pub fn make_ascii_titlecase<T: AsMut<[u8]>>(slice: &mut T) {
 /// assert_eq!(to_ascii_titlecase("ABC, XYZ"), &b"Abc, xyz"[..]);
 /// ```
 ///
-/// [`String#capitalize`]: https://ruby-doc.org/core-2.6.3/String.html#method-i-capitalize
-/// [`Symbol#capitalize`]: https://ruby-doc.org/core-2.6.3/Symbol.html#method-i-capitalize
+/// [`String#capitalize`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-capitalize
+/// [`Symbol#capitalize`]: https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-capitalize
 #[inline]
 #[cfg(feature = "alloc")]
 #[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
