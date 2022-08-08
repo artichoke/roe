@@ -70,12 +70,30 @@
 //!   collections library. This feature enables APIs that allocate [`String`] or
 //!   [`Vec`].
 //!
+#![cfg_attr(
+    not(feature = "std"),
+    doc = "[`std`]: https://doc.rust-lang.org/std/index.html"
+)]
+#![cfg_attr(
+    not(feature = "std"),
+    doc = "[`std::error::Error`]: https://doc.rust-lang.org/std/error/trait.Error.html"
+)]
+#![cfg_attr(
+    not(feature = "alloc"),
+    doc = "[`alloc`]: https://doc.rust-lang.org/alloc/index.html"
+)]
+#![cfg_attr(feature = "alloc", doc = "[`String`]: alloc::string::String")]
+#![cfg_attr(
+    not(feature = "alloc"),
+    doc = "[`String`]: https://doc.rust-lang.org/alloc/string/struct.String.html"
+)]
+#![cfg_attr(feature = "alloc", doc = "[`Vec`]: alloc::vec::Vec")]
+#![cfg_attr(
+    not(feature = "alloc"),
+    doc = "[`Vec`]: https://doc.rust-lang.org/alloc/vec/struct.Vec.html"
+)]
 //! [Unicode case mapping]: https://unicode.org/faq/casemap_charprop.html#casemap
 //! [conventionally UTF-8 binary strings]: https://docs.rs/bstr/0.2.*/bstr/#when-should-i-use-byte-strings
-//! [`std`]: https://doc.rust-lang.org/std/index.html
-//! [`std::error::Error`]: https://doc.rust-lang.org/std/error/trait.Error.html
-//! [`String`]: https://doc.rust-lang.org/alloc/string/struct.String.html
-//! [`Vec`]: https://doc.rust-lang.org/alloc/vec/struct.Vec.html
 
 #![no_std]
 #![doc(html_root_url = "https://docs.rs/roe/0.0.2")]

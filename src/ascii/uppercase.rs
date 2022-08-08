@@ -9,10 +9,11 @@ use alloc::vec::Vec;
 /// This function can be used to implement [`String#upcase!`] for ASCII strings
 /// in Ruby.
 ///
-/// To return a new uppercased value without modifying the existing one, use
-/// [`to_ascii_uppercase`].
-///
-/// See also [`<[u8]>::make_ascii_uppercase`][slice-primitive].
+#[cfg_attr(
+    feature = "alloc",
+    doc = "To return a new uppercased value without modifying the existing one, use [`to_ascii_uppercase`]."
+)]
+/// This function is analogous to [`<[u8]>::make_ascii_uppercase`][slice-primitive].
 ///
 /// # Examples
 ///
@@ -45,9 +46,8 @@ pub fn make_ascii_uppercase<T: AsMut<[u8]>>(slice: &mut T) {
 /// This function can be used to implement [`String#upcase`] and
 /// [`Symbol#upcase`] for ASCII strings in Ruby.
 ///
-/// To uppercase the value in-place, use [`make_ascii_uppercase`].
-///
-/// See also [`<[u8]>::to_ascii_uppercase`][slice-primitive].
+/// To uppercase the value in-place, use [`make_ascii_uppercase`]. This function
+/// is analogous to [`<[u8]>::to_ascii_uppercase`][slice-primitive].
 ///
 /// # Examples
 ///
