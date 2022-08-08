@@ -9,10 +9,11 @@ use alloc::vec::Vec;
 /// This function can be used to implement [`String#downcase!`] for ASCII
 /// strings in Ruby.
 ///
-/// To return a new lowercased value without modifying the existing one, use
-/// [`to_ascii_lowercase`].
-///
-/// See also [`<[u8]>::make_ascii_lowercase`][slice-primitive].
+#[cfg_attr(
+    feature = "alloc",
+    doc = "To return a new lowercased value without modifying the existing one, use [`to_ascii_lowercase`]."
+)]
+/// This function is analogous [`<[u8]>::make_ascii_lowercase`][slice-primitive].
 ///
 /// # Examples
 ///
@@ -45,9 +46,8 @@ pub fn make_ascii_lowercase<T: AsMut<[u8]>>(slice: &mut T) {
 /// This function can be used to implement [`String#downcase`] and
 /// [`Symbol#downcase`] for ASCII strings in Ruby.
 ///
-/// To lowercase the value in-place, use [`make_ascii_lowercase`].
-///
-/// See also [`<[u8]>::to_ascii_lowercase`][slice-primitive].
+/// To lowercase the value in-place, use [`make_ascii_lowercase`]. This function
+/// is analogous to [`<[u8]>::to_ascii_lowercase`][slice-primitive].
 ///
 /// # Examples
 ///

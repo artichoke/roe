@@ -10,8 +10,10 @@ use alloc::vec::Vec;
 /// This function can be used to implement [`String#capitalize!`] for ASCII
 /// strings in Ruby.
 ///
-/// To return a new titlecased value without modifying the existing one, use
-/// [`to_ascii_titlecase`].
+#[cfg_attr(
+    feature = "alloc",
+    doc = "To return a new titlecased value without modifying the existing one, use [`to_ascii_titlecase`]."
+)]
 ///
 /// # Examples
 ///
