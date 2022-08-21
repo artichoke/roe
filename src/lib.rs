@@ -104,20 +104,6 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
-// Ensure code blocks in README.md compile
-#[cfg(doctest)]
-macro_rules! readme {
-    ($x:expr) => {
-        #[doc = $x]
-        mod readme {}
-    };
-    () => {
-        readme!(include_str!("../README.md"));
-    };
-}
-#[cfg(all(feature = "alloc", doctest))]
-readme!();
-
 use core::convert::{TryFrom, TryInto};
 use core::fmt;
 use core::str::FromStr;
@@ -469,3 +455,20 @@ pub fn uppercase(slice: &[u8], options: UppercaseMode) -> Uppercase<'_> {
         UppercaseMode::Turkic => panic!("uppercase Turkic mode is not yet implemented"),
     }
 }
+
+// Ensure code blocks in README.md compile
+//
+// This module and macro declaration should be kept at the end of the file, in
+// order to not interfere with code coverage.
+#[cfg(doctest)]
+macro_rules! readme {
+    ($x:expr) => {
+        #[doc = $x]
+        mod readme {}
+    };
+    () => {
+        readme!(include_str!("../README.md"));
+    };
+}
+#[cfg(doctest)]
+readme!();
