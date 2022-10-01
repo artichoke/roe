@@ -1,6 +1,6 @@
 [package]
 name = "roe"
-version = "0.0.3" # remember to set `html_root_url` in `src/lib.rs`.
+version = "0.0.4" # remember to set `html_root_url` in `src/lib.rs`.
 authors = ["Ryan Lopopolo <rjl@hyperbo.la>"]
 license = "MIT"
 edition = "2018"
@@ -23,8 +23,7 @@ std = ["alloc"]
 alloc = []
 
 [dependencies]
-# `no_std` mode was fixed in https://github.com/BurntSushi/bstr/commit/83e8f27e
-bstr = { version = "0.2.4", default-features = false }
+bstr = { version = "1.0.1", default-features = false }
 
 [dev-dependencies]
 
