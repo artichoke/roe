@@ -62,10 +62,11 @@ jobs:
         with:
           toolchain: stable
 
+      - name: Generate minimal versions lockfile
+        run: cargo +nightly generate-lockfile -Z minimal-versions
+
       - name: Check with minimal versions
-        run: |
-          cargo generate-lockfile -Z minimal-versions
-          cargo check --all-targets --profile=test
+        run: cargo check --all-targets --profile=test
 
   rust:
     name: Lint and format Rust
