@@ -1,6 +1,7 @@
 # roe
 
 [![GitHub Actions](https://github.com/artichoke/roe/workflows/CI/badge.svg)](https://github.com/artichoke/roe/actions)
+[![Code Coverage](https://codecov.artichokeruby.org/roe/badges/flat.svg?nocache=2)](https://codecov.artichokeruby.org/roe/index.html)
 [![Discord](https://img.shields.io/discord/607683947496734760)](https://discord.gg/QCe2tp2)
 [![Twitter](https://img.shields.io/twitter/follow/artichokeruby?label=Follow&style=social)](https://twitter.com/artichokeruby)
 <br>
