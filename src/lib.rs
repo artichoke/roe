@@ -96,7 +96,7 @@
 //! [conventionally UTF-8 binary strings]: https://docs.rs/bstr/0.2.*/bstr/#when-should-i-use-byte-strings
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/roe/0.0.4")]
+#![doc(html_root_url = "https://docs.rs/roe/0.0.5")]
 
 #[cfg(any(feature = "alloc", test))]
 extern crate alloc;
