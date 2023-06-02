@@ -1,6 +1,6 @@
 [package]
 name = "roe"
-version = "0.0.4" # remember to set `html_root_url` in `src/lib.rs`.
+version = "0.0.5" # remember to set `html_root_url` in `src/lib.rs`.
 authors = ["Ryan Lopopolo <rjl@hyperbo.la>"]
 license = "MIT"
 edition = "2018"
@@ -10,7 +10,7 @@ documentation = "https://docs.rs/roe"
 homepage = "https://github.com/artichoke/roe"
 description = "Unicode case conversion"
 keywords = ["capitalize", "case", "lowercase", "unicode", "uppercase"]
-categories = ["encoding", "internationalization", "no-std", "text-processing"]
+categories = ["encoding", "internationalization", "no-std", "no-std::no-alloc", "text-processing"]
 include = ["src/**/*", "tests/**/*", "LICENSE", "README.md"]
 
 [features]
