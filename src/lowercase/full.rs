@@ -215,7 +215,7 @@ mod tests {
         // substituted, which demonstrates the "substitution of maximal
         // subparts" strategy.
         //
-        // See: https://docs.rs/bstr/0.2.*/bstr/#handling-of-invalid-utf-8
+        // See: https://docs.rs/bstr/1.*/bstr/#handling-of-invalid-utf-8
         let iter = Lowercase::from(&b"aB\xF0\x9F\x87Yz"[..]);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
