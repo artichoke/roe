@@ -93,7 +93,7 @@
     doc = "[`Vec`]: https://doc.rust-lang.org/alloc/vec/struct.Vec.html"
 )]
 //! [Unicode case mapping]: https://unicode.org/faq/casemap_charprop.html#casemap
-//! [conventionally UTF-8 binary strings]: https://docs.rs/bstr/0.2.*/bstr/#when-should-i-use-byte-strings
+//! [conventionally UTF-8 binary strings]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
 
 #![no_std]
 #![doc(html_root_url = "https://docs.rs/roe/0.0.5")]
