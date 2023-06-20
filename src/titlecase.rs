@@ -1,13 +1,13 @@
 use core::iter::FusedIterator;
 
 mod ascii;
-// mod full;
+mod full;
 
 #[derive(Debug, Clone)]
 #[allow(variant_size_differences)]
 enum Inner<'a> {
     Empty,
-    // Full(full::Titlecase<'a>),
+    Full(full::Titlecase<'a>),
     Ascii(ascii::Titlecase<'a>),
 }
 
@@ -49,7 +49,7 @@ impl<'a> Titlecase<'a> {
     /// ```
     /// # use roe::Titlecase;
     /// let mut titlecase = Titlecase::with_slice(b"abcXYZ");
-    /// assert_eq!(titlecase.next(), Some(b'a'));
+    /// assert_eq!(titlecase.next(), Some(b'A'));
     /// assert_eq!(titlecase.next(), Some(b'b'));
     /// assert_eq!(titlecase.next(), Some(b'c'));
     /// assert_eq!(titlecase.next(), Some(b'x'));
@@ -62,8 +62,8 @@ impl<'a> Titlecase<'a> {
     ///
     /// ```
     /// # use roe::Titlecase;
-    /// let titlecase = Titlecase::with_slice("Αύριο".as_bytes());
-    /// assert_eq!(titlecase.collect::<Vec<_>>(), "αύριο".as_bytes());
+    /// let titlecase = Titlecase::with_slice("αύριο".as_bytes());
+    /// assert_eq!(titlecase.collect::<Vec<_>>(), "Αύριο".as_bytes());
     /// ```
     ///
     /// Invalid UTF-8 bytes are yielded as is without impacting Unicode
@@ -71,18 +71,17 @@ impl<'a> Titlecase<'a> {
     ///
     /// ```
     /// # use roe::Titlecase;
-    /// let mut s = "Αύριο".to_string().into_bytes();
+    /// let mut s = "αύριο".to_string().into_bytes();
     /// s.extend(b"\xFF\xFE");
     /// let titlecase = Titlecase::with_slice(s.as_slice());
     ///
-    /// let mut expected = "αύριο".to_string().into_bytes();
+    /// let mut expected = "Αύριο".to_string().into_bytes();
     /// expected.extend(b"\xFF\xFE");
     /// assert_eq!(titlecase.collect::<Vec<_>>(), expected);
     /// ```
     pub const fn with_slice(slice: &'a [u8]) -> Self {
         Self {
-            // iter: Inner::Full(full::Titlecase::with_slice(slice)),
-            iter: Inner::Ascii(ascii::Titlecase::with_slice(slice)),
+            iter: Inner::Full(full::Titlecase::with_slice(slice)),
         }
     }
 
@@ -94,7 +93,7 @@ impl<'a> Titlecase<'a> {
     /// ```
     /// # use roe::Titlecase;
     /// let mut titlecase = Titlecase::with_ascii_slice(b"abcXYZ");
-    /// assert_eq!(titlecase.next(), Some(b'a'));
+    /// assert_eq!(titlecase.next(), Some(b'A'));
     /// assert_eq!(titlecase.next(), Some(b'b'));
     /// assert_eq!(titlecase.next(), Some(b'c'));
     /// assert_eq!(titlecase.next(), Some(b'x'));
@@ -107,8 +106,8 @@ impl<'a> Titlecase<'a> {
     ///
     /// ```
     /// # use roe::Titlecase;
-    /// let titlecase = Titlecase::with_ascii_slice("Αύριο".as_bytes());
-    /// assert_eq!(titlecase.collect::<Vec<_>>(), "Αύριο".as_bytes());
+    /// let titlecase = Titlecase::with_ascii_slice("αΎρΙο".as_bytes());
+    /// assert_eq!(titlecase.collect::<Vec<_>>(), "αΎρΙο".as_bytes());
     /// ```
     ///
     /// Invalid UTF-8 bytes are yielded as is without impacting ASCII bytes:
@@ -116,7 +115,7 @@ impl<'a> Titlecase<'a> {
     /// ```
     /// # use roe::Titlecase;
     /// let titlecase = Titlecase::with_ascii_slice(b"abc\xFF\xFEXYZ");
-    /// assert_eq!(titlecase.collect::<Vec<_>>(), b"abc\xFF\xFExyz");
+    /// assert_eq!(titlecase.collect::<Vec<_>>(), b"Abc\xFF\xFExyz");
     /// ```
     pub const fn with_ascii_slice(slice: &'a [u8]) -> Self {
         Self {
@@ -131,7 +130,7 @@ impl<'a> Iterator for Titlecase<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         match self.iter {
             Inner::Empty => None,
-            // Inner::Full(ref mut iter) => iter.next(),
+            Inner::Full(ref mut iter) => iter.next(),
             Inner::Ascii(ref mut iter) => iter.next(),
         }
     }
@@ -139,7 +138,7 @@ impl<'a> Iterator for Titlecase<'a> {
     fn size_hint(&self) -> (usize, Option<usize>) {
         match self.iter {
             Inner::Empty => (0, Some(0)),
-            // Inner::Full(ref iter) => iter.size_hint(),
+            Inner::Full(ref iter) => iter.size_hint(),
             Inner::Ascii(ref iter) => iter.size_hint(),
         }
     }
@@ -147,7 +146,7 @@ impl<'a> Iterator for Titlecase<'a> {
     fn count(self) -> usize {
         match self.iter {
             Inner::Empty => 0,
-            // Inner::Full(iter) => iter.count(),
+            Inner::Full(iter) => iter.count(),
             Inner::Ascii(iter) => iter.count(),
         }
     }

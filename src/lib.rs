@@ -41,7 +41,7 @@
 //! You can convert case like:
 //!
 //! ```
-//! # use roe::{LowercaseMode, UppercaseMode};
+//! # use roe::{LowercaseMode, UppercaseMode, TitlecaseMode};
 //! assert_eq!(
 //!     roe::lowercase(b"Artichoke Ruby", LowercaseMode::Ascii).collect::<Vec<_>>(),
 //!     b"artichoke ruby"
@@ -49,6 +49,10 @@
 //! assert_eq!(
 //!     roe::uppercase("Αύριο".as_bytes(), UppercaseMode::Full).collect::<Vec<_>>(),
 //!     "ΑΎΡΙΟ".as_bytes()
+//! );
+//! assert_eq!(
+//!     roe::titlecase("ﬃ".as_bytes(), TitlecaseMode::Full).collect::<Vec<_>>(),
+//!     "Ffi".as_bytes()
 //! );
 //! ```
 //!
@@ -502,7 +506,7 @@ pub enum TitlecaseMode {
 
 impl Default for TitlecaseMode {
     fn default() -> Self {
-        Self::Ascii // TODO: Default to Full when available
+        Self::Full
     }
 }
 
