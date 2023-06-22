@@ -58,7 +58,7 @@ impl<'a> DoubleEndedIterator for Titlecase<'a> {
     fn next_back(&mut self) -> Option<Self::Item> {
         let (&byte, remainder) = self.slice.split_last()?;
         self.slice = remainder;
-        if remainder.len() == 0 {
+        if remainder.is_empty() {
             Some(byte.to_ascii_uppercase())
         } else {
             Some(byte.to_ascii_lowercase())
