@@ -89,6 +89,20 @@ task :test do
   sh 'cargo test --workspace'
 end
 
+namespace :unicode do
+  ucd_dir = "./generated/ucd"
+
+  desc 'Update Unicode data'
+  task :update do
+    %w[UnicodeData.txt SpecialCasing.txt PropList.txt].each do |filename|
+      uri = "https://www.unicode.org/Public/UCD/latest/ucd/#{filename}"
+      URI.parse(uri).open do |data|
+        IO.copy_stream(data, "#{ucd_dir}/#{filename}")
+      end
+    end
+  end
+end
+
 Bundler::Audit::Task.new
 
 namespace :release do
