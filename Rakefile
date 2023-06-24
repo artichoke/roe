@@ -92,6 +92,21 @@ end
 namespace :unicode do
   ucd_dir = "./generated/ucd"
 
+  desc 'Rebuild Rust generated Rust sources from Unicode data'
+  task :build do
+    system("ucd-generate --version") || begin
+      puts 'Please install "ucd-generate" first with `cargo install ucd-generate`'
+      exit(1)
+    end
+
+    dest = "./generated/case_mapping.rs"
+    if system("ucd-generate case-mapping #{ucd_dir} --flat-table > #{dest}")
+      puts "Successfully generated #{dest}"
+    else
+      puts "Failed to generate #{dest} due to above error"
+    end
+  end
+
   desc 'Update Unicode data'
   task :update do
     %w[UnicodeData.txt SpecialCasing.txt PropList.txt].each do |filename|
