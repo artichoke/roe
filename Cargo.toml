@@ -11,7 +11,7 @@ homepage = "https://github.com/artichoke/roe"
 description = "Unicode case conversion"
 keywords = ["capitalize", "case", "lowercase", "unicode", "uppercase"]
 categories = ["encoding", "internationalization", "no-std", "no-std::no-alloc", "text-processing"]
-include = ["src/**/*", "tests/**/*", "LICENSE", "README.md"]
+include = ["src/**/*", "generated/**/*", "tests/**/*", "LICENSE", "README.md"]
 
 [features]
 default = ["std"]
@@ -24,7 +24,6 @@ alloc = []
 
 [dependencies]
 bstr = { version = "1.0.1", default-features = false }
-unicode_titlecase = "2.0.0"
 
 [dev-dependencies]
 

@@ -115,6 +115,7 @@ use core::str::FromStr;
 mod ascii;
 mod lowercase;
 mod titlecase;
+mod unicode;
 mod uppercase;
 
 pub use ascii::{make_ascii_lowercase, make_ascii_titlecase, make_ascii_uppercase};
@@ -122,6 +123,7 @@ pub use ascii::{make_ascii_lowercase, make_ascii_titlecase, make_ascii_uppercase
 pub use ascii::{to_ascii_lowercase, to_ascii_titlecase, to_ascii_uppercase};
 pub use lowercase::Lowercase;
 pub use titlecase::Titlecase;
+pub use unicode::to_titlecase;
 pub use uppercase::Uppercase;
 
 /// Error that indicates a failure to parse a [`LowercaseMode`],

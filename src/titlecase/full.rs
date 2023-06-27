@@ -2,14 +2,16 @@ use core::char::ToLowercase;
 use core::fmt;
 use core::iter::FusedIterator;
 use core::ops::Range;
-use unicode_titlecase::{TitleCase, ToTitleCase};
 
 use bstr::ByteSlice;
+
+pub use crate::unicode::Titlecase as TitlecaseForChar;
+use crate::unicode::ToTitlecase;
 
 #[derive(Clone, Debug)]
 enum ToCase {
     ToLowercase(ToLowercase),
-    ToTitlecase(ToTitleCase),
+    ToTitlecase(ToTitlecase),
 }
 
 impl Iterator for ToCase {
@@ -96,7 +98,7 @@ impl<'a> Iterator for Titlecase<'a> {
                 };
                 let ch = case_iter
                     .next()
-                    .expect("ToTitleCase or ToLowercase yields at lteast one char");
+                    .expect("ToTitlecase or ToLowercase yields at lteast one char");
                 let enc = ch.encode_utf8(&mut self.next_bytes);
 
                 self.next_range = 1..enc.len();
