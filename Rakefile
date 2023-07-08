@@ -94,33 +94,19 @@ namespace :unicode do
 
   desc 'Rebuild Rust generated Rust sources from Unicode data'
   task :build do
+    unless system('ucd-generate --version')
+      puts 'Please install ucd-generate > 0.3.0 first'
+      exit(1)
+    end
+
     unless system('git diff --exit-code')
       puts 'Stage your changes before running this task'
       exit(1)
     end
 
-    sh 'rm -rf ./tmp'
-    sh 'mkdir tmp'
-    sh 'git clone https://github.com/choznerol/ucd-generate tmp/ucd-generate ' \
-       '--depth 1 --branch choznerol/cli-case-mapping-include-flag'
-    sh 'pwd'
-    sh 'cd ./tmp/ucd-generate && ' \
-       "cargo run -- case-mapping ../../#{ucd_dir} --include TITLE --flat-table > ../../generated/case_mapping.rs"
+    filename = './generated/case_mapping.rs'
+    sh("ucd-generate case-mapping #{ucd_dir} --include TITLE --flat-table > #{filename}")
     sh 'cargo clippy --fix --allow-dirty'
-    sh 'rm -rf ./tmp'
-
-    # Use below instead when https://github.com/BurntSushi/ucd-generate/pull/55 get merged
-    # system('ucd-generate --version') || begin
-    #   puts 'Please install "ucd-generate" first with `cargo install ucd-generate`'
-    #   exit(1)
-    # end
-
-    # filename = './generated/case_mapping.rs'
-    # if system("ucd-generate case-mapping #{ucd_dir} --flat-table > #{filename}")
-    #   puts "Successfully generated #{filename}"
-    # else
-    #   puts "Failed to generate #{filename} due to above error"
-    # end
   end
 
   desc 'Update Unicode data'
