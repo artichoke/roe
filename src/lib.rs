@@ -609,3 +609,109 @@ macro_rules! readme {
 }
 #[cfg(doctest)]
 readme!();
+
+#[cfg(test)]
+mod tests {
+    use core::{convert::TryInto, str::FromStr};
+
+    use alloc::format;
+
+    use crate::{InvalidCaseMappingMode, LowercaseMode, TitlecaseMode, UppercaseMode};
+
+    #[test]
+    fn test_invalid_case_mapping_mode_fmt() {
+        let err = InvalidCaseMappingMode::new();
+        assert_eq!(format!("{err}"), "invalid option");
+    }
+
+    #[test]
+    fn test_lowercase_mode_parsing() {
+        assert_eq!(LowercaseMode::from_str("ascii"), Ok(LowercaseMode::Ascii));
+        assert_eq!(LowercaseMode::from_str("turkic"), Ok(LowercaseMode::Turkic));
+        assert_eq!(
+            LowercaseMode::from_str("lithuanian"),
+            Ok(LowercaseMode::Lithuanian)
+        );
+        assert_eq!(LowercaseMode::from_str("fold"), Ok(LowercaseMode::Fold));
+        assert_eq!(
+            LowercaseMode::from_str("full"),
+            Err(InvalidCaseMappingMode::new())
+        );
+    }
+
+    #[test]
+    fn test_lowercase_mode_conversion() {
+        let mut mode: LowercaseMode;
+        mode = "turkic".try_into().unwrap();
+        assert_eq!(mode, LowercaseMode::Turkic);
+
+        mode = Some("turkic").try_into().unwrap();
+        assert_eq!(mode, LowercaseMode::Turkic);
+
+        mode = b"turkic"[..].try_into().unwrap();
+        assert_eq!(mode, LowercaseMode::Turkic);
+
+        mode = Some(&b"turkic"[..]).try_into().unwrap();
+        assert_eq!(mode, LowercaseMode::Turkic);
+    }
+
+    #[test]
+    fn test_uppercase_mode_parsing() {
+        assert_eq!(UppercaseMode::from_str("ascii"), Ok(UppercaseMode::Ascii));
+        assert_eq!(UppercaseMode::from_str("turkic"), Ok(UppercaseMode::Turkic));
+        assert_eq!(
+            UppercaseMode::from_str("lithuanian"),
+            Ok(UppercaseMode::Lithuanian)
+        );
+        assert_eq!(
+            UppercaseMode::from_str("full"),
+            Err(InvalidCaseMappingMode::new())
+        );
+    }
+
+    #[test]
+    fn test_uppercase_mode_conversion() {
+        let mut mode: UppercaseMode;
+        mode = "turkic".try_into().unwrap();
+        assert_eq!(mode, UppercaseMode::Turkic);
+
+        mode = Some("turkic").try_into().unwrap();
+        assert_eq!(mode, UppercaseMode::Turkic);
+
+        mode = b"turkic"[..].try_into().unwrap();
+        assert_eq!(mode, UppercaseMode::Turkic);
+
+        mode = Some(&b"turkic"[..]).try_into().unwrap();
+        assert_eq!(mode, UppercaseMode::Turkic);
+    }
+
+    #[test]
+    fn test_titlecase_mode_parsing() {
+        assert_eq!(TitlecaseMode::from_str("ascii"), Ok(TitlecaseMode::Ascii));
+        assert_eq!(TitlecaseMode::from_str("turkic"), Ok(TitlecaseMode::Turkic));
+        assert_eq!(
+            TitlecaseMode::from_str("lithuanian"),
+            Ok(TitlecaseMode::Lithuanian)
+        );
+        assert_eq!(
+            TitlecaseMode::from_str("full"),
+            Err(InvalidCaseMappingMode::new())
+        );
+    }
+
+    #[test]
+    fn test_titlecase_mode_conversion() {
+        let mut mode: TitlecaseMode;
+        mode = "turkic".try_into().unwrap();
+        assert_eq!(mode, TitlecaseMode::Turkic);
+
+        mode = Some("turkic").try_into().unwrap();
+        assert_eq!(mode, TitlecaseMode::Turkic);
+
+        mode = b"turkic"[..].try_into().unwrap();
+        assert_eq!(mode, TitlecaseMode::Turkic);
+
+        mode = Some(&b"turkic"[..]).try_into().unwrap();
+        assert_eq!(mode, TitlecaseMode::Turkic);
+    }
+}

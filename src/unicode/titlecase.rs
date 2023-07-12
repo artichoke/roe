@@ -89,4 +89,13 @@ mod tests {
         assert_eq!('i'.to_titlecase().collect::<Vec<_>>(), ['I']);
         assert_eq!('A'.to_titlecase().collect::<Vec<_>>(), ['A']);
     }
+
+    #[test]
+    fn test_next_back() {
+        let mut iter = 'ﬄ'.to_titlecase();
+        assert_eq!(iter.next_back(), Some('l'));
+        assert_eq!(iter.next_back(), Some('f'));
+        assert_eq!(iter.next_back(), Some('F'));
+        assert_eq!(iter.next_back(), None);
+    }
 }

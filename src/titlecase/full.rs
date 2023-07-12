@@ -153,7 +153,7 @@ impl<'a> FusedIterator for Titlecase<'a> {}
 
 #[cfg(test)]
 mod tests {
-    use alloc::vec::Vec;
+    use alloc::{format, vec::Vec};
     use bstr::ByteSlice;
 
     use super::Titlecase;
@@ -414,5 +414,15 @@ mod tests {
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
+    }
+
+    #[test]
+    fn test_fmt() {
+        let s = "Αύριο".as_bytes();
+        let iter = Titlecase::from(s);
+        assert_eq!(
+            format!("{iter:?}"),
+            "Titlecase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, case: None, first: true }"
+        );
     }
 }

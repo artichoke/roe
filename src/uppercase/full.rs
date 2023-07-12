@@ -122,7 +122,7 @@ impl<'a> FusedIterator for Uppercase<'a> {}
 
 #[cfg(test)]
 mod tests {
-    use alloc::vec::Vec;
+    use alloc::{format, vec::Vec};
     use bstr::ByteSlice;
 
     use super::Uppercase;
@@ -389,5 +389,15 @@ mod tests {
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
+    }
+
+    #[test]
+    fn test_fmt() {
+        let s = "Αύριο".as_bytes();
+        let iter = Uppercase::from(s);
+        assert_eq!(
+            format!("{iter:?}"),
+            "Uppercase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, uppercase: None }"
+        );
     }
 }

@@ -122,7 +122,7 @@ impl<'a> FusedIterator for Lowercase<'a> {}
 
 #[cfg(test)]
 mod tests {
-    use alloc::vec::Vec;
+    use alloc::{format, vec::Vec};
     use bstr::ByteSlice;
     use core::char;
 
@@ -358,5 +358,15 @@ mod tests {
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
+    }
+
+    #[test]
+    fn test_fmt() {
+        let s = "Αύριο".as_bytes();
+        let iter = Lowercase::from(s);
+        assert_eq!(
+            format!("{iter:?}"),
+            "Lowercase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, lowercase: None }"
+        );
     }
 }

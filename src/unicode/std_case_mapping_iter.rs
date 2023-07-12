@@ -91,3 +91,46 @@ impl Display for CaseMappingIter {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use alloc::{format, vec::Vec};
+
+    use super::CaseMappingIter;
+
+    #[test]
+    fn test_case_mapping_iter() {
+        fn test_iterator(iter: CaseMappingIter, expected: &[char], expected_rev: &[char]) {
+            assert_eq!(iter.size_hint(), (expected.len(), Some(expected.len())));
+            assert_eq!(iter.clone().collect::<Vec<_>>(), expected);
+            assert_eq!(iter.rev().collect::<Vec<_>>(), expected_rev);
+        }
+        test_iterator(
+            CaseMappingIter::new(['F', 'f', 'l']),
+            &['F', 'f', 'l'],
+            &['l', 'f', 'F'],
+        );
+        test_iterator(
+            CaseMappingIter::new(['S', 's', '\0']),
+            &['S', 's'],
+            &['s', 'S'],
+        );
+        test_iterator(CaseMappingIter::new(['A', '\0', '\0']), &['A'], &['A']);
+        test_iterator(CaseMappingIter::new(['\0', '\0', '\0']), &['\0'], &['\0']);
+    }
+
+    #[test]
+    fn test_fmt() {
+        let zero = CaseMappingIter::Zero;
+        assert_eq!(format!("{zero}"), "");
+
+        let one = CaseMappingIter::One('A');
+        assert_eq!(format!("{one}"), "A");
+
+        let two = CaseMappingIter::Two('S', 's');
+        assert_eq!(format!("{two}"), "Ss");
+
+        let three = CaseMappingIter::Three('F', 'f', 'l');
+        assert_eq!(format!("{three}"), "Ffl");
+    }
+}
