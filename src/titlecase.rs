@@ -64,6 +64,10 @@ impl<'a> Titlecase<'a> {
     /// # use roe::Titlecase;
     /// let titlecase = Titlecase::with_slice("αύριο".as_bytes());
     /// assert_eq!(titlecase.collect::<Vec<_>>(), "Αύριο".as_bytes());
+    ///
+    ///
+    /// let titlecase = Titlecase::with_slice("ﬃ".as_bytes());
+    /// assert_eq!(titlecase.collect::<Vec<_>>(), "Ffi".as_bytes());
     /// ```
     ///
     /// Invalid UTF-8 bytes are yielded as is without impacting Unicode
