@@ -188,11 +188,9 @@ mod tests {
         // Change length when uppercased
         // https://github.com/minimaxir/big-list-of-naughty-strings/blob/894882e7/blns.txt#L226-L232
         let s = "zⱥⱦ".as_bytes();
-        let iter = Uppercase::from(s);
-        assert_eq!(
-            iter.collect::<Vec<_>>().as_bstr(),
-            "ZȺȾ".as_bytes().as_bstr()
-        );
+        let uppercased = Uppercase::from(s).collect::<Vec<_>>();
+        assert_eq!(uppercased.as_bstr(), "ZȺȾ".as_bytes().as_bstr());
+        assert_ne!(s.len(), uppercased.len());
     }
 
     #[test]

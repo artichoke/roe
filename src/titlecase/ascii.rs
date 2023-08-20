@@ -135,12 +135,10 @@ mod tests {
 
         // Change length when titlecased
         // https://github.com/minimaxir/big-list-of-naughty-strings/blob/894882e7/blns.txt#L226-L232
-        let s = "zȺȾ".as_bytes();
-        let iter = Titlecase::from(s);
-        assert_eq!(
-            iter.collect::<Vec<_>>().as_bstr(),
-            "ZȺȾ".as_bytes().as_bstr()
-        );
+        let s = "ⱥȾȾZ".as_bytes();
+        let titlecased = Titlecase::from(s).collect::<Vec<_>>();
+        assert_eq!(titlecased.as_bstr(), "ⱥȾȾz".as_bytes().as_bstr());
+        assert_eq!(s.len(), titlecased.len());
     }
 
     #[test]

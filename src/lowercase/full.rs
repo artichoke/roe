@@ -186,11 +186,9 @@ mod tests {
         // Change length when lowercased
         // https://github.com/minimaxir/big-list-of-naughty-strings/blob/894882e7/blns.txt#L226-L232
         let s = "ZȺȾ".as_bytes();
-        let iter = Lowercase::from(s);
-        assert_eq!(
-            iter.collect::<Vec<_>>().as_bstr(),
-            "zⱥⱦ".as_bytes().as_bstr()
-        );
+        let lowercased = Lowercase::from(s).collect::<Vec<_>>();
+        assert_eq!(lowercased.as_bstr(), "zⱥⱦ".as_bytes().as_bstr());
+        assert_ne!(s.len(), lowercased.len());
     }
 
     #[test]
