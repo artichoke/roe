@@ -94,18 +94,23 @@ namespace :unicode do
 
   desc 'Rebuild Rust generated Rust sources from Unicode data'
   task :build do
-    unless system('ucd-generate --version')
-      puts 'Please install ucd-generate > 0.3.0 first'
-      exit(1)
+    unless system 'which ucd-generate'
+      raise '`ucd-generate` not found. ' \
+            "Install it for generating Unicode data: \n\n  " \
+            "cargo install 'ucd-generate@>=0.3.0'\n\n"
     end
 
-    unless system('git diff --exit-code')
-      puts 'Stage your changes before running this task'
-      exit(1)
+    installed_version = `ucd-generate --version`[/(\d+\.\d+\.\d+)/]
+    unless Gem::Version.new(installed_version) >= Gem::Version.new('0.3.0')
+      # The `--include` flag used later is only available after 0.3.0
+      raise 'Please upgrade ucd-generate to >=0.3.0 to run this task ' \
+            "(Using ucd-generate #{installed_version})."
     end
+
+    raise 'Stage your changes before running this task' unless system 'git diff --exit-code'
 
     filename = './generated/case_mapping.rs'
-    sh("ucd-generate case-mapping #{ucd_dir} --include TITLE --flat-table > #{filename}")
+    sh "ucd-generate case-mapping #{ucd_dir} --include TITLE --flat-table > #{filename}"
     sh 'cargo clippy --fix --allow-dirty'
   end
 
