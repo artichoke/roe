@@ -32,7 +32,7 @@ pub struct Titlecase<'a> {
     next_bytes: [u8; 4],
     next_range: Range<usize>,
     case_iter: Option<ToCase>,
-    beginning: bool,
+    first: bool,
 }
 
 impl<'a> fmt::Debug for Titlecase<'a> {
@@ -42,7 +42,7 @@ impl<'a> fmt::Debug for Titlecase<'a> {
             .field("next_bytes", &self.next_bytes)
             .field("next_range", &self.next_range)
             .field("case", &self.case_iter)
-            .field("first", &self.beginning)
+            .field("first", &self.first)
             .finish()
     }
 }
@@ -60,7 +60,7 @@ impl<'a> Titlecase<'a> {
             next_bytes: [0; 4],
             next_range: 0..0,
             case_iter: None,
-            beginning: true,
+            first: true,
         }
     }
 }
@@ -90,8 +90,8 @@ impl<'a> Iterator for Titlecase<'a> {
             (_, 0) => None,
             (Some(ch), size) => {
                 self.slice = &self.slice[size..];
-                let mut case_iter = if self.beginning {
-                    self.beginning = false;
+                let mut case_iter = if self.first {
+                    self.first = false;
                     ToCase::ToTitlecase(ch.to_titlecase())
                 } else {
                     ToCase::ToLowercase(ch.to_lowercase())

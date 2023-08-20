@@ -1,4 +1,4 @@
-// This file contain code extracted from std::char::CaseMappingIter.
+// This file contains code extracted from std::char::CaseMappingIter.
 use core::fmt::{Debug, Display, Formatter, Result, Write};
 
 #[derive(Debug, Clone)]
