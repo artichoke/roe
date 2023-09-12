@@ -98,7 +98,7 @@ impl<'a> Iterator for Titlecase<'a> {
                 };
                 let ch = case_iter
                     .next()
-                    .expect("ToTitlecase or ToLowercase yields at lteast one char");
+                    .expect("ToTitlecase or ToLowercase yields at least one char");
                 let enc = ch.encode_utf8(&mut self.next_bytes);
 
                 self.next_range = 1..enc.len();
