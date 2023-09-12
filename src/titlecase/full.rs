@@ -276,6 +276,13 @@ mod tests {
     }
 
     #[test]
+    fn case_map_to_one_char() {
+        let s = "ᾂ".as_bytes();
+        let iter = Titlecase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ᾊ".as_bytes().as_bstr());
+    }
+
+    #[test]
     fn case_map_to_two_chars() {
         let s = "և".as_bytes();
         let iter = Titlecase::from(s);
@@ -290,10 +297,6 @@ mod tests {
             iter.collect::<Vec<_>>().as_bstr(),
             "Y\u{30a}".as_bytes().as_bstr()
         );
-
-        let s = "ᾂ".as_bytes();
-        let iter = Titlecase::from(s);
-        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ᾊ".as_bytes().as_bstr());
 
         let s = "ﬗ".as_bytes();
         let iter = Titlecase::from(s);
