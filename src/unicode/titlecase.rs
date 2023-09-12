@@ -1,5 +1,6 @@
-use crate::unicode::std_case_mapping_iter::CaseMappingIter;
+// use crate::unicode::std_case_mapping_iter::CaseMappingIter;
 use crate::unicode::ucd_generated_case_mapping::SORTED_TITLECASE_MAPPING;
+use core::char::ToLowercase;
 use core::iter::FusedIterator;
 
 /// Take a char and return its Unicode titlecase as 3 chars.
@@ -43,7 +44,7 @@ pub fn to_titlecase(c: char) -> [char; 3] {
 /// This `struct` is created by the [`to_titlecase`] method.
 #[allow(clippy::module_name_repetitions)]
 #[derive(Clone, Debug)]
-pub struct ToTitlecase(CaseMappingIter);
+pub struct ToTitlecase(ToLowercase);
 
 impl Iterator for ToTitlecase {
     type Item = char;
@@ -71,7 +72,16 @@ pub trait Titlecase {
 
 impl Titlecase for char {
     fn to_titlecase(self) -> ToTitlecase {
-        ToTitlecase(CaseMappingIter::new(to_titlecase(self)))
+        // rustc: no function or associated item named `new` found for
+        //  struct `core::char::ToLowercase` in the current scope
+        // function or associated item not found in `ToLowercase` [E0599] [E0599]
+        return ToTitlecase(ToLowercase::new(to_titlecase(self)));
+
+        // OR
+
+        // rustc: cannot construct `core::char::ToLowercase` with struct literal syntax due to private fields
+        // ... and other private field `0` that was not provided
+        return ToTitlecase(ToLowercase{ to_titlecase(self) });
     }
 }
 
