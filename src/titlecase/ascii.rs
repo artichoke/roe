@@ -7,7 +7,7 @@ use bstr::ByteSlice;
 #[must_use = "Titlecase is a Iterator and must be used"]
 pub struct Titlecase<'a> {
     slice: &'a [u8],
-    first: bool,
+    head_yielded: bool,
 }
 
 impl<'a> fmt::Debug for Titlecase<'a> {
@@ -26,7 +26,10 @@ impl<'a> From<&'a [u8]> for Titlecase<'a> {
 
 impl<'a> Titlecase<'a> {
     pub const fn with_slice(slice: &'a [u8]) -> Self {
-        Self { slice, first: true }
+        Self {
+            slice,
+            head_yielded: false,
+        }
     }
 }
 
@@ -36,11 +39,11 @@ impl<'a> Iterator for Titlecase<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         let (&byte, remainder) = self.slice.split_first()?;
         self.slice = remainder;
-        if self.first {
-            self.first = false;
-            Some(byte.to_ascii_uppercase())
-        } else {
+        if self.head_yielded {
             Some(byte.to_ascii_lowercase())
+        } else {
+            self.head_yielded = true;
+            Some(byte.to_ascii_uppercase())
         }
     }
 
@@ -59,7 +62,12 @@ impl<'a> DoubleEndedIterator for Titlecase<'a> {
         let (&byte, remainder) = self.slice.split_last()?;
         self.slice = remainder;
         if remainder.is_empty() {
-            Some(byte.to_ascii_uppercase())
+            if self.head_yielded {
+                Some(byte.to_ascii_lowercase())
+            } else {
+                self.head_yielded = true;
+                Some(byte.to_ascii_uppercase())
+            }
         } else {
             Some(byte.to_ascii_lowercase())
         }
@@ -303,6 +311,6 @@ mod tests {
         let mut iter = Titlecase::with_slice(b"abc");
         assert_eq!(iter.next(), Some(b'A'));
         assert_eq!(iter.next_back(), Some(b'c'));
-        assert_eq!(iter.next_back(), Some(b'B')); // FIXME: Should be 'b'
+        assert_eq!(iter.next_back(), Some(b'b'));
     }
 }
