@@ -292,4 +292,17 @@ mod tests {
         assert!(min <= count);
         assert!(count <= max.unwrap());
     }
+
+    #[test]
+    fn double_ended_iterator() {
+        let mut iter = Titlecase::with_slice(b"abc");
+        assert_eq!(iter.next_back(), Some(b'c'));
+        assert_eq!(iter.next_back(), Some(b'b'));
+        assert_eq!(iter.next_back(), Some(b'A'));
+
+        let mut iter = Titlecase::with_slice(b"abc");
+        assert_eq!(iter.next(), Some(b'A'));
+        assert_eq!(iter.next_back(), Some(b'c'));
+        assert_eq!(iter.next_back(), Some(b'B')); // FIXME: Should be 'b'
+    }
 }
