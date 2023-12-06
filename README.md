@@ -42,7 +42,7 @@ roe = "0.0.5"
 Then convert case like:
 
 ```rust
-use roe::{LowercaseMode, UppercaseMode};
+use roe::{LowercaseMode, UppercaseMode, TitlecaseMode};
 
 assert_eq!(
     roe::lowercase(b"Artichoke Ruby", LowercaseMode::Ascii).collect::<Vec<_>>(),
@@ -51,6 +51,10 @@ assert_eq!(
 assert_eq!(
     roe::uppercase("Αύριο".as_bytes(), UppercaseMode::Full).collect::<Vec<_>>(),
     "ΑΎΡΙΟ".as_bytes()
+);
+assert_eq!(
+    roe::titlecase("ﬃ".as_bytes(), TitlecaseMode::Full).collect::<Vec<_>>(),
+    "Ffi".as_bytes()
 );
 ```
 

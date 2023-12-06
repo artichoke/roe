@@ -122,7 +122,7 @@ impl<'a> FusedIterator for Lowercase<'a> {}
 
 #[cfg(test)]
 mod tests {
-    use alloc::vec::Vec;
+    use alloc::{format, vec::Vec};
     use bstr::ByteSlice;
     use core::char;
 
@@ -186,11 +186,9 @@ mod tests {
         // Change length when lowercased
         // https://github.com/minimaxir/big-list-of-naughty-strings/blob/894882e7/blns.txt#L226-L232
         let s = "ZȺȾ".as_bytes();
-        let iter = Lowercase::from(s);
-        assert_eq!(
-            iter.collect::<Vec<_>>().as_bstr(),
-            "zⱥⱦ".as_bytes().as_bstr()
-        );
+        let lowercased = Lowercase::from(s).collect::<Vec<_>>();
+        assert_eq!(lowercased.as_bstr(), "zⱥⱦ".as_bytes().as_bstr());
+        assert_ne!(s.len(), lowercased.len());
     }
 
     #[test]
@@ -231,8 +229,16 @@ mod tests {
     }
 
     #[test]
-    fn dz_titlecase() {
+    fn dz_to_lowercase() {
         let s = "ǅ".as_bytes();
+        let iter = Lowercase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǆ".as_bytes().as_bstr());
+
+        let s = "Ǆ".as_bytes();
+        let iter = Lowercase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǆ".as_bytes().as_bstr());
+
+        let s = "ǆ".as_bytes();
         let iter = Lowercase::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǆ".as_bytes().as_bstr());
     }
@@ -358,5 +364,15 @@ mod tests {
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
+    }
+
+    #[test]
+    fn test_fmt() {
+        let s = "Αύριο".as_bytes();
+        let iter = Lowercase::from(s);
+        assert_eq!(
+            format!("{iter:?}"),
+            "Lowercase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, lowercase: None }"
+        );
     }
 }

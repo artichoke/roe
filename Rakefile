@@ -4,6 +4,7 @@ require 'open-uri'
 require 'shellwords'
 require 'bundler/audit/task'
 require 'rubocop/rake_task'
+require 'pathname'
 
 task default: %i[format lint]
 
@@ -87,6 +88,44 @@ end
 desc 'Run Roe unit tests'
 task :test do
   sh 'cargo test --workspace'
+end
+
+namespace :unicode do
+  generated_dir = Pathname.pwd.join('generated')
+  ucd_dir = generated_dir.join('ucd')
+
+  desc 'Rebuild Rust generated Rust sources from Unicode data'
+  task :build do
+    unless system 'which ucd-generate'
+      raise '`ucd-generate` not found. ' \
+            "Install it for generating Unicode data: \n\n  " \
+            "cargo install 'ucd-generate@>=0.3.0'\n\n"
+    end
+
+    installed_version = `ucd-generate --version`[/(\d+\.\d+\.\d+)/]
+    unless Gem::Version.new(installed_version) >= Gem::Version.new('0.3.0')
+      # The `--include` flag used later is only available after 0.3.0
+      raise 'Please upgrade ucd-generate to >=0.3.0 to run this task ' \
+            "(Using ucd-generate #{installed_version})."
+    end
+
+    raise 'Stage your changes before running this task' unless system 'git diff --exit-code'
+
+    filename = generated_dir.join('case_mapping.rs')
+    sh "ucd-generate case-mapping #{ucd_dir.relative_path_from(Pathname.pwd)} " \
+       "--include TITLE --flat-table > #{filename.relative_path_from(Pathname.pwd)}"
+    sh 'cargo clippy --fix --allow-dirty'
+  end
+
+  desc 'Update Unicode data'
+  task :update do
+    %w[UnicodeData.txt SpecialCasing.txt PropList.txt].each do |filename|
+      uri = "https://www.unicode.org/Public/UCD/latest/ucd/#{filename}"
+      URI.parse(uri).open do |data|
+        IO.copy_stream(data, ucd_dir.join(filename))
+      end
+    end
+  end
 end
 
 Bundler::Audit::Task.new
