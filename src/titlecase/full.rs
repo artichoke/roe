@@ -262,8 +262,16 @@ mod tests {
     }
 
     #[test]
-    fn dz_titlecase() {
+    fn dz_to_titlecase() {
         let s = "ǅ".as_bytes();
+        let iter = Titlecase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǅ".as_bytes().as_bstr());
+
+        let s = "Ǆ".as_bytes();
+        let iter = Titlecase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǅ".as_bytes().as_bstr());
+
+        let s = "ǆ".as_bytes();
         let iter = Titlecase::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǅ".as_bytes().as_bstr());
     }

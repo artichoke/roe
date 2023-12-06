@@ -231,8 +231,16 @@ mod tests {
     }
 
     #[test]
-    fn dz_titlecase() {
+    fn dz_to_uppercase() {
         let s = "ǅ".as_bytes();
+        let iter = Uppercase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "Ǆ".as_bytes().as_bstr());
+
+        let s = "Ǆ".as_bytes();
+        let iter = Uppercase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "Ǆ".as_bytes().as_bstr());
+
+        let s = "ǆ".as_bytes();
         let iter = Uppercase::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "Ǆ".as_bytes().as_bstr());
     }

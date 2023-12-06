@@ -229,8 +229,16 @@ mod tests {
     }
 
     #[test]
-    fn dz_titlecase() {
+    fn dz_to_lowercase() {
         let s = "ǅ".as_bytes();
+        let iter = Lowercase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǆ".as_bytes().as_bstr());
+
+        let s = "Ǆ".as_bytes();
+        let iter = Lowercase::from(s);
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǆ".as_bytes().as_bstr());
+
+        let s = "ǆ".as_bytes();
         let iter = Lowercase::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǆ".as_bytes().as_bstr());
     }
