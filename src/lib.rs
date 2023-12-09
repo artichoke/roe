@@ -100,7 +100,7 @@
 //! [conventionally UTF-8 binary strings]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/roe/0.0.5")]
+#![doc(html_root_url = "https://docs.rs/roe/0.0.6")]
 
 #[cfg(any(feature = "alloc", test))]
 extern crate alloc;
@@ -566,8 +566,8 @@ impl FromStr for TitlecaseMode {
 }
 
 /// Returns an iterator that yields a copy of the bytes in the given slice with
-/// the leading letter replaced with their titlecase counterpart, and rest
-/// letters replaced with their titlecase counterparts.
+/// the leading letter replaced with its titlecase counterpart and all remaining
+/// letters replaced with their lowercase counterparts.
 ///
 /// This function treats the given slice as a [conventionally UTF-8 string].
 /// UTF-8 byte sequences are converted to their Unicode titlecase equivalents.

@@ -2,12 +2,14 @@ use crate::unicode::std_case_mapping_iter::CaseMappingIter;
 use crate::unicode::ucd_generated_case_mapping::SORTED_TITLECASE_MAPPING;
 use core::iter::FusedIterator;
 
-/// Take a char and return its Unicode titlecase as 3 chars.
+/// Take a [`char`] and return its Unicode titlecase as 3 `char`s.
+///
+/// Trailing NUL bytes in the returned array should be ignored.
 ///
 /// # Examples
 ///
 /// ```
-/// # use roe::to_titlecase;
+/// use roe::to_titlecase;
 ///
 /// assert_eq!(to_titlecase('Ǆ'), ['ǅ', '\0', '\0']);
 ///
@@ -20,8 +22,6 @@ use core::iter::FusedIterator;
 /// // A character already titlecased map to itself
 /// assert_eq!(to_titlecase('A'), ['A', '\0', '\0']);
 /// ```
-///
-/// [Ruby `ArgumentError` Exception class]: https://ruby-doc.org/core-3.1.2/ArgumentError.html
 #[allow(clippy::module_name_repetitions)]
 #[must_use]
 pub fn to_titlecase(c: char) -> [char; 3] {
