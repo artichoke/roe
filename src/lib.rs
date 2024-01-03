@@ -4,6 +4,7 @@
 #![cfg_attr(test, allow(clippy::shadow_unrelated))]
 #![warn(clippy::cargo)]
 #![allow(unknown_lints)]
+#![allow(clippy::struct_field_names)]
 #![warn(missing_copy_implementations)]
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
