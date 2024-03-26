@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["LowercaseMode","TitlecaseMode","UppercaseMode"],"fn":["lowercase","make_ascii_lowercase","make_ascii_titlecase","make_ascii_uppercase","titlecase","to_ascii_lowercase","to_ascii_titlecase","to_ascii_uppercase","to_titlecase","uppercase"],"struct":["InvalidCaseMappingMode","Lowercase","Titlecase","Uppercase"]};
