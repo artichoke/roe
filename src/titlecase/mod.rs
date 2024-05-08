@@ -27,6 +27,12 @@ pub struct Titlecase<'a> {
     iter: Inner<'a>,
 }
 
+impl<'a> Default for Titlecase<'a> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'a> Titlecase<'a> {
     /// Create a new, empty titlecase iterator.
     ///

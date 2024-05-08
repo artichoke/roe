@@ -27,6 +27,12 @@ pub struct Uppercase<'a> {
     iter: Inner<'a>,
 }
 
+impl<'a> Default for Uppercase<'a> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'a> Uppercase<'a> {
     /// Create a new, empty uppercase iterator.
     ///

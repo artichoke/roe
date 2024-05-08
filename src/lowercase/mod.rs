@@ -27,6 +27,12 @@ pub struct Lowercase<'a> {
     iter: Inner<'a>,
 }
 
+impl<'a> Default for Lowercase<'a> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'a> Lowercase<'a> {
     /// Create a new, empty lowercase iterator.
     ///
