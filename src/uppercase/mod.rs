@@ -172,6 +172,9 @@ mod tests {
         let iter = Uppercase::new();
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"".as_bstr());
 
+        let iter = Uppercase::default();
+        assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"".as_bstr());
+
         let iter = Uppercase::with_slice(b"");
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"".as_bstr());
 
@@ -182,6 +185,8 @@ mod tests {
     #[test]
     fn size_hint() {
         assert_eq!(Uppercase::new().size_hint(), (0, Some(0)));
+        assert_eq!(Uppercase::default().size_hint(), (0, Some(0)));
+        assert_eq!(Uppercase::with_slice(b"").size_hint(), (0, Some(0)));
 
         assert_eq!(Uppercase::with_slice(b"abc, xyz").size_hint(), (8, Some(8)));
         assert_eq!(
@@ -240,6 +245,8 @@ mod tests {
     #[test]
     fn count() {
         assert_eq!(Uppercase::new().count(), 0);
+        assert_eq!(Uppercase::default().count(), 0);
+        assert_eq!(Uppercase::with_slice(b"").count(), 0);
 
         assert_eq!(Uppercase::with_slice(b"abc, xyz").count(), 8);
         assert_eq!(Uppercase::with_slice(b"abc, \xFF\xFE, xyz").count(), 12);
