@@ -117,6 +117,9 @@ jobs:
         with:
           node-version: "lts/*"
 
+      - name: Install toolchain
+        run: npm ci
+
       - name: Format with prettier
         run: npx prettier --check '**/*'
 
