@@ -27,7 +27,7 @@ pub struct Uppercase<'a> {
     iter: Inner<'a>,
 }
 
-impl<'a> Default for Uppercase<'a> {
+impl Default for Uppercase<'_> {
     fn default() -> Self {
         Self::new()
     }
@@ -130,7 +130,7 @@ impl<'a> Uppercase<'a> {
     }
 }
 
-impl<'a> Iterator for Uppercase<'a> {
+impl Iterator for Uppercase<'_> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -158,7 +158,7 @@ impl<'a> Iterator for Uppercase<'a> {
     }
 }
 
-impl<'a> FusedIterator for Uppercase<'a> {}
+impl FusedIterator for Uppercase<'_> {}
 
 #[cfg(test)]
 mod tests {

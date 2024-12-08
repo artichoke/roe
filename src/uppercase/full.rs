@@ -14,7 +14,7 @@ pub struct Uppercase<'a> {
     uppercase: Option<ToUppercase>,
 }
 
-impl<'a> fmt::Debug for Uppercase<'a> {
+impl fmt::Debug for Uppercase<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Uppercase")
             .field("slice", &self.slice.as_bstr())
@@ -42,7 +42,7 @@ impl<'a> Uppercase<'a> {
     }
 }
 
-impl<'a> Iterator for Uppercase<'a> {
+impl Iterator for Uppercase<'_> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -118,7 +118,7 @@ impl<'a> Iterator for Uppercase<'a> {
     }
 }
 
-impl<'a> FusedIterator for Uppercase<'a> {}
+impl FusedIterator for Uppercase<'_> {}
 
 #[cfg(test)]
 mod tests {

@@ -14,7 +14,7 @@ pub struct Lowercase<'a> {
     lowercase: Option<ToLowercase>,
 }
 
-impl<'a> fmt::Debug for Lowercase<'a> {
+impl fmt::Debug for Lowercase<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Lowercase")
             .field("slice", &self.slice.as_bstr())
@@ -42,7 +42,7 @@ impl<'a> Lowercase<'a> {
     }
 }
 
-impl<'a> Iterator for Lowercase<'a> {
+impl Iterator for Lowercase<'_> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -118,7 +118,7 @@ impl<'a> Iterator for Lowercase<'a> {
     }
 }
 
-impl<'a> FusedIterator for Lowercase<'a> {}
+impl FusedIterator for Lowercase<'_> {}
 
 #[cfg(test)]
 mod tests {

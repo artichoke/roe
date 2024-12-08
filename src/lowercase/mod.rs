@@ -27,7 +27,7 @@ pub struct Lowercase<'a> {
     iter: Inner<'a>,
 }
 
-impl<'a> Default for Lowercase<'a> {
+impl Default for Lowercase<'_> {
     fn default() -> Self {
         Self::new()
     }
@@ -130,7 +130,7 @@ impl<'a> Lowercase<'a> {
     }
 }
 
-impl<'a> Iterator for Lowercase<'a> {
+impl Iterator for Lowercase<'_> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -158,7 +158,7 @@ impl<'a> Iterator for Lowercase<'a> {
     }
 }
 
-impl<'a> FusedIterator for Lowercase<'a> {}
+impl FusedIterator for Lowercase<'_> {}
 
 #[cfg(test)]
 mod tests {

@@ -11,6 +11,10 @@
 
 Implements [Unicode case mapping] for [conventionally UTF-8 binary strings].
 
+[unicode case mapping]: https://unicode.org/faq/casemap_charprop.html#casemap
+[conventionally utf-8 binary strings]:
+  https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
+
 > Case mapping or case conversion is a process whereby strings are converted to
 > a particular form—uppercase, lowercase, or titlecase—possibly for display to
 > the user.
@@ -20,7 +24,32 @@ and uppercase forms. This crate is used to implement [`String#capitalize`],
 [`Symbol#capitalize`], [`String#downcase`], [`Symbol#downcase`],
 [`String#upcase`], and [`Symbol#upcase`] in [Artichoke Ruby].
 
+[`string#capitalize`]:
+  https://ruby-doc.org/core-3.1.2/String.html#method-i-capitalize
+[`symbol#capitalize`]:
+  https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-capitalize
+[`string#downcase`]:
+  https://ruby-doc.org/core-3.1.2/String.html#method-i-downcase
+[`symbol#downcase`]:
+  https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-downcase
+[`string#upcase`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-upcase
+[`symbol#upcase`]: https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-upcase
+[artichoke ruby]: https://github.com/artichoke/artichoke
+
 This crate depends on [`bstr`].
+
+[`bstr`]: https://crates.io/crates/bstr
+
+## Implementation
+
+Roe generates conversion tables from Unicode Data Files. Roe implements case
+mapping as defined in the [Unicode standard][casemap] (see [`PropList.txt`],
+[`SpecialCasing.txt`], [`UnicodeData.txt`]).
+
+[casemap]: https://unicode.org/faq/casemap_charprop.html#casemap
+[`proplist.txt`]: generated/ucd/PropList.txt
+[`specialcasing.txt`]: generated/ucd/SpecialCasing.txt
+[`unicodedata.txt`]: generated/ucd/UnicodeData.txt
 
 ## Status
 
@@ -36,7 +65,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-roe = "0.0.6"
+roe = "0.0.7"
 ```
 
 Then convert case like:
@@ -71,27 +100,26 @@ assert_eq!(
   collections library. This feature enables APIs that allocate [`String`] or
   [`Vec`].
 
-## License
-
-`roe` is licensed under the [MIT License](LICENSE) (c) Ryan Lopopolo.
-
-[unicode case mapping]: https://unicode.org/faq/casemap_charprop.html#casemap
-[conventionally utf-8 binary strings]:
-  https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
-[`string#capitalize`]:
-  https://ruby-doc.org/core-3.1.2/String.html#method-i-capitalize
-[`symbol#capitalize`]:
-  https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-capitalize
-[`string#downcase`]:
-  https://ruby-doc.org/core-3.1.2/String.html#method-i-downcase
-[`symbol#downcase`]:
-  https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-downcase
-[`string#upcase`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-upcase
-[`symbol#upcase`]: https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-upcase
-[artichoke ruby]: https://github.com/artichoke/artichoke
-[`bstr`]: https://crates.io/crates/bstr
 [`alloc`]: https://doc.rust-lang.org/alloc/index.html
 [`std`]: https://doc.rust-lang.org/std/index.html
 [`std::error::error`]: https://doc.rust-lang.org/std/error/trait.Error.html
 [`string`]: https://doc.rust-lang.org/stable/alloc/string/struct.String.html
 [`vec`]: https://doc.rust-lang.org/stable/alloc/vec/struct.Vec.html
+
+## Unicode Version
+
+Roe implements Unicode case mapping with the Unicode 16.0.0 case mapping
+ruleset.
+
+Each new release of Unicode may bring updates to the Data Files which are the
+source for the case mappings in this crate. Updates to the case mapping rules
+will be accompanied with a minor version bump.
+
+## License
+
+`roe` is licensed under the [MIT License](LICENSE) (c) Ryan Lopopolo.
+
+`roe` includes Unicode Data Files which are subject to the [Unicode Terms of
+Use] and [Unicode License v3](LICENSE-UNICODE) (c) 1991-2024 Unicode, Inc.
+
+[unicode terms of use]: https://www.unicode.org/copyright.html

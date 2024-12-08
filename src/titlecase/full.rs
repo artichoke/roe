@@ -35,7 +35,7 @@ pub struct Titlecase<'a> {
     first: bool,
 }
 
-impl<'a> fmt::Debug for Titlecase<'a> {
+impl fmt::Debug for Titlecase<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Titlecase")
             .field("slice", &self.slice.as_bstr())
@@ -65,7 +65,7 @@ impl<'a> Titlecase<'a> {
     }
 }
 
-impl<'a> Iterator for Titlecase<'a> {
+impl Iterator for Titlecase<'_> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -149,7 +149,7 @@ impl<'a> Iterator for Titlecase<'a> {
     }
 }
 
-impl<'a> FusedIterator for Titlecase<'a> {}
+impl FusedIterator for Titlecase<'_> {}
 
 #[cfg(test)]
 mod tests {
