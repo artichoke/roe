@@ -121,3 +121,5 @@ will be accompanied with a minor version bump.
 
 `roe` includes Unicode Data Files which are subject to the [Unicode Terms of
 Use] and [Unicode License v3](LICENSE-UNICODE) (c) 1991-2024 Unicode, Inc.
+
+[unicode terms of use]: https://www.unicode.org/copyright.html
