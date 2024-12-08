@@ -27,7 +27,7 @@ pub struct Titlecase<'a> {
     iter: Inner<'a>,
 }
 
-impl<'a> Default for Titlecase<'a> {
+impl Default for Titlecase<'_> {
     fn default() -> Self {
         Self::new()
     }
@@ -134,7 +134,7 @@ impl<'a> Titlecase<'a> {
     }
 }
 
-impl<'a> Iterator for Titlecase<'a> {
+impl Iterator for Titlecase<'_> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -162,7 +162,7 @@ impl<'a> Iterator for Titlecase<'a> {
     }
 }
 
-impl<'a> FusedIterator for Titlecase<'a> {}
+impl FusedIterator for Titlecase<'_> {}
 
 #[cfg(test)]
 mod tests {

@@ -9,7 +9,7 @@ pub struct Uppercase<'a> {
     slice: &'a [u8],
 }
 
-impl<'a> fmt::Debug for Uppercase<'a> {
+impl fmt::Debug for Uppercase<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Uppercase")
             .field("slice", &self.slice.as_bstr())
@@ -29,7 +29,7 @@ impl<'a> Uppercase<'a> {
     }
 }
 
-impl<'a> Iterator for Uppercase<'a> {
+impl Iterator for Uppercase<'_> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -48,7 +48,7 @@ impl<'a> Iterator for Uppercase<'a> {
     }
 }
 
-impl<'a> DoubleEndedIterator for Uppercase<'a> {
+impl DoubleEndedIterator for Uppercase<'_> {
     fn next_back(&mut self) -> Option<Self::Item> {
         let (&byte, remainder) = self.slice.split_last()?;
         self.slice = remainder;
@@ -56,9 +56,9 @@ impl<'a> DoubleEndedIterator for Uppercase<'a> {
     }
 }
 
-impl<'a> ExactSizeIterator for Uppercase<'a> {}
+impl ExactSizeIterator for Uppercase<'_> {}
 
-impl<'a> FusedIterator for Uppercase<'a> {}
+impl FusedIterator for Uppercase<'_> {}
 
 #[cfg(test)]
 mod tests {

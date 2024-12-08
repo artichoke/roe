@@ -101,7 +101,7 @@
 //! [conventionally UTF-8 binary strings]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/roe/0.0.6")]
+#![doc(html_root_url = "https://docs.rs/roe/0.0.7")]
 
 #[cfg(any(feature = "alloc", test))]
 extern crate alloc;
@@ -118,6 +118,19 @@ mod lowercase;
 mod titlecase;
 mod unicode;
 mod uppercase;
+
+/// Roe is derived from Unicode Data Files and is subject to Unicode License v3.
+///
+/// See <https://www.unicode.org/terms_of_use.html>.
+///
+/// # Unicode License v3
+///
+/// ```txt
+#[doc = include_str!("../LICENSE-UNICODE")]
+/// ```
+#[cfg(doc)]
+#[cfg_attr(docsrs, doc(cfg(doc)))]
+pub mod unicode_terms {}
 
 pub use ascii::{make_ascii_lowercase, make_ascii_titlecase, make_ascii_uppercase};
 #[cfg(feature = "alloc")]

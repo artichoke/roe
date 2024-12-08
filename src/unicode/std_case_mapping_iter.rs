@@ -11,14 +11,10 @@ pub enum CaseMappingIter {
 
 impl CaseMappingIter {
     pub fn new(chars: [char; 3]) -> CaseMappingIter {
-        if chars[2] == '\0' {
-            if chars[1] == '\0' {
-                CaseMappingIter::One(chars[0]) // Including if chars[0] == '\0'
-            } else {
-                CaseMappingIter::Two(chars[0], chars[1])
-            }
-        } else {
-            CaseMappingIter::Three(chars[0], chars[1], chars[2])
+        match chars {
+            [a, '\0', '\0'] => CaseMappingIter::One(a),
+            [a, b, '\0'] => CaseMappingIter::Two(a, b),
+            [a, b, c] => CaseMappingIter::Three(a, b, c),
         }
     }
 }
