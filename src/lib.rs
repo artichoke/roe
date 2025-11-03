@@ -214,7 +214,7 @@ impl std::error::Error for InvalidCaseMappingMode {}
 /// default.
 ///
 /// [`lowercase`]: crate::lowercase()
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LowercaseMode {
     /// Full Unicode case mapping, suitable for most languages.
     ///
@@ -225,6 +225,7 @@ pub enum LowercaseMode {
     ///
     /// [Turkic]: Self::Turkic
     /// [Lithuanian]: Self::Lithuanian
+    #[default]
     Full,
     /// Only the ASCII region, i.e. the characters `'A'..='Z'` and `'a'..='z'`,
     /// are affected.
@@ -250,12 +251,6 @@ pub enum LowercaseMode {
     /// This option currently cannot be combined with any other option (i.e.
     /// there is currently no variant for turkic languages).
     Fold,
-}
-
-impl Default for LowercaseMode {
-    fn default() -> Self {
-        Self::Full
-    }
 }
 
 impl TryFrom<&str> for LowercaseMode {
@@ -356,7 +351,7 @@ pub fn lowercase(slice: &[u8], options: LowercaseMode) -> Lowercase<'_> {
 /// default.
 ///
 /// [`uppercase`]: crate::uppercase()
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum UppercaseMode {
     /// Full Unicode case mapping, suitable for most languages.
     ///
@@ -367,6 +362,7 @@ pub enum UppercaseMode {
     ///
     /// [Turkic]: Self::Turkic
     /// [Lithuanian]: Self::Lithuanian
+    #[default]
     Full,
     /// Only the ASCII region, i.e. the characters `'A'..='Z'` and `'a'..='z'`,
     /// are affected.
@@ -386,12 +382,6 @@ pub enum UppercaseMode {
     ///
     /// [full Unicode case mapping]: Self::Full
     Lithuanian,
-}
-
-impl Default for UppercaseMode {
-    fn default() -> Self {
-        Self::Full
-    }
 }
 
 impl TryFrom<&str> for UppercaseMode {
@@ -488,7 +478,7 @@ pub fn uppercase(slice: &[u8], options: UppercaseMode) -> Uppercase<'_> {
 /// default.
 ///
 /// [`titlecase`]: crate::titlecase()
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum TitlecaseMode {
     /// Full Unicode case mapping, suitable for most languages.
     ///
@@ -499,6 +489,7 @@ pub enum TitlecaseMode {
     ///
     /// [Turkic]: Self::Turkic
     /// [Lithuanian]: Self::Lithuanian
+    #[default]
     Full,
     /// Only the ASCII region, i.e. the characters `'A'..='Z'` and `'a'..='z'`,
     /// are affected.
@@ -518,12 +509,6 @@ pub enum TitlecaseMode {
     ///
     /// [full Unicode case mapping]: Self::Full
     Lithuanian,
-}
-
-impl Default for TitlecaseMode {
-    fn default() -> Self {
-        Self::Full
-    }
 }
 
 impl TryFrom<&str> for TitlecaseMode {
