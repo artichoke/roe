@@ -18,7 +18,6 @@
 //
 // This approach is borrowed from tokio.
 #![cfg_attr(docsrs, feature(doc_cfg))]
-#![cfg_attr(docsrs, feature(doc_alias))]
 
 //! This crate provides [Unicode case mapping] routines and iterators for
 //! [conventionally UTF-8 binary strings].

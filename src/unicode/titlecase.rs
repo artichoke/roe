@@ -83,16 +83,19 @@ mod tests {
 
     #[test]
     fn test_char_to_titlecase() {
-        assert_eq!('ß'.to_titlecase().collect::<Vec<_>>(), ['S', 's']);
-        assert_eq!('Ǆ'.to_titlecase().collect::<Vec<_>>(), ['ǅ']);
-        assert_eq!('ﬄ'.to_titlecase().collect::<Vec<_>>(), ['F', 'f', 'l']);
-        assert_eq!('i'.to_titlecase().collect::<Vec<_>>(), ['I']);
-        assert_eq!('A'.to_titlecase().collect::<Vec<_>>(), ['A']);
+        assert_eq!(Titlecase::to_titlecase('ß').collect::<Vec<_>>(), ['S', 's']);
+        assert_eq!(Titlecase::to_titlecase('Ǆ').collect::<Vec<_>>(), ['ǅ']);
+        assert_eq!(
+            Titlecase::to_titlecase('ﬄ').collect::<Vec<_>>(),
+            ['F', 'f', 'l']
+        );
+        assert_eq!(Titlecase::to_titlecase('i').collect::<Vec<_>>(), ['I']);
+        assert_eq!(Titlecase::to_titlecase('A').collect::<Vec<_>>(), ['A']);
     }
 
     #[test]
     fn test_next_back() {
-        let mut iter = 'ﬄ'.to_titlecase();
+        let mut iter = Titlecase::to_titlecase('ﬄ');
         assert_eq!(iter.next_back(), Some('l'));
         assert_eq!(iter.next_back(), Some('f'));
         assert_eq!(iter.next_back(), Some('F'));
