@@ -92,7 +92,7 @@ impl Iterator for Titlecase<'_> {
                 self.slice = &self.slice[size..];
                 let mut case_iter = if self.first {
                     self.first = false;
-                    ToCase::ToTitlecase(ch.to_titlecase())
+                    ToCase::ToTitlecase(TitlecaseForChar::to_titlecase(ch))
                 } else {
                     ToCase::ToLowercase(ch.to_lowercase())
                 };

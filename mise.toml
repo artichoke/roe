@@ -1,0 +1,25 @@
+[tools]
+node = "24.19.0"
+# Rust intentionally tracks the stable channel for this Rust library.
+rust = { version = "stable", profile = "minimal", components = "clippy,rustfmt" }
+"aqua:zizmorcore/zizmor" = "1.29.0"
+
+"cargo:cargo-deny" = "0.20.2"
+"cargo:cargo-mutants" = "27.1.0"
+"cargo:cargo-outdated" = "0.19.0"
+
+[hooks]
+postinstall = "corepack enable"
+
+[settings]
+experimental = true
+use_versions_host_track = false
+
+[env]
+_.path = ["{{config_root}}/node_modules/.bin"]
+
+[tasks.pnpm-install]
+description = "Install dependencies with pnpm when lockfile changes"
+run = "pnpm install"
+sources = ["package.json", "pnpm-lock.yaml", "mise.toml"]
+outputs = ["node_modules/.pnpm/lock.yaml"]
