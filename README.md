@@ -5,7 +5,6 @@
 <br>
 [![Crate](https://img.shields.io/crates/v/roe.svg)](https://crates.io/crates/roe)
 [![API](https://docs.rs/roe/badge.svg)](https://docs.rs/roe)
-[![API trunk](https://img.shields.io/badge/docs-trunk-blue.svg)](https://artichoke.github.io/roe/roe/)
 
 Implements [Unicode case mapping] for [conventionally UTF-8 binary strings].
 
