@@ -34,6 +34,7 @@ main() {
   readonly config_path
 
   emit_version node node "$config_path" "$github_output" "$mise"
+  emit_version ruby ruby "$config_path" "$github_output" "$mise"
   emit_version zizmor aqua:zizmorcore/zizmor "$config_path" "$github_output" "$mise"
 }
 

@@ -21,8 +21,10 @@ issues are labeled `E-easy`].
 
 ## Setup
 
-roe includes Rust, Ruby, and Text sources. Developing on roe requires
-configuring several dependencies.
+roe includes Rust, Ruby, and text sources. Developing on roe requires
+configuring several dependencies. [mise] manages the local development toolchain
+declared in [`mise.toml`](mise.toml), including Node.js, Ruby, Rust,
+`ucd-generate`, and auxiliary Rust tools.
 
 ### Rust Toolchain
 
@@ -31,21 +33,17 @@ is guaranteed to build on the latest stable release of the Rust compiler.
 
 #### Installation
 
-The recommended way to install the Rust toolchain is with [rustup]. On macOS,
-you can install rustup with [Homebrew]:
+Install and activate [mise], then install the toolchains declared in
+[`mise.toml`](mise.toml):
 
 ```sh
-brew install rustup-init
-rustup-init
+mise install
 ```
 
-Once you have rustup, you can install the Rust toolchain needed to compile roe:
-
-```sh
-rustup toolchain install stable
-rustup component add rustfmt
-rustup component add clippy
-```
+`mise.toml` configures the latest stable Rust toolchain with the `minimal`
+profile plus the `clippy` and `rustfmt` components. mise installs that toolchain
+via [rustup]. Documentation checks use nightly Rust; install it with
+`rustup toolchain install nightly` if you run those workflows locally.
 
 To update your stable Rust compiler to the latest version, run:
 
@@ -60,76 +58,35 @@ toolchain installed, you can install the crates specified in
 [`Cargo.toml`](Cargo.toml) by running:
 
 ```sh
-cargo build
+mise run build
 ```
 
-### Ruby
-
-roe requires a recent Ruby and [bundler] for development tasks. The
-[`.ruby-version`](.ruby-version) file in this repository specifies the preferred
-Ruby toolchain.
-
-If you use [RVM], you can install Ruby dependencies by running:
+Common development tasks are declared in [`mise.toml`](mise.toml):
 
 ```sh
-rvm install "$(cat .ruby-version)"
-gem install bundler
+mise run build
+mise run test
+mise run fmt
+mise run fmt:check
+mise run lint
+mise run lint:clippy:restriction
+mise run doc
+mise run doc:open
 ```
 
-If you use [rbenv] and [ruby-build], you can install Ruby dependencies by
-running:
+### Ruby and Unicode data
+
+Ruby is only used by dependency-free scripts that update Unicode data and
+generate Rust lookup tables. mise installs both Ruby and `ucd-generate`.
 
 ```sh
-rbenv install "$(cat .ruby-version)"
-gem install bundler
-rbenv rehash
+mise run unicode:update
+mise run unicode:build
 ```
 
-The [`Gemfile`](Gemfile) in this repository specifies several dev dependencies.
-You can install these dependencies by running:
-
-```sh
-bundle install
-```
-
-[rvm]: https://rvm.io/
-[rbenv]: https://github.com/rbenv/rbenv
-[ruby-build]: https://github.com/rbenv/ruby-build
-
-roe uses [`rake`](Rakefile) as a task runner. You can see the available tasks by
-running:
-
-```console
-$ bundle exec rake --tasks
-rake build                         # Build Rust workspace
-rake bundle:audit:check            # Checks the Gemfile.lock for insecure dependencies
-rake bundle:audit:update           # Updates the bundler-audit vulnerability database
-rake doc                           # Generate Rust API documentation
-rake doc:open                      # Generate Rust API documentation and open it in a web browser
-rake fmt                           # Format sources
-rake fmt:rust                      # Format Rust sources with rustfmt
-rake fmt:text                      # Format text, YAML, and Markdown sources with prettier
-rake format                        # Format sources
-rake format:rust                   # Format Rust sources with rustfmt
-rake format:text                   # Format text, YAML, and Markdown sources with prettier
-rake lint                          # Lint sources
-rake lint:clippy                   # Lint Rust sources with Clippy
-rake lint:clippy:restriction       # Lint Rust sources with Clippy restriction pass (unenforced lints)
-rake lint:rubocop                  # Run RuboCop
-rake lint:rubocop:autocorrect      # Autocorrect RuboCop offenses (only when it's safe)
-rake lint:rubocop:autocorrect_all  # Autocorrect RuboCop offenses (safe and unsafe)
-rake test                          # Run Roe unit tests
-rake unicode:build                 # Rebuild Rust generated Rust sources from Unicode data
-rake unicode:update                # Update Unicode data
-```
-
-To lint Ruby sources, roe uses [RuboCop]. RuboCop runs as part of the `lint`
-task. To run RuboCop by itself, invoke the `lint:rubocop` task.
-
-```console
-$ bundle exec rake lint
-$ bundle exec rake lint:rubocop
-```
+The update task downloads the current Unicode license and Unicode Character
+Database inputs. Review those changes before rebuilding and committing the
+generated Rust code.
 
 ### Node.js
 
@@ -142,21 +99,23 @@ Node.js is only required for formatting if modifying the following filetypes:
 - `yaml`
 - `yml`
 
-You will need to install [Node.js].
-
-On macOS, you can install Node.js with [Homebrew]:
+Install Node.js with mise and install the repository-local dependencies:
 
 ```sh
-brew install node
+mise install
+pnpm install
 ```
 
 ## Linting
 
-To lint and format all sources run:
+To lint and check formatting for Rust and text sources run:
 
 ```sh
-rake lint
+mise run lint
 ```
+
+The unenforced Clippy restriction lint pass is available separately as
+`mise run lint:clippy:restriction`.
 
 ## Testing
 
@@ -166,7 +125,7 @@ on testing] is a good place to start.
 To run tests:
 
 ```sh
-rake test
+mise run test
 ```
 
 `cargo test` accepts a filter argument that will limit test execution to tests
@@ -210,9 +169,7 @@ Regular dependency bumps are handled by [@dependabot].
 [good first issues are labeled `e-easy`]:
   https://github.com/artichoke/roe/labels/E-easy
 [rustup]: https://rustup.rs/
-[homebrew]: https://docs.brew.sh/Installation
-[bundler]: https://bundler.io/
-[rubocop]: https://github.com/rubocop-hq/rubocop
+[mise]: https://mise.jdx.dev/
 [prettier]: https://prettier.io/
 [node.js]: https://nodejs.org/en/download/package-manager/
 [rust book chapter on testing]:

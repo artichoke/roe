@@ -14,26 +14,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
-  ruby:
-    name: Audit Ruby Dependencies
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Install Ruby toolchain
-        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
-        with:
-          ruby-version: ".ruby-version"
-          bundler-cache: true
-
-      - name: bundler-audit
-        run: bundle exec bundle-audit check --update
-
   rust:
     name: Audit Rust Dependencies
     runs-on: ubuntu-24.04

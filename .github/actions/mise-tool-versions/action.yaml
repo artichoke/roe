@@ -9,6 +9,9 @@ outputs:
   node:
     description: Node.js toolchain version
     value: ${{ steps.resolve.outputs.node }}
+  ruby:
+    description: Ruby toolchain version
+    value: ${{ steps.resolve.outputs.ruby }}
   zizmor:
     description: zizmor tool version
     value: ${{ steps.resolve.outputs.zizmor }}
