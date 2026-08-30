@@ -62,7 +62,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-roe = "0.0.7"
+roe = "0.0.8"
 ```
 
 Then convert case like:
@@ -105,7 +105,7 @@ assert_eq!(
 
 ## Unicode Version
 
-Roe implements Unicode case mapping with the Unicode 16.0.0 case mapping
+Roe implements Unicode case mapping with the Unicode 17.0.0 case mapping
 ruleset.
 
 Each new release of Unicode may bring updates to the Data Files which are the
