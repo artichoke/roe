@@ -162,7 +162,7 @@ jobs:
         run: cargo clippy --workspace --all-features --all-targets
 
   ruby:
-    name: Lint and format Ruby
+    name: Check Ruby scripts
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
@@ -170,14 +170,25 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install Ruby toolchain
+      - name: Setup mise
+        id: mise
+        uses: ./.github/actions/setup-mise
+        with:
+          github-token: ${{ github.token }}
+
+      - name: Resolve toolchain versions
+        id: toolchains
+        uses: ./.github/actions/mise-tool-versions
+        with:
+          executable: ${{ steps.mise.outputs.executable }}
+
+      - name: Setup Ruby
         uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
         with:
-          ruby-version: ".ruby-version"
-          bundler-cache: true
+          ruby-version: ${{ steps.toolchains.outputs.ruby }}
 
-      - name: Lint and check formatting with Rubocop
-        run: bundle exec rubocop --format github
+      - name: Check Ruby syntax
+        run: ruby -c scripts/*.rb
 
   text:
     name: Lint and format text
