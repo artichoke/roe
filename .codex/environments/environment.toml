@@ -1,0 +1,11 @@
+version = 1
+name = "roe"
+
+[setup]
+script = "./scripts/setup_codex_worktree.sh"
+
+[setup.win32]
+script = """
+Write-Error "roe worktree setup is supported on macOS and Linux only."
+exit 69
+"""
