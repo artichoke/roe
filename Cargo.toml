@@ -1,6 +1,6 @@
 [package]
 name = "roe"
-version = "0.0.7" # remember to set `html_root_url` in `src/lib.rs`.
+version = "0.0.8" # remember to set `html_root_url` in `src/lib.rs`.
 authors = ["Ryan Lopopolo <rjl@hyperbo.la>"]
 license = "MIT AND Unicode-3.0"
 edition = "2021"
