@@ -23,7 +23,7 @@ jobs:
       matrix:
         include:
           - name: ubuntu-latest
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
           - name: windows-latest
             runner: windows-2025-vs2026
           - name: macos-latest
@@ -66,7 +66,7 @@ jobs:
 
   build-msrv:
     name: Build (MSRV)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       CARGO_INCREMENTAL: 0
       RUSTFLAGS: -D warnings
@@ -104,7 +104,7 @@ jobs:
 
   rust-minimal-versions:
     name: Compile with minimum dependency versions
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       RUSTFLAGS: -D warnings
       RUST_BACKTRACE: 1
@@ -135,7 +135,7 @@ jobs:
 
   rust:
     name: Lint and format Rust
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       RUSTFLAGS: -D warnings
       RUST_BACKTRACE: 1
@@ -163,7 +163,7 @@ jobs:
 
   ruby:
     name: Check Ruby scripts
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -192,7 +192,7 @@ jobs:
 
   text:
     name: Lint and format text
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
