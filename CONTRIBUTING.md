@@ -23,8 +23,8 @@ issues are labeled `E-easy`].
 
 roe includes Rust, Ruby, and text sources. Developing on roe requires
 configuring several dependencies. [mise] manages the local development toolchain
-declared in [`mise.toml`](mise.toml), including Node.js, Ruby, Rust,
-`ucd-generate`, and auxiliary Rust tools.
+declared in [`mise.toml`](mise.toml), including Node.js, Ruby, Rust, and
+auxiliary Rust tools.
 
 ### Rust Toolchain
 
@@ -77,7 +77,8 @@ mise run doc:open
 ### Ruby and Unicode data
 
 Ruby is only used by dependency-free scripts that update Unicode data and
-generate Rust lookup tables. mise installs both Ruby and `ucd-generate`.
+generate Rust lookup tables. mise installs Ruby; generation needs no Ruby gems
+or external Unicode generator.
 
 ```sh
 mise run unicode:update

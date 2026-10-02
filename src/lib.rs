@@ -29,12 +29,13 @@
 //! > to a particular form—uppercase, lowercase, or titlecase—possibly for
 //! > display to the user.
 //!
-//! This crate is currently a *work in progress*. When the API is complete, Roe
-//! will support lowercase, uppercase, titlecase, and case folding iterators for
-//! conventionally UTF-8 byte slices.
+//! Roe supports full Unicode, Turkic, and ASCII lowercase, uppercase, and
+//! capitalization mappings. Full Unicode case folding is available through
+//! [`LowercaseMode::Fold`]. Invalid UTF-8 is preserved.
 //!
-//! Roe will implement support for full, Turkic, ASCII, and case folding
-//! transforms.
+//! Mappings use bundled Unicode 18.0.0 tables, independent of the Rust compiler.
+//! Like MRI Ruby, mappings are context-independent and Lithuanian mode is an
+//! alias for full Unicode mapping. The API is still evolving ahead of 1.0.
 //!
 //! # Usage
 //!
@@ -239,8 +240,8 @@ pub enum LowercaseMode {
     Turkic,
     /// Currently, just [full Unicode case mapping].
     ///
-    /// In the future, full Unicode case mapping adapted for Lithuanian (keeping
-    /// the dot on the lower case i even if there is an accent on top).
+    /// This matches MRI Ruby, which does not implement Lithuanian contextual
+    /// case mapping.
     ///
     /// [full Unicode case mapping]: Self::Full
     Lithuanian,
@@ -320,22 +321,13 @@ impl FromStr for LowercaseMode {
 /// The case mapping mode is determined by the given [`LowercaseMode`]. See its
 /// documentation for details on the available case mapping modes.
 ///
-/// # Panics
-///
-/// Not all [`LowercaseMode`]s are currently implemented. This function will
-/// panic if the caller supplies [Turkic] or [case folding] lowercasing mode.
-///
-/// [conventionally UTF-8 string]: https://docs.rs/bstr/0.2.*/bstr/#when-should-i-use-byte-strings
-/// [Turkic]: LowercaseMode::Turkic
-/// [case folding]: LowercaseMode::Fold
-// TODO: make this const once we're no longer panicking.
-pub fn lowercase(slice: &[u8], options: LowercaseMode) -> Lowercase<'_> {
+/// [conventionally UTF-8 string]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
+pub const fn lowercase(slice: &[u8], options: LowercaseMode) -> Lowercase<'_> {
     match options {
         LowercaseMode::Full | LowercaseMode::Lithuanian => Lowercase::with_slice(slice),
         LowercaseMode::Ascii => Lowercase::with_ascii_slice(slice),
-        // TODO: implement `turkic` and `fold` modes.
-        LowercaseMode::Turkic => panic!("lowercase Turkic mode is not yet implemented"),
-        LowercaseMode::Fold => panic!("lowercase case folding mode is not yet implemented"),
+        LowercaseMode::Turkic => Lowercase::with_mode(slice, unicode::mapping::Mode::TurkicLower),
+        LowercaseMode::Fold => Lowercase::with_mode(slice, unicode::mapping::Mode::Fold),
     }
 }
 
@@ -376,8 +368,8 @@ pub enum UppercaseMode {
     Turkic,
     /// Currently, just [full Unicode case mapping].
     ///
-    /// In the future, full Unicode case mapping adapted for Lithuanian (keeping
-    /// the dot on the lower case i even if there is an accent on top).
+    /// This matches MRI Ruby, which does not implement Lithuanian contextual
+    /// case mapping.
     ///
     /// [full Unicode case mapping]: Self::Full
     Lithuanian,
@@ -449,20 +441,12 @@ impl FromStr for UppercaseMode {
 /// The case mapping mode is determined by the given [`UppercaseMode`]. See its
 /// documentation for details on the available case mapping modes.
 ///
-/// # Panics
-///
-/// Not all [`UppercaseMode`]s are currently implemented. This function will
-/// panic if the caller supplies [Turkic] uppercasing mode.
-///
-/// [conventionally UTF-8 string]: https://docs.rs/bstr/0.2.*/bstr/#when-should-i-use-byte-strings
-/// [Turkic]: LowercaseMode::Turkic
-// TODO: make this const once we're no longer panicking.
-pub fn uppercase(slice: &[u8], options: UppercaseMode) -> Uppercase<'_> {
+/// [conventionally UTF-8 string]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
+pub const fn uppercase(slice: &[u8], options: UppercaseMode) -> Uppercase<'_> {
     match options {
         UppercaseMode::Full | UppercaseMode::Lithuanian => Uppercase::with_slice(slice),
         UppercaseMode::Ascii => Uppercase::with_ascii_slice(slice),
-        // TODO: implement `turkic` mode.
-        UppercaseMode::Turkic => panic!("uppercase Turkic mode is not yet implemented"),
+        UppercaseMode::Turkic => Uppercase::with_mode(slice, unicode::mapping::Mode::TurkicUpper),
     }
 }
 
@@ -574,20 +558,12 @@ impl FromStr for TitlecaseMode {
 /// The case mapping mode is determined by the given [`TitlecaseMode`]. See its
 /// documentation for details on the available case mapping modes.
 ///
-/// # Panics
-///
-/// Not all [`TitlecaseMode`]s are currently implemented. This function will
-/// panic if the caller supplies [Turkic] titlecasing mode.
-///
-/// [conventionally UTF-8 string]: https://docs.rs/bstr/0.2.*/bstr/#when-should-i-use-byte-strings
-/// [Turkic]: TitlecaseMode::Turkic
-// TODO: make this const once we're no longer panicking.
-pub fn titlecase(slice: &[u8], options: TitlecaseMode) -> Titlecase<'_> {
+/// [conventionally UTF-8 string]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
+pub const fn titlecase(slice: &[u8], options: TitlecaseMode) -> Titlecase<'_> {
     match options {
         TitlecaseMode::Full | TitlecaseMode::Lithuanian => Titlecase::with_slice(slice),
         TitlecaseMode::Ascii => Titlecase::with_ascii_slice(slice),
-        // TODO: implement `turkic` mode.
-        TitlecaseMode::Turkic => panic!("titlecase Turkic mode is not yet implemented"),
+        TitlecaseMode::Turkic => Titlecase::with_mode(slice, unicode::mapping::Mode::TurkicTitle),
     }
 }
 

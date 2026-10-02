@@ -1,9 +1,11 @@
-use core::char::ToLowercase;
 use core::fmt;
 use core::iter::FusedIterator;
 use core::ops::Range;
 
 use bstr::ByteSlice;
+
+use crate::unicode::mapping::{lookup, Mode};
+use crate::unicode::std_case_mapping_iter::CaseMappingIter;
 
 #[derive(Clone)]
 #[must_use = "Lowercase is a Iterator and must be used"]
@@ -11,7 +13,8 @@ pub struct Lowercase<'a> {
     slice: &'a [u8],
     next_bytes: [u8; 4],
     next_range: Range<usize>,
-    lowercase: Option<ToLowercase>,
+    lowercase: Option<CaseMappingIter>,
+    mode: Mode,
 }
 
 impl fmt::Debug for Lowercase<'_> {
@@ -21,6 +24,7 @@ impl fmt::Debug for Lowercase<'_> {
             .field("next_bytes", &self.next_bytes)
             .field("next_range", &self.next_range)
             .field("lowercase", &self.lowercase)
+            .field("mode", &self.mode)
             .finish()
     }
 }
@@ -33,11 +37,16 @@ impl<'a> From<&'a [u8]> for Lowercase<'a> {
 
 impl<'a> Lowercase<'a> {
     pub const fn with_slice(slice: &'a [u8]) -> Self {
+        Self::with_mode(slice, Mode::Lower)
+    }
+
+    pub const fn with_mode(slice: &'a [u8], mode: Mode) -> Self {
         Self {
             slice,
             next_bytes: [0; 4],
             next_range: 0..0,
             lowercase: None,
+            mode,
         }
     }
 
@@ -75,10 +84,10 @@ impl Iterator for Lowercase<'_> {
             (_, 0) => None,
             (Some(ch), size) => {
                 self.slice = &self.slice[size..];
-                let mut lowercase = ch.to_lowercase();
+                let mut lowercase = lookup(ch, self.mode);
                 let ch = lowercase
                     .next()
-                    .expect("ToLowercase yields at least one char");
+                    .expect("case mapping yields at least one char");
                 let enc = ch.encode_utf8(&mut self.next_bytes);
 
                 self.next_range = 1..enc.len();
@@ -105,7 +114,7 @@ impl Iterator for Lowercase<'_> {
         const CASE_MAPPING_MAX_BYTES: usize = 3 * 4;
         let buffered = self.buffered_len();
         let len = self.slice.len();
-        if self.slice.is_ascii() {
+        if self.slice.is_ascii() && !self.mode.is_turkic() {
             let len = buffered + len;
             (len, Some(len))
         } else {
@@ -121,7 +130,7 @@ impl Iterator for Lowercase<'_> {
     }
 
     fn count(self) -> usize {
-        if self.slice.is_ascii() {
+        if self.slice.is_ascii() && !self.mode.is_turkic() {
             self.buffered_len() + self.slice.len()
         } else {
             self.fold(0, |acc, _| acc + 1)
@@ -135,6 +144,8 @@ impl FusedIterator for Lowercase<'_> {}
 mod tests {
     use alloc::{format, vec::Vec};
     use bstr::ByteSlice;
+
+    use crate::unicode::mapping::{lookup, Mode};
     use core::char;
 
     use super::Lowercase;
@@ -279,10 +290,10 @@ mod tests {
         // there are no such characters
         for ch in '\0'..char::MAX {
             assert!(
-                ch.to_lowercase().count() < 3,
+                lookup(ch, Mode::Lower).count() < 3,
                 "Expected no characters that downcase to three or more characters, found: '{}', which expands to: {:?}",
                 ch,
-                ch.to_lowercase().collect::<Vec<_>>()
+                lookup(ch, Mode::Lower).collect::<Vec<_>>()
             );
         }
     }
@@ -383,7 +394,7 @@ mod tests {
         let iter = Lowercase::from(s);
         assert_eq!(
             format!("{iter:?}"),
-            "Lowercase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, lowercase: None }"
+            "Lowercase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, lowercase: None, mode: Lower }"
         );
     }
 }

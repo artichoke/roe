@@ -35,11 +35,17 @@ require 'fileutils'
 require 'open-uri'
 
 repo = File.expand_path('..', __dir__)
+# Resolve the latest final release once so all inputs use the same version.
+readme = URI.open('https://www.unicode.org/Public/UCD/latest/ucd/ReadMe.txt', &:read)
+version = readme[/final data files for version (\d+\.\d+\.\d+)/, 1]
+abort 'Could not identify a final Unicode release.' unless version
 downloads = {
   'https://www.unicode.org/license.txt' => 'LICENSE-UNICODE',
-  'https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt' => 'generated/ucd/UnicodeData.txt',
-  'https://www.unicode.org/Public/UCD/latest/ucd/SpecialCasing.txt' => 'generated/ucd/SpecialCasing.txt',
-  'https://www.unicode.org/Public/UCD/latest/ucd/PropList.txt' => 'generated/ucd/PropList.txt'
+  "https://www.unicode.org/Public/#{version}/ucd/UnicodeData.txt" => 'generated/ucd/UnicodeData.txt',
+  "https://www.unicode.org/Public/#{version}/ucd/SpecialCasing.txt" => 'generated/ucd/SpecialCasing.txt',
+  "https://www.unicode.org/Public/#{version}/ucd/CaseFolding.txt" => 'generated/ucd/CaseFolding.txt',
+  "https://www.unicode.org/Public/#{version}/ucd/ReadMe.txt" => 'generated/ucd/ReadMe.txt',
+  "https://www.unicode.org/Public/#{version}/ucd/PropList.txt" => 'generated/ucd/PropList.txt'
 }.freeze
 
 FileUtils.mkdir_p(File.join(repo, 'generated', 'ucd'))

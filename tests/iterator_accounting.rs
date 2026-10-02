@@ -28,6 +28,9 @@ fn lowercase_remaining_output() {
     for input in inputs() {
         check_remaining(lowercase(input, LowercaseMode::Full));
         check_remaining(lowercase(input, LowercaseMode::Ascii));
+        check_remaining(lowercase(input, LowercaseMode::Turkic));
+        check_remaining(lowercase(input, LowercaseMode::Fold));
+        check_remaining(lowercase(input, LowercaseMode::Lithuanian));
     }
 }
 
@@ -36,6 +39,8 @@ fn uppercase_remaining_output() {
     for input in inputs() {
         check_remaining(uppercase(input, UppercaseMode::Full));
         check_remaining(uppercase(input, UppercaseMode::Ascii));
+        check_remaining(uppercase(input, UppercaseMode::Turkic));
+        check_remaining(uppercase(input, UppercaseMode::Lithuanian));
     }
 }
 
@@ -44,6 +49,8 @@ fn titlecase_remaining_output() {
     for input in inputs() {
         check_remaining(titlecase(input, TitlecaseMode::Full));
         check_remaining(titlecase(input, TitlecaseMode::Ascii));
+        check_remaining(titlecase(input, TitlecaseMode::Turkic));
+        check_remaining(titlecase(input, TitlecaseMode::Lithuanian));
     }
 }
 
