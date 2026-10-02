@@ -6,7 +6,7 @@
 
 class CaseMappingGenerator
   UNICODE_DATA_COLUMNS = { 'UPPER' => 12, 'LOWER' => 13, 'TITLE' => 14 }.freeze
-  MAPPING_NAMES = %w[LOWER UPPER TITLE FOLD].freeze
+  MAPPING_NAMES = %w[LOWER UPPER TITLE FOLD SWAP].freeze
 
   def initialize(repo:)
     @repo = repo
@@ -44,6 +44,7 @@ class CaseMappingGenerator
     load_unicode_data(mappings)
     load_special_casing(mappings)
     load_case_folding(mappings)
+    load_swapcase(mappings)
     mappings
   end
 
@@ -77,6 +78,29 @@ class CaseMappingGenerator
 
       mappings['FOLD'][code.to_i(16)] = parse_mapping(target)
     end
+  end
+
+  def load_swapcase(mappings)
+    (mappings['LOWER'].keys | mappings['UPPER'].keys).each do |code|
+      mappings['SWAP'][code] = swap_mapping(code, mappings)
+    end
+    File.foreach(ucd_path('UnicodeData')) do |line|
+      fields = line.chomp.split(';', -1)
+      next unless fields[2] == 'Lt'
+
+      # MRI swaps the components of titlecase letters (e.g. ǅ -> dŽ).
+      components = fields[5].sub(/\A<[^>]+>\s*/, '').split.map { |code| code.to_i(16) }
+      raise "Missing titlecase decomposition: #{fields[0]}" if components.empty?
+
+      mappings['SWAP'][fields[0].to_i(16)] = components.flat_map { |code| swap_mapping(code, mappings) }
+    end
+  end
+
+  def swap_mapping(code, mappings)
+    lower = mappings['LOWER'][code]
+    return lower if lower && lower != [code]
+
+    mappings['UPPER'][code] || [code]
   end
 
   def each_record(name)

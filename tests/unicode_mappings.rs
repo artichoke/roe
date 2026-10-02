@@ -69,6 +69,12 @@ fn all_unicode_scalars_match_ucd() {
             lowercase(input, LowercaseMode::Fold).collect::<Vec<_>>(),
         ];
         for (kind, (actual, table)) in actual.iter().zip(&maps).enumerate() {
+            // MRI capitalization lowercases Georgian Mtavruli capitals.
+            let table = if kind == 2 && ('\u{1c90}'..='\u{1cbf}').contains(&c) {
+                &maps[0]
+            } else {
+                table
+            };
             let expected = table.get(&c).map_or(input, Vec::as_slice);
             assert_eq!(actual, expected, "mapping {kind}, U+{:04X}", u32::from(c));
         }
@@ -149,5 +155,14 @@ fn lithuanian_remains_an_alias_for_full() {
     assert_eq!(
         titlecase(input, TitlecaseMode::Lithuanian).collect::<Vec<_>>(),
         titlecase(input, TitlecaseMode::Full).collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn georgian_capitalization_differs_from_character_titlecase() {
+    assert_eq!(roe::to_titlecase('Ა'), ['Ა', '\0', '\0']);
+    assert_eq!(
+        titlecase("ᲐᲑ".as_bytes(), TitlecaseMode::Full).collect::<Vec<_>>(),
+        "აბ".as_bytes()
     );
 }

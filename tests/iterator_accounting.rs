@@ -1,4 +1,6 @@
-use roe::{lowercase, titlecase, uppercase, LowercaseMode, TitlecaseMode, UppercaseMode};
+use roe::{
+    lowercase, titlecase, uppercase, LowercaseMode, SwapcaseMode, TitlecaseMode, UppercaseMode,
+};
 
 fn check_remaining(mut iter: impl Iterator<Item = u8> + Clone) {
     // Count by advancing explicitly so the oracle does not use `count` or
@@ -54,10 +56,26 @@ fn titlecase_remaining_output() {
     }
 }
 
+#[test]
+fn swapcase_remaining_output() {
+    for input in inputs() {
+        for mode in [
+            SwapcaseMode::Full,
+            SwapcaseMode::Ascii,
+            SwapcaseMode::Turkic,
+            SwapcaseMode::Lithuanian,
+        ] {
+            check_remaining(roe::swapcase(input, mode));
+        }
+    }
+}
+
 fn inputs() -> impl Iterator<Item = &'static [u8]> {
     [
         &b""[..],
         b"abcXYZ",
+        b"iI",
+        "ǅᾈ".as_bytes(),
         "ß".as_bytes(),
         "ßABC".as_bytes(),
         "İ".as_bytes(),
