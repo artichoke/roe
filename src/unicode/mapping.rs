@@ -1,5 +1,5 @@
 use super::std_case_mapping_iter::CaseMappingIter;
-use super::ucd_generated_case_mapping::{FOLD, LOWER, TITLE, UPPER};
+use super::ucd_generated_case_mapping::{FOLD, LOWER, SWAP, TITLE, UPPER};
 
 #[derive(Clone, Copy, Debug)]
 pub(crate) enum Mode {
@@ -7,6 +7,8 @@ pub(crate) enum Mode {
     Upper,
     Title,
     Fold,
+    Swap,
+    TurkicSwap,
     TurkicLower,
     TurkicUpper,
     TurkicTitle,
@@ -16,7 +18,7 @@ impl Mode {
     pub(crate) const fn is_turkic(self) -> bool {
         matches!(
             self,
-            Self::TurkicLower | Self::TurkicUpper | Self::TurkicTitle
+            Self::TurkicLower | Self::TurkicUpper | Self::TurkicTitle | Self::TurkicSwap
         )
     }
 }
@@ -24,9 +26,9 @@ impl Mode {
 pub(crate) fn lookup(c: char, mode: Mode) -> CaseMappingIter {
     // MRI applies these language-specific I mappings without contextual casing.
     let special = match (mode, c) {
-        (Mode::TurkicLower, 'I') => Some('\u{131}'),
-        (Mode::TurkicLower, '\u{130}') => Some('i'),
-        (Mode::TurkicUpper | Mode::TurkicTitle, 'i') => Some('\u{130}'),
+        (Mode::TurkicLower | Mode::TurkicSwap, 'I') => Some('\u{131}'),
+        (Mode::TurkicLower | Mode::TurkicSwap, '\u{130}') => Some('i'),
+        (Mode::TurkicUpper | Mode::TurkicTitle | Mode::TurkicSwap, 'i') => Some('\u{130}'),
         _ => None,
     };
     if let Some(c) = special {
@@ -34,18 +36,23 @@ pub(crate) fn lookup(c: char, mode: Mode) -> CaseMappingIter {
     }
     if c.is_ascii() {
         let c = match mode {
-            Mode::Lower | Mode::TurkicLower | Mode::Fold => c.to_ascii_lowercase(),
+            Mode::Swap | Mode::TurkicSwap if c.is_ascii_lowercase() => c.to_ascii_uppercase(),
+            Mode::Lower | Mode::TurkicLower | Mode::Fold | Mode::Swap | Mode::TurkicSwap => {
+                c.to_ascii_lowercase()
+            }
             Mode::Upper | Mode::TurkicUpper | Mode::Title | Mode::TurkicTitle => {
                 c.to_ascii_uppercase()
             }
         };
         return CaseMappingIter::new([c, '\0', '\0']);
     }
+    let mode = super::georgian::capitalization_mode(c, mode);
     let table = match mode {
         Mode::Lower | Mode::TurkicLower => LOWER,
         Mode::Upper | Mode::TurkicUpper => UPPER,
         Mode::Title | Mode::TurkicTitle => TITLE,
         Mode::Fold => FOLD,
+        Mode::Swap | Mode::TurkicSwap => SWAP,
     };
     CaseMappingIter::new(lookup_table(c, table))
 }

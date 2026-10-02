@@ -19,18 +19,23 @@ Implements [Unicode case mapping] for [conventionally UTF-8 binary strings].
 `roe` can convert conventionally UTF-8 binary strings to capitalized, lowercase,
 and uppercase forms. This crate is used to implement [`String#capitalize`],
 [`Symbol#capitalize`], [`String#downcase`], [`Symbol#downcase`],
-[`String#upcase`], and [`Symbol#upcase`] in [Artichoke Ruby].
+[`String#upcase`], [`Symbol#upcase`], [`String#swapcase`], and
+[`Symbol#swapcase`] in [Artichoke Ruby].
 
 [`string#capitalize`]:
-  https://ruby-doc.org/core-3.1.2/String.html#method-i-capitalize
+  https://docs.ruby-lang.org/en/4.0/String.html#method-i-capitalize
 [`symbol#capitalize`]:
-  https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-capitalize
+  https://docs.ruby-lang.org/en/4.0/Symbol.html#method-i-capitalize
 [`string#downcase`]:
-  https://ruby-doc.org/core-3.1.2/String.html#method-i-downcase
+  https://docs.ruby-lang.org/en/4.0/String.html#method-i-downcase
 [`symbol#downcase`]:
-  https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-downcase
-[`string#upcase`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-upcase
-[`symbol#upcase`]: https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-upcase
+  https://docs.ruby-lang.org/en/4.0/Symbol.html#method-i-downcase
+[`string#upcase`]: https://docs.ruby-lang.org/en/4.0/String.html#method-i-upcase
+[`symbol#upcase`]: https://docs.ruby-lang.org/en/4.0/Symbol.html#method-i-upcase
+[`string#swapcase`]:
+  https://docs.ruby-lang.org/en/4.0/String.html#method-i-swapcase
+[`symbol#swapcase`]:
+  https://docs.ruby-lang.org/en/4.0/Symbol.html#method-i-swapcase
 [artichoke ruby]: https://github.com/artichoke/artichoke
 
 This crate depends on [`bstr`].
@@ -52,8 +57,9 @@ mapping as defined in the [Unicode standard][casemap] (see [`PropList.txt`],
 ## Status
 
 Roe supports full Unicode, Turkic, and ASCII lowercase, uppercase, and
-capitalization mappings for conventionally UTF-8 byte slices. Full Unicode case
-folding is available through `LowercaseMode::Fold`. Invalid UTF-8 is preserved.
+capitalization and swapcase mappings for conventionally UTF-8 byte slices. Full
+Unicode case folding is available through `LowercaseMode::Fold`. Invalid UTF-8
+is preserved.
 
 Like MRI Ruby, mappings are context-independent and Lithuanian mode currently
 uses the full Unicode mappings. All Unicode mappings use bundled tables rather
