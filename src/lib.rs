@@ -581,13 +581,22 @@ pub const fn swapcase(slice: &[u8], options: SwapcaseMode) -> Swapcase<'_> {
 ///
 /// See individual variants for a description of the available behaviors.
 ///
-/// If you're not sure which mode to choose, [`UppercaseMode::Full`] is a a good
+/// If you're not sure which mode to choose, [`TitlecaseMode::Full`] is a good
 /// default.
 ///
 /// [`titlecase`]: crate::titlecase()
 #[derive(Default, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum TitlecaseMode {
-    /// Full Unicode case mapping, suitable for most languages.
+    /// Full Unicode case mapping with Ruby string capitalization semantics.
+    ///
+    /// Georgian Mtavruli capitals are lowercased to Mkhedruli, including the
+    /// initial character: `ᲐᲑᲒ` becomes `აბგ`. Modern Georgian uses Mtavruli for
+    /// all-caps emphasis, without initial-letter capitalization. This avoids
+    /// producing mixed forms such as `Აბგ`.
+    ///
+    /// This differs from [`to_titlecase(char)`](crate::to_titlecase), which
+    /// follows Unicode's character mapping and leaves Mtavruli unchanged.
+    /// See [`titlecase`](crate::titlecase()) for an example and rationale.
     ///
     /// See the [Turkic] and [Lithuanian] variants for exceptions.
     ///
@@ -682,6 +691,29 @@ impl FromStr for TitlecaseMode {
 ///
 /// The case mapping mode is determined by the given [`TitlecaseMode`]. See its
 /// documentation for details on the available case mapping modes.
+///
+/// # Georgian capitalization
+///
+/// Modern Georgian uses Mkhedruli for ordinary text and Mtavruli for all-caps
+/// emphasis, without capitalizing only the initial letter. Unicode's character
+/// titlecase mappings leave both forms unchanged. Titlecasing an initial
+/// Mtavruli character and lowercasing the rest would therefore produce an
+/// inappropriate mixed form such as `Აბგ`.
+///
+/// Like MRI, this function instead lowercases the initial Mtavruli character,
+/// producing `აბგ`. This applies to [`TitlecaseMode::Full`],
+/// [`TitlecaseMode::Turkic`], and [`TitlecaseMode::Lithuanian`]. The character
+/// mapping function [`to_titlecase`] retains Unicode's unchanged Mtavruli mapping.
+/// See [Ruby issue #14839](https://bugs.ruby-lang.org/issues/14839) for the
+/// rationale and feedback from Georgian speakers.
+///
+/// ```
+/// use roe::{titlecase, to_titlecase, TitlecaseMode};
+///
+/// let capitalized: Vec<u8> = titlecase("ᲐᲑᲒ".as_bytes(), TitlecaseMode::Full).collect();
+/// assert_eq!(capitalized, "აბგ".as_bytes());
+/// assert_eq!(to_titlecase('Ა'), ['Ა', '\0', '\0']);
+/// ```
 ///
 /// [conventionally UTF-8 string]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
 pub const fn titlecase(slice: &[u8], options: TitlecaseMode) -> Titlecase<'_> {
