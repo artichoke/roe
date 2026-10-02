@@ -36,14 +36,10 @@ pub(crate) fn lookup(c: char, mode: Mode) -> CaseMappingIter {
     }
     if c.is_ascii() {
         let c = match mode {
-            Mode::Swap | Mode::TurkicSwap => {
-                if c.is_ascii_lowercase() {
-                    c.to_ascii_uppercase()
-                } else {
-                    c.to_ascii_lowercase()
-                }
+            Mode::Swap | Mode::TurkicSwap if c.is_ascii_lowercase() => c.to_ascii_uppercase(),
+            Mode::Lower | Mode::TurkicLower | Mode::Fold | Mode::Swap | Mode::TurkicSwap => {
+                c.to_ascii_lowercase()
             }
-            Mode::Lower | Mode::TurkicLower | Mode::Fold => c.to_ascii_lowercase(),
             Mode::Upper | Mode::TurkicUpper | Mode::Title | Mode::TurkicTitle => {
                 c.to_ascii_uppercase()
             }
