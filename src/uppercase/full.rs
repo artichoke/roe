@@ -1,9 +1,11 @@
-use core::char::ToUppercase;
 use core::fmt;
 use core::iter::FusedIterator;
 use core::ops::Range;
 
 use bstr::ByteSlice;
+
+use crate::unicode::mapping::{lookup, Mode};
+use crate::unicode::std_case_mapping_iter::CaseMappingIter;
 
 #[derive(Clone)]
 #[must_use = "Uppercase is a Iterator and must be used"]
@@ -11,7 +13,8 @@ pub struct Uppercase<'a> {
     slice: &'a [u8],
     next_bytes: [u8; 4],
     next_range: Range<usize>,
-    uppercase: Option<ToUppercase>,
+    uppercase: Option<CaseMappingIter>,
+    mode: Mode,
 }
 
 impl fmt::Debug for Uppercase<'_> {
@@ -21,6 +24,7 @@ impl fmt::Debug for Uppercase<'_> {
             .field("next_bytes", &self.next_bytes)
             .field("next_range", &self.next_range)
             .field("uppercase", &self.uppercase)
+            .field("mode", &self.mode)
             .finish()
     }
 }
@@ -33,11 +37,16 @@ impl<'a> From<&'a [u8]> for Uppercase<'a> {
 
 impl<'a> Uppercase<'a> {
     pub const fn with_slice(slice: &'a [u8]) -> Self {
+        Self::with_mode(slice, Mode::Upper)
+    }
+
+    pub const fn with_mode(slice: &'a [u8], mode: Mode) -> Self {
         Self {
             slice,
             next_bytes: [0; 4],
             next_range: 0..0,
             uppercase: None,
+            mode,
         }
     }
 
@@ -75,10 +84,10 @@ impl Iterator for Uppercase<'_> {
             (_, 0) => None,
             (Some(ch), size) => {
                 self.slice = &self.slice[size..];
-                let mut uppercase = ch.to_uppercase();
+                let mut uppercase = lookup(ch, self.mode);
                 let ch = uppercase
                     .next()
-                    .expect("ToUppercase yields at least one char");
+                    .expect("case mapping yields at least one char");
                 let enc = ch.encode_utf8(&mut self.next_bytes);
 
                 self.next_range = 1..enc.len();
@@ -105,7 +114,7 @@ impl Iterator for Uppercase<'_> {
         const CASE_MAPPING_MAX_BYTES: usize = 3 * 4;
         let buffered = self.buffered_len();
         let len = self.slice.len();
-        if self.slice.is_ascii() {
+        if self.slice.is_ascii() && !self.mode.is_turkic() {
             let len = buffered + len;
             (len, Some(len))
         } else {
@@ -121,7 +130,7 @@ impl Iterator for Uppercase<'_> {
     }
 
     fn count(self) -> usize {
-        if self.slice.is_ascii() {
+        if self.slice.is_ascii() && !self.mode.is_turkic() {
             self.buffered_len() + self.slice.len()
         } else {
             self.fold(0, |acc, _| acc + 1)
@@ -414,7 +423,7 @@ mod tests {
         let iter = Uppercase::from(s);
         assert_eq!(
             format!("{iter:?}"),
-            "Uppercase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, uppercase: None }"
+            "Uppercase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, uppercase: None, mode: Upper }"
         );
     }
 }

@@ -41,20 +41,25 @@ This crate depends on [`bstr`].
 
 Roe generates conversion tables from Unicode Data Files. Roe implements case
 mapping as defined in the [Unicode standard][casemap] (see [`PropList.txt`],
-[`SpecialCasing.txt`], [`UnicodeData.txt`]).
+[`SpecialCasing.txt`], [`UnicodeData.txt`], [`CaseFolding.txt`]).
 
 [casemap]: https://unicode.org/faq/casemap_charprop.html#casemap
 [`proplist.txt`]: generated/ucd/PropList.txt
 [`specialcasing.txt`]: generated/ucd/SpecialCasing.txt
 [`unicodedata.txt`]: generated/ucd/UnicodeData.txt
+[`casefolding.txt`]: generated/ucd/CaseFolding.txt
 
 ## Status
 
-This crate is currently a _work in progress_. When the API is complete, Roe will
-support lowercase, uppercase, titlecase, and case folding iterators for
-conventionally UTF-8 byte slices.
+Roe supports full Unicode, Turkic, and ASCII lowercase, uppercase, and
+capitalization mappings for conventionally UTF-8 byte slices. Full Unicode case
+folding is available through `LowercaseMode::Fold`. Invalid UTF-8 is preserved.
 
-Roe will implement support for full, Turkic, ASCII, and case folding transforms.
+Like MRI Ruby, mappings are context-independent and Lithuanian mode currently
+uses the full Unicode mappings. All Unicode mappings use bundled tables rather
+than the Rust compiler's Unicode version.
+
+The API is still evolving ahead of a 1.0 release.
 
 ## Usage
 
@@ -105,7 +110,7 @@ assert_eq!(
 
 ## Unicode Version
 
-Roe implements Unicode case mapping with the Unicode 17.0.0 case mapping
+Roe implements Unicode case mapping with the Unicode 18.0.0 case mapping
 ruleset.
 
 Each new release of Unicode may bring updates to the Data Files which are the
@@ -117,6 +122,6 @@ will be accompanied with a minor version bump.
 `roe` is licensed under the [MIT License](LICENSE) (c) Ryan Lopopolo.
 
 `roe` includes Unicode Data Files which are subject to the [Unicode Terms of
-Use] and [Unicode License v3](LICENSE-UNICODE) (c) 1991-2024 Unicode, Inc.
+Use] and [Unicode License v3](LICENSE-UNICODE) (c) Unicode, Inc.
 
 [unicode terms of use]: https://www.unicode.org/copyright.html

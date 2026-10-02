@@ -7,8 +7,8 @@ release and keeps Roe's embedded data current. It must read
 
 ## Owned Inputs
 
-- `UnicodeData.txt`, `SpecialCasing.txt`, and `PropList.txt` from the latest
-  Unicode Character Database;
+- `UnicodeData.txt`, `SpecialCasing.txt`, `CaseFolding.txt`, `ReadMe.txt`, and
+  `PropList.txt` from the latest Unicode Character Database;
 - `LICENSE-UNICODE` from the Unicode license endpoint;
 - `generated/case_mapping.rs`.
 
@@ -28,7 +28,6 @@ Use the repository tasks:
 
 ```sh
 mise run unicode:update
-git add LICENSE-UNICODE generated/ucd
 mise run unicode:build
 mise run fmt
 mise run lint
@@ -38,8 +37,8 @@ cargo package --allow-dirty
 
 Review every generated diff. Confirm the downloaded license is present in the
 crate package and that generated tables are deterministic on a second build. The
-explicit staging step is required by the generator's clean-input guard; stage
-`generated/case_mapping.rs` after reviewing it.
+Ruby generator reads the bundled final-release data and requires no external
+Unicode generator. Review and stage the generated files after validation.
 
 While Roe is on `0.0.x`, a Unicode data update prepares the next patch release
 unless a maintainer directs otherwise. Update `Cargo.toml`, README dependency

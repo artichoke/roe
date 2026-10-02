@@ -1,5 +1,7 @@
 use core::iter::FusedIterator;
 
+use crate::unicode::mapping::Mode;
+
 mod ascii;
 mod full;
 
@@ -126,6 +128,12 @@ impl<'a> Uppercase<'a> {
     pub const fn with_ascii_slice(slice: &'a [u8]) -> Self {
         Self {
             iter: Inner::Ascii(ascii::Uppercase::with_slice(slice)),
+        }
+    }
+
+    pub(crate) const fn with_mode(slice: &'a [u8], mode: Mode) -> Self {
+        Self {
+            iter: Inner::Full(full::Uppercase::with_mode(slice, mode)),
         }
     }
 }
