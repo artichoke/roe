@@ -23,15 +23,15 @@ and uppercase forms. This crate is used to implement [`String#capitalize`],
 [`Symbol#swapcase`] in [Artichoke Ruby].
 
 [`string#capitalize`]:
-  https://ruby-doc.org/core-3.1.2/String.html#method-i-capitalize
+  https://docs.ruby-lang.org/en/4.0/String.html#method-i-capitalize
 [`symbol#capitalize`]:
-  https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-capitalize
+  https://docs.ruby-lang.org/en/4.0/Symbol.html#method-i-capitalize
 [`string#downcase`]:
-  https://ruby-doc.org/core-3.1.2/String.html#method-i-downcase
+  https://docs.ruby-lang.org/en/4.0/String.html#method-i-downcase
 [`symbol#downcase`]:
-  https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-downcase
-[`string#upcase`]: https://ruby-doc.org/core-3.1.2/String.html#method-i-upcase
-[`symbol#upcase`]: https://ruby-doc.org/core-3.1.2/Symbol.html#method-i-upcase
+  https://docs.ruby-lang.org/en/4.0/Symbol.html#method-i-downcase
+[`string#upcase`]: https://docs.ruby-lang.org/en/4.0/String.html#method-i-upcase
+[`symbol#upcase`]: https://docs.ruby-lang.org/en/4.0/Symbol.html#method-i-upcase
 [`string#swapcase`]:
   https://docs.ruby-lang.org/en/4.0/String.html#method-i-swapcase
 [`symbol#swapcase`]:
