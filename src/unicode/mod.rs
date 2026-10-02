@@ -1,3 +1,4 @@
+mod georgian;
 pub(crate) mod mapping;
 pub(crate) mod std_case_mapping_iter;
 pub mod titlecase;

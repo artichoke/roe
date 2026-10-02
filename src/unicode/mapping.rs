@@ -46,12 +46,7 @@ pub(crate) fn lookup(c: char, mode: Mode) -> CaseMappingIter {
         };
         return CaseMappingIter::new([c, '\0', '\0']);
     }
-    // Ruby capitalization maps Georgian Mtavruli to Mkhedruli. Unicode's
-    // character titlecase mapping itself remains available via `to_titlecase`.
-    let mode = match (mode, c) {
-        (Mode::Title | Mode::TurkicTitle, '\u{1c90}'..='\u{1cbf}') => Mode::Lower,
-        _ => mode,
-    };
+    let mode = super::georgian::capitalization_mode(c, mode);
     let table = match mode {
         Mode::Lower | Mode::TurkicLower => LOWER,
         Mode::Upper | Mode::TurkicUpper => UPPER,
