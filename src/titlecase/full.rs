@@ -63,6 +63,14 @@ impl<'a> Titlecase<'a> {
             first: true,
         }
     }
+
+    fn buffered_len(&self) -> usize {
+        let mapped = self
+            .case_iter
+            .clone()
+            .map_or(0, |iter| iter.map(char::len_utf8).sum());
+        self.next_range.len() + mapped
+    }
 }
 
 impl Iterator for Titlecase<'_> {
@@ -122,27 +130,27 @@ impl Iterator for Titlecase<'_> {
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        const TO_LOWER_OR_TITLE_EXPAND: usize = 3;
-        const UTF_8_CHAR_MAX_BYTES: usize = 4;
-        if self.slice.is_empty() {
-            (0, Some(0))
-        } else if self.slice.is_ascii() {
-            let len = self.slice.len();
+        const CASE_MAPPING_MAX_BYTES: usize = 3 * 4;
+        let buffered = self.buffered_len();
+        let len = self.slice.len();
+        if self.slice.is_ascii() {
+            let len = buffered + len;
             (len, Some(len))
         } else {
-            let len = self.slice.len();
-            (
-                len,
-                Some(len * TO_LOWER_OR_TITLE_EXPAND * UTF_8_CHAR_MAX_BYTES),
-            )
+            // A decoded character consumes at most four input bytes and yields
+            // at least one output byte. Invalid UTF-8 is passed through. Input
+            // byte length is not a lower bound: e.g. dotless i maps to ASCII I.
+            let min = buffered.saturating_add(len.div_ceil(4));
+            let max = len
+                .checked_mul(CASE_MAPPING_MAX_BYTES)
+                .and_then(|len| len.checked_add(buffered));
+            (min, max)
         }
     }
 
     fn count(self) -> usize {
-        if self.slice.is_empty() {
-            0
-        } else if self.slice.is_ascii() {
-            self.slice.len()
+        if self.slice.is_ascii() {
+            self.buffered_len() + self.slice.len()
         } else {
             self.fold(0, |acc, _| acc + 1)
         }
@@ -341,26 +349,26 @@ mod tests {
         assert_eq!(Titlecase::with_slice(b"abc, xyz").size_hint(), (8, Some(8)));
         assert_eq!(
             Titlecase::with_slice(b"abc, \xFF\xFE, xyz").size_hint(),
-            (12, Some(144))
+            (3, Some(144))
         );
         assert_eq!(
             Titlecase::with_slice("�".as_bytes()).size_hint(),
-            (3, Some(36))
+            (1, Some(36))
         );
         assert_eq!(
             Titlecase::with_slice("Έτος".as_bytes()).size_hint(),
-            (8, Some(96))
+            (2, Some(96))
         );
         assert_eq!(
             Titlecase::with_slice("ZȺȾ".as_bytes()).size_hint(),
-            (5, Some(60))
+            (2, Some(60))
         );
 
         let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
         utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
         assert_eq!(
             Titlecase::with_slice(&utf8_with_invalid_bytes).size_hint(),
-            (10, Some(120))
+            (3, Some(120))
         );
     }
 
