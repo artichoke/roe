@@ -2,6 +2,12 @@
 // Unicode 18.0.0. Derived from Unicode Data Files.
 // Copyright Unicode, Inc. See LICENSE-UNICODE and LICENSE.
 
+/// The bundled Unicode case mapping version as (major, minor, patch).
+///
+/// This version is independent of the Rust compiler's Unicode tables.
+/// Unicode updates can change mapping results and require a minor crate release.
+pub const UNICODE_VERSION: (u8, u8, u8) = (18, 0, 0);
+
 pub const LOWER: &[(u32, [u32; 3])] = &[
     (0x41, [0x61, !0, !0]),
     (0x42, [0x62, !0, !0]),

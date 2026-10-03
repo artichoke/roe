@@ -61,8 +61,6 @@ jobs:
 
       - name: Test with no default features
         run: cargo test --no-default-features
-      - name: Test additional feature configuration 1
-        run: cargo test --no-default-features --features alloc
 
   build-msrv:
     name: Build (MSRV)
@@ -82,8 +80,8 @@ jobs:
         run: |
           set -euo pipefail
           rustup set profile minimal
-          rustup toolchain install 1.76.0 --no-self-update
-          rustup default 1.76.0
+          rustup toolchain install 1.85.0 --no-self-update
+          rustup default 1.85.0
           rustc -Vv
           cargo -V
 
@@ -188,7 +186,10 @@ jobs:
           ruby-version: ${{ steps.toolchains.outputs.ruby }}
 
       - name: Check Ruby syntax
-        run: ruby -c scripts/*.rb
+        run: |
+          for script in scripts/*.rb; do
+            ruby -c "$script"
+          done
 
   text:
     name: Lint and format text

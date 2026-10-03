@@ -99,20 +99,17 @@ assert_eq!(
 
 `roe` is `no_std` compatible with an optional dependency on the [`alloc`] crate.
 
-`roe` has several Cargo features, all of which are enabled by default:
-
-- **std** - Adds a dependency on [`std`], the Rust Standard Library. This
-  feature enables [`std::error::Error`] implementations on error types in this
-  crate. Enabling the **std** feature also enables the **alloc** feature.
-- **alloc** - Adds a dependency on [`alloc`], the Rust allocation and
-  collections library. This feature enables APIs that allocate [`String`] or
-  [`Vec`].
+The **alloc** feature is enabled by default and provides APIs that allocate
+[`String`] or [`Vec`]. Disable default features to use Roe without allocation.
 
 [`alloc`]: https://doc.rust-lang.org/alloc/index.html
-[`std`]: https://doc.rust-lang.org/std/index.html
-[`std::error::error`]: https://doc.rust-lang.org/std/error/trait.Error.html
 [`string`]: https://doc.rust-lang.org/stable/alloc/string/struct.String.html
 [`vec`]: https://doc.rust-lang.org/stable/alloc/vec/struct.Vec.html
+
+### Minimum Supported Rust Version
+
+This crate requires at least Rust 1.85.0. This version can be bumped in minor
+releases.
 
 ## Unicode Version
 

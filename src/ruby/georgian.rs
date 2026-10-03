@@ -18,11 +18,11 @@
 //! description](https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-7/)
 //! for the distinction between uppercase emphasis and titlecasing.
 
-use super::mapping::Mode;
+use crate::unicode::mapping::Mode;
 
 /// Select the lowercase mapping for an initial Mtavruli character when
 /// capitalizing a string. All other mapping modes and characters are unchanged.
-pub(super) const fn capitalization_mode(c: char, mode: Mode) -> Mode {
+pub(crate) const fn capitalization_mode(c: char, mode: Mode) -> Mode {
     match (mode, c) {
         (Mode::Title | Mode::TurkicTitle, '\u{1c90}'..='\u{1cbf}') => Mode::Lower,
         _ => mode,

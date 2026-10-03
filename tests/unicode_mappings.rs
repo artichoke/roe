@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use roe::{lowercase, titlecase, uppercase, LowercaseMode, TitlecaseMode, UppercaseMode};
+use roe::{LowercaseMode, TitlecaseMode, UppercaseMode, lowercase, titlecase, uppercase};
 
 type Mappings = BTreeMap<char, Vec<u8>>;
 

@@ -136,6 +136,14 @@ class CaseMappingGenerator
         // Unicode #{version}. Derived from Unicode Data Files.
         // Copyright Unicode, Inc. See LICENSE-UNICODE and LICENSE.
       HEADER
+      output.puts <<~VERSION
+
+        /// The bundled Unicode case mapping version as (major, minor, patch).
+        ///
+        /// This version is independent of the Rust compiler's Unicode tables.
+        /// Unicode updates can change mapping results and require a minor crate release.
+        pub const UNICODE_VERSION: (u8, u8, u8) = (#{version.split('.').join(', ')});
+      VERSION
       mappings.each { |name, table| write_table(output, name, table) }
     end
   end

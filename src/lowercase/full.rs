@@ -4,7 +4,7 @@ use core::ops::Range;
 
 use bstr::ByteSlice;
 
-use crate::unicode::mapping::{lookup, Mode};
+use crate::unicode::mapping::{Mode, lookup};
 use crate::unicode::std_case_mapping_iter::CaseMappingIter;
 
 #[derive(Clone)]
@@ -145,7 +145,7 @@ mod tests {
     use alloc::{format, vec::Vec};
     use bstr::ByteSlice;
 
-    use crate::unicode::mapping::{lookup, Mode};
+    use crate::unicode::mapping::{Mode, lookup};
     use core::char;
 
     use super::Lowercase;

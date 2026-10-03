@@ -40,8 +40,9 @@ crate package and that generated tables are deterministic on a second build. The
 Ruby generator reads the bundled final-release data and requires no external
 Unicode generator. Review and stage the generated files after validation.
 
-While Roe is on `0.0.x`, a Unicode data update prepares the next patch release
-unless a maintainer directs otherwise. Update `Cargo.toml`, README dependency
+Unicode data updates prepare the next minor release unless a maintainer directs
+otherwise. The generator updates `UNICODE_VERSION` from the bundled UCD version;
+confirm it matches the data headers. Update `Cargo.toml`, README dependency
 examples and Unicode prose, and `html_root_url` together. Do not create tags,
 publish crates, or create GitHub releases.
 
