@@ -1,4 +1,5 @@
-use roe::{LowercaseMode as L, SwapcaseMode as S, TitlecaseMode as T, UppercaseMode as U};
+use roe::ruby::{CapitalizeMode as C, capitalize};
+use roe::{LowercaseMode as L, SwapcaseMode as S, UppercaseMode as U};
 
 fn decode_hex(value: &str) -> Vec<u8> {
     value
@@ -27,8 +28,8 @@ fn mapping_corpus_matches_mri_4_0_7() {
         for mode in [U::Full, U::Ascii, U::Turkic, U::Lithuanian] {
             actual.push(roe::uppercase(&input, mode).collect::<Vec<_>>());
         }
-        for mode in [T::Full, T::Ascii, T::Turkic, T::Lithuanian] {
-            actual.push(roe::titlecase(&input, mode).collect::<Vec<_>>());
+        for mode in [C::Full, C::Ascii, C::Turkic, C::Lithuanian] {
+            actual.push(capitalize(&input, mode).collect::<Vec<_>>());
         }
         for mode in [S::Full, S::Ascii, S::Turkic, S::Lithuanian] {
             actual.push(roe::swapcase(&input, mode).collect::<Vec<_>>());

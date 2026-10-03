@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 
-use roe::{LowercaseMode, TitlecaseMode, UppercaseMode, lowercase, titlecase, uppercase};
+use roe::ruby::{CapitalizeMode, capitalize};
+use roe::{LowercaseMode, UppercaseMode, lowercase, uppercase};
 
 type Mappings = BTreeMap<char, Vec<u8>>;
 
@@ -65,7 +66,7 @@ fn all_unicode_scalars_match_ucd() {
         let actual = [
             lowercase(input, LowercaseMode::Full).collect::<Vec<_>>(),
             uppercase(input, UppercaseMode::Full).collect::<Vec<_>>(),
-            titlecase(input, TitlecaseMode::Full).collect::<Vec<_>>(),
+            capitalize(input, CapitalizeMode::Full).collect::<Vec<_>>(),
             lowercase(input, LowercaseMode::Fold).collect::<Vec<_>>(),
         ];
         for (kind, (actual, table)) in actual.iter().zip(&maps).enumerate() {
@@ -93,11 +94,11 @@ fn turkic_mapping_and_capitalization() {
         "IİİI STRAẞE FFI".as_bytes()
     );
     assert_eq!(
-        titlecase("iIİı ABC".as_bytes(), TitlecaseMode::Turkic).collect::<Vec<_>>(),
+        capitalize("iIİı ABC".as_bytes(), CapitalizeMode::Turkic).collect::<Vec<_>>(),
         "İıiı abc".as_bytes()
     );
     assert_eq!(
-        titlecase("ﬃ Iİ".as_bytes(), TitlecaseMode::Turkic).collect::<Vec<_>>(),
+        capitalize("ﬃ Iİ".as_bytes(), CapitalizeMode::Turkic).collect::<Vec<_>>(),
         "Ffi ıi".as_bytes()
     );
     // Like MRI, Turkic casing is not contextual: the combining dot is retained.
@@ -132,7 +133,7 @@ fn invalid_utf8_is_preserved_in_new_modes() {
         b"I\xff\xf0\x9f\x87\xc4\xb0"
     );
     assert_eq!(
-        titlecase(input, TitlecaseMode::Turkic).collect::<Vec<_>>(),
+        capitalize(input, CapitalizeMode::Turkic).collect::<Vec<_>>(),
         input
     );
     assert_eq!(
@@ -153,8 +154,8 @@ fn lithuanian_remains_an_alias_for_full() {
         uppercase(input, UppercaseMode::Full).collect::<Vec<_>>()
     );
     assert_eq!(
-        titlecase(input, TitlecaseMode::Lithuanian).collect::<Vec<_>>(),
-        titlecase(input, TitlecaseMode::Full).collect::<Vec<_>>()
+        capitalize(input, CapitalizeMode::Lithuanian).collect::<Vec<_>>(),
+        capitalize(input, CapitalizeMode::Full).collect::<Vec<_>>()
     );
 }
 
@@ -162,7 +163,7 @@ fn lithuanian_remains_an_alias_for_full() {
 fn georgian_capitalization_differs_from_character_titlecase() {
     assert_eq!(roe::to_titlecase('Ა'), ['Ა', '\0', '\0']);
     assert_eq!(
-        titlecase("ᲐᲑ".as_bytes(), TitlecaseMode::Full).collect::<Vec<_>>(),
+        capitalize("ᲐᲑ".as_bytes(), CapitalizeMode::Full).collect::<Vec<_>>(),
         "აბ".as_bytes()
     );
 }

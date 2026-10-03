@@ -8,8 +8,8 @@ use crate::unicode::mapping::{Mode, lookup};
 use crate::unicode::std_case_mapping_iter::CaseMappingIter;
 
 #[derive(Clone)]
-#[must_use = "Titlecase is a Iterator and must be used"]
-pub struct Titlecase<'a> {
+#[must_use = "Capitalize is an Iterator and must be used"]
+pub struct Capitalize<'a> {
     slice: &'a [u8],
     next_bytes: [u8; 4],
     next_range: Range<usize>,
@@ -18,9 +18,9 @@ pub struct Titlecase<'a> {
     first: bool,
 }
 
-impl fmt::Debug for Titlecase<'_> {
+impl fmt::Debug for Capitalize<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Titlecase")
+        f.debug_struct("Capitalize")
             .field("slice", &self.slice.as_bstr())
             .field("next_bytes", &self.next_bytes)
             .field("next_range", &self.next_range)
@@ -31,13 +31,13 @@ impl fmt::Debug for Titlecase<'_> {
     }
 }
 
-impl<'a> From<&'a [u8]> for Titlecase<'a> {
+impl<'a> From<&'a [u8]> for Capitalize<'a> {
     fn from(slice: &'a [u8]) -> Self {
         Self::with_slice(slice)
     }
 }
 
-impl<'a> Titlecase<'a> {
+impl<'a> Capitalize<'a> {
     pub const fn with_slice(slice: &'a [u8]) -> Self {
         Self::with_mode(slice, Mode::Title)
     }
@@ -62,7 +62,7 @@ impl<'a> Titlecase<'a> {
     }
 }
 
-impl Iterator for Titlecase<'_> {
+impl Iterator for Capitalize<'_> {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -149,33 +149,33 @@ impl Iterator for Titlecase<'_> {
     }
 }
 
-impl FusedIterator for Titlecase<'_> {}
+impl FusedIterator for Capitalize<'_> {}
 
 #[cfg(test)]
 mod tests {
     use alloc::{format, vec::Vec};
     use bstr::ByteSlice;
 
-    use super::Titlecase;
+    use super::Capitalize;
 
     #[test]
     fn empty() {
-        let iter = Titlecase::from(&b""[..]);
+        let iter = Capitalize::from(&b""[..]);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"".as_bstr());
     }
 
     #[test]
     fn ascii() {
-        let iter = Titlecase::from(&b"abc"[..]);
+        let iter = Capitalize::from(&b"abc"[..]);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"Abc".as_bstr());
 
-        let iter = Titlecase::from(&b"aBC"[..]);
+        let iter = Capitalize::from(&b"aBC"[..]);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"Abc".as_bstr());
 
-        let iter = Titlecase::from(&b"ABC"[..]);
+        let iter = Capitalize::from(&b"ABC"[..]);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"Abc".as_bstr());
 
-        let iter = Titlecase::from(&b"aBC, 123, ABC, baby you and me girl"[..]);
+        let iter = Capitalize::from(&b"aBC, 123, ABC, baby you and me girl"[..]);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             b"Abc, 123, abc, baby you and me girl".as_bstr()
@@ -185,21 +185,21 @@ mod tests {
     #[test]
     fn utf8() {
         let s = "ß".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             "Ss".as_bytes().as_bstr()
         );
 
         let s = "Αύριο".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             "Αύριο".as_bytes().as_bstr()
         );
 
         let s = "Έτος".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             "Έτος".as_bytes().as_bstr()
@@ -208,7 +208,7 @@ mod tests {
         // two-byte characters
         // https://github.com/minimaxir/big-list-of-naughty-strings/blob/894882e7/blns.txt#L198-L200
         let s = "𐐜 𐐔𐐇𐐝𐐀𐐡𐐇𐐓 𐐙𐐊𐐡𐐝𐐓/𐐝𐐇𐐗𐐊𐐤𐐔 𐐒𐐋𐐗 𐐒𐐌 𐐜 𐐡𐐀𐐖𐐇𐐤𐐓𐐝 𐐱𐑂 𐑄 𐐔𐐇𐐝𐐀𐐡𐐇𐐓 𐐏𐐆𐐅𐐤𐐆𐐚𐐊𐐡𐐝𐐆𐐓𐐆".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             "𐐜 𐐼𐐯𐑅𐐨𐑉𐐯𐐻 𐑁𐐲𐑉𐑅𐐻/𐑅𐐯𐐿𐐲𐑌𐐼 𐐺𐐳𐐿 𐐺𐐴 𐑄 𐑉𐐨𐐾𐐯𐑌𐐻𐑅 𐐱𐑂 𐑄 𐐼𐐯𐑅𐐨𐑉𐐯𐐻 𐐷𐐮𐐭𐑌𐐮𐑂𐐲𐑉𐑅𐐮𐐻𐐮"
@@ -219,23 +219,23 @@ mod tests {
         // Change length when titlecased
         // https://github.com/minimaxir/big-list-of-naughty-strings/blob/894882e7/blns.txt#L226-L232
         let s = "ⱥȾȾZ".as_bytes();
-        let titlecased = Titlecase::from(s).collect::<Vec<_>>();
+        let titlecased = Capitalize::from(s).collect::<Vec<_>>();
         assert_eq!(titlecased.as_bstr(), "Ⱥⱦⱦz".as_bytes().as_bstr());
         assert_ne!(s.len(), titlecased.len());
     }
 
     #[test]
     fn invalid_utf8() {
-        let iter = Titlecase::from(&b"\xFF\xFE"[..]);
+        let iter = Capitalize::from(&b"\xFF\xFE"[..]);
         assert_eq!(iter.collect::<Vec<u8>>().as_bstr(), b"\xFF\xFE".as_bstr());
 
-        let iter = Titlecase::from(&b"ABC\xFF\xFEXYZ"[..]);
+        let iter = Capitalize::from(&b"ABC\xFF\xFEXYZ"[..]);
         assert_eq!(
             iter.collect::<Vec<u8>>().as_bstr(),
             b"Abc\xFF\xFExyz".as_bstr()
         );
 
-        let iter = Titlecase::from(&b"abc\xFF\xFEXYZ"[..]);
+        let iter = Capitalize::from(&b"abc\xFF\xFEXYZ"[..]);
         assert_eq!(
             iter.collect::<Vec<u8>>().as_bstr(),
             b"Abc\xFF\xFExyz".as_bstr()
@@ -247,7 +247,7 @@ mod tests {
         // subparts" strategy.
         //
         // See: https://docs.rs/bstr/1.*/bstr/#handling-of-invalid-utf-8
-        let iter = Titlecase::from(&b"aB\xF0\x9F\x87Yz"[..]);
+        let iter = Capitalize::from(&b"aB\xF0\x9F\x87Yz"[..]);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             b"Ab\xF0\x9F\x87yz".as_bstr()
@@ -257,57 +257,57 @@ mod tests {
     #[test]
     fn unicode_replacement_character() {
         let s = "�".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "�".as_bytes().as_bstr());
     }
 
     #[test]
     fn dz_to_titlecase() {
         let s = "ǅ".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǅ".as_bytes().as_bstr());
 
         let s = "Ǆ".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǅ".as_bytes().as_bstr());
 
         let s = "ǆ".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ǅ".as_bytes().as_bstr());
     }
 
     #[test]
     fn latin_capital_i_with_dot_above() {
         let s = "İ".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "İ");
     }
 
     #[test]
     fn case_map_to_one_char() {
         let s = "ᾂ".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), "ᾊ".as_bytes().as_bstr());
     }
 
     #[test]
     fn case_map_to_two_chars() {
         let s = "և".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             "Եւ".as_bytes().as_bstr()
         );
 
         let s = "ẙ".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             "Y\u{30a}".as_bytes().as_bstr()
         );
 
         let s = "ﬗ".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             "Մխ".as_bytes().as_bstr()
@@ -317,18 +317,18 @@ mod tests {
     #[test]
     fn case_map_to_three_chars() {
         let s = "ﬃ".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(iter.collect::<Vec<_>>().as_bstr(), b"Ffi".as_bstr());
 
         let s = "ὖ".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             "Υ\u{313}\u{342}".as_bytes().as_bstr()
         );
 
         let s = "ῷ".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(
             iter.collect::<Vec<_>>().as_bstr(),
             "Ω\u{342}\u{345}".as_bytes().as_bstr()
@@ -337,80 +337,83 @@ mod tests {
 
     #[test]
     fn size_hint() {
-        assert_eq!(Titlecase::with_slice(b"").size_hint(), (0, Some(0)));
-        assert_eq!(Titlecase::with_slice(b"abc, xyz").size_hint(), (8, Some(8)));
+        assert_eq!(Capitalize::with_slice(b"").size_hint(), (0, Some(0)));
         assert_eq!(
-            Titlecase::with_slice(b"abc, \xFF\xFE, xyz").size_hint(),
+            Capitalize::with_slice(b"abc, xyz").size_hint(),
+            (8, Some(8))
+        );
+        assert_eq!(
+            Capitalize::with_slice(b"abc, \xFF\xFE, xyz").size_hint(),
             (3, Some(144))
         );
         assert_eq!(
-            Titlecase::with_slice("�".as_bytes()).size_hint(),
+            Capitalize::with_slice("�".as_bytes()).size_hint(),
             (1, Some(36))
         );
         assert_eq!(
-            Titlecase::with_slice("Έτος".as_bytes()).size_hint(),
+            Capitalize::with_slice("Έτος".as_bytes()).size_hint(),
             (2, Some(96))
         );
         assert_eq!(
-            Titlecase::with_slice("ZȺȾ".as_bytes()).size_hint(),
+            Capitalize::with_slice("ZȺȾ".as_bytes()).size_hint(),
             (2, Some(60))
         );
 
         let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
         utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
         assert_eq!(
-            Titlecase::with_slice(&utf8_with_invalid_bytes).size_hint(),
+            Capitalize::with_slice(&utf8_with_invalid_bytes).size_hint(),
             (3, Some(120))
         );
     }
 
     #[test]
     fn count() {
-        assert_eq!(Titlecase::with_slice(b"").count(), 0);
-        assert_eq!(Titlecase::with_slice(b"abc, xyz").count(), 8);
-        assert_eq!(Titlecase::with_slice(b"abc, \xFF\xFE, xyz").count(), 12);
-        assert_eq!(Titlecase::with_slice("�".as_bytes()).count(), 3);
-        assert_eq!(Titlecase::with_slice("Έτος".as_bytes()).count(), 8);
-        assert_eq!(Titlecase::with_slice("ZȺȾ".as_bytes()).count(), 7);
+        assert_eq!(Capitalize::with_slice(b"").count(), 0);
+        assert_eq!(Capitalize::with_slice(b"abc, xyz").count(), 8);
+        assert_eq!(Capitalize::with_slice(b"abc, \xFF\xFE, xyz").count(), 12);
+        assert_eq!(Capitalize::with_slice("�".as_bytes()).count(), 3);
+        assert_eq!(Capitalize::with_slice("Έτος".as_bytes()).count(), 8);
+        assert_eq!(Capitalize::with_slice("ZȺȾ".as_bytes()).count(), 7);
 
         let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
         utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
-        assert_eq!(Titlecase::with_slice(&utf8_with_invalid_bytes).count(), 10);
+        assert_eq!(Capitalize::with_slice(&utf8_with_invalid_bytes).count(), 10);
     }
 
     #[test]
     fn size_hint_covers_count() {
-        let iter = Titlecase::with_slice(b"");
+        let iter = Capitalize::with_slice(b"");
         let (min, max) = iter.size_hint();
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
 
-        let iter = Titlecase::with_slice(b"abc, xyz");
+        let iter = Capitalize::with_slice(b"abc, xyz");
         let (min, max) = iter.size_hint();
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
 
-        let iter = Titlecase::with_slice(b"abc, \xFF\xFE, xyz");
+        let iter = Capitalize::with_slice(b"abc, \xFF\xFE, xyz");
         let (min, max) = iter.size_hint();
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
 
-        let iter = Titlecase::with_slice("�".as_bytes());
+        let iter = Capitalize::with_slice("�".as_bytes());
         let (min, max) = iter.size_hint();
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
 
-        let iter = Titlecase::with_slice("Έτος".as_bytes());
+        let iter = Capitalize::with_slice("Έτος".as_bytes());
         let (min, max) = iter.size_hint();
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
 
-        let iter = Titlecase::with_slice("ZȺȾ".as_bytes());
+        let iter = Capitalize::with_slice("ZȺȾ".as_bytes());
         let (min, max) = iter.size_hint();
         let count = iter.count();
         assert!(min <= count);
@@ -418,7 +421,7 @@ mod tests {
 
         let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
         utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
-        let iter = Titlecase::with_slice(&utf8_with_invalid_bytes);
+        let iter = Capitalize::with_slice(&utf8_with_invalid_bytes);
         let (min, max) = iter.size_hint();
         let count = iter.count();
         assert!(min <= count);
@@ -428,10 +431,10 @@ mod tests {
     #[test]
     fn test_fmt() {
         let s = "Αύριο".as_bytes();
-        let iter = Titlecase::from(s);
+        let iter = Capitalize::from(s);
         assert_eq!(
             format!("{iter:?}"),
-            "Titlecase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, case: None, first: true, mode: Title }"
+            "Capitalize { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, case: None, first: true, mode: Title }"
         );
     }
 }

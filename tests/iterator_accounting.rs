@@ -1,6 +1,5 @@
-use roe::{
-    LowercaseMode, SwapcaseMode, TitlecaseMode, UppercaseMode, lowercase, titlecase, uppercase,
-};
+use roe::ruby::{CapitalizeMode, capitalize};
+use roe::{LowercaseMode, SwapcaseMode, UppercaseMode, lowercase, uppercase};
 
 fn check_remaining(mut iter: impl Iterator<Item = u8> + Clone) {
     // Count by advancing explicitly so the oracle does not use `count` or
@@ -47,12 +46,12 @@ fn uppercase_remaining_output() {
 }
 
 #[test]
-fn titlecase_remaining_output() {
+fn capitalize_remaining_output() {
     for input in inputs() {
-        check_remaining(titlecase(input, TitlecaseMode::Full));
-        check_remaining(titlecase(input, TitlecaseMode::Ascii));
-        check_remaining(titlecase(input, TitlecaseMode::Turkic));
-        check_remaining(titlecase(input, TitlecaseMode::Lithuanian));
+        check_remaining(capitalize(input, CapitalizeMode::Full));
+        check_remaining(capitalize(input, CapitalizeMode::Ascii));
+        check_remaining(capitalize(input, CapitalizeMode::Turkic));
+        check_remaining(capitalize(input, CapitalizeMode::Lithuanian));
     }
 }
 
