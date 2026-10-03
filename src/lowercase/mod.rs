@@ -95,6 +95,10 @@ impl<'a> Lowercase<'a> {
     /// assert_eq!(lowercase.collect::<Vec<_>>(), expected);
     /// ```
     pub const fn with_slice(slice: &'a [u8]) -> Self {
+        // Full Unicode and ASCII mappings agree for an entirely ASCII input.
+        if slice.is_ascii() {
+            return Self::with_ascii_slice(slice);
+        }
         Self {
             iter: Inner::Full(full::Lowercase::with_slice(slice)),
         }
@@ -139,6 +143,9 @@ impl<'a> Lowercase<'a> {
     }
 
     pub(crate) const fn with_mode(slice: &'a [u8], mode: Mode) -> Self {
+        if !mode.is_turkic() && slice.is_ascii() {
+            return Self::with_ascii_slice(slice);
+        }
         Self {
             iter: Inner::Full(full::Lowercase::with_mode(slice, mode)),
         }

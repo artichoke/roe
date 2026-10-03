@@ -83,6 +83,20 @@ impl Iterator for Capitalize<'_> {
 
         self.case_iter = None;
 
+        if let Some((&byte, remainder)) = self.slice.split_first() {
+            let special_i = if self.first { b'i' } else { b'I' };
+            if byte.is_ascii() && !(self.mode.is_turkic() && byte == special_i) {
+                let mapped = if self.first {
+                    byte.to_ascii_uppercase()
+                } else {
+                    byte.to_ascii_lowercase()
+                };
+                self.slice = remainder;
+                self.first = false;
+                return Some(mapped);
+            }
+        }
+
         match bstr::decode_utf8(self.slice) {
             (_, 0) => None,
             (Some(ch), size) => {

@@ -95,6 +95,8 @@ fn inputs() -> impl Iterator<Item = &'static [u8]> {
         b"\xf0\x9f\x87ABC",
         b"A\xff\xfeZ",
         b"\0ABC",
+        b"\xef\xac\x83A\xc3\x9f\xffIi",
+        b"iI\xc4\xb0\xc4\xb1\xffABC",
     ]
     .into_iter()
 }

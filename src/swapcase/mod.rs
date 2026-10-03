@@ -43,6 +43,9 @@ impl<'a> Swapcase<'a> {
 
     /// Create an iterator using full Unicode case swapping.
     pub const fn with_slice(slice: &'a [u8]) -> Self {
+        if slice.is_ascii() {
+            return Self::with_ascii_slice(slice);
+        }
         Self {
             iter: Inner::Full(full::Swapcase::with_slice(slice)),
         }
@@ -56,6 +59,9 @@ impl<'a> Swapcase<'a> {
     }
 
     pub(crate) const fn with_mode(slice: &'a [u8], mode: Mode) -> Self {
+        if !mode.is_turkic() && slice.is_ascii() {
+            return Self::with_ascii_slice(slice);
+        }
         Self {
             iter: Inner::Full(full::Swapcase::with_mode(slice, mode)),
         }
