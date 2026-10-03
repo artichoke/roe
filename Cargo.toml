@@ -15,9 +15,7 @@ categories = ["encoding", "internationalization", "no-std", "no-std::no-alloc", 
 include = ["/src/**/*", "/generated/**/*", "/tests/**/*", "/LICENSE", "/LICENSE-UNICODE", "/README.md"]
 
 [features]
-default = ["std"]
-# Enable dependency on `std`, the Rust standard library, and the `alloc` feature.
-std = ["alloc"]
+default = ["alloc"]
 # Enable a dependency on `alloc`, The Rust collections library. This feature
 # enables APIs that depend on `Vec` and `String`.
 alloc = []

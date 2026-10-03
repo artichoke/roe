@@ -65,18 +65,9 @@
 //! Roe is `no_std` compatible with an optional dependency on the [`alloc`]
 //! crate.
 //!
-//! Roe has several Cargo features, all of which are enabled by default:
+//! The **alloc** feature is enabled by default and provides APIs that allocate
+//! [`String`] or [`Vec`]. Disable default features to use Roe without allocation.
 //!
-//! - **std** - Adds a dependency on [`std`], the Rust Standard Library, and
-//!   enables the **alloc** feature.
-//! - **alloc** - Adds a dependency on [`alloc`], the Rust allocation and
-//!   collections library. This feature enables APIs that allocate [`String`] or
-//!   [`Vec`].
-//!
-#![cfg_attr(
-    not(feature = "std"),
-    doc = "[`std`]: https://doc.rust-lang.org/std/index.html"
-)]
 #![cfg_attr(
     not(feature = "alloc"),
     doc = "[`alloc`]: https://doc.rust-lang.org/alloc/index.html"
@@ -99,9 +90,6 @@
 
 #[cfg(any(feature = "alloc", test))]
 extern crate alloc;
-
-#[cfg(feature = "std")]
-extern crate std;
 
 use core::convert::{TryFrom, TryInto};
 use core::fmt;
@@ -144,7 +132,6 @@ pub use uppercase::Uppercase;
 /// [`UppercaseMode`], [`SwapcaseMode`], or [`TitlecaseMode`].
 ///
 /// This error corresponds to the [Ruby `ArgumentError` Exception class].
-/// It implements [`core::error::Error`] in every feature configuration.
 ///
 /// # Examples
 ///

@@ -61,8 +61,6 @@ jobs:
 
       - name: Test with no default features
         run: cargo test --no-default-features
-      - name: Test additional feature configuration 1
-        run: cargo test --no-default-features --features alloc
 
   build-msrv:
     name: Build (MSRV)
