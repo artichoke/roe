@@ -4,7 +4,7 @@ version = "0.0.8" # remember to set `html_root_url` in `src/lib.rs`.
 authors = ["Ryan Lopopolo <rjl@hyperbo.la>"]
 license = "MIT AND Unicode-3.0"
 edition = "2021"
-rust-version = "1.76.0"
+rust-version = "1.81.0"
 readme = "README.md"
 repository = "https://github.com/artichoke/roe"
 documentation = "https://docs.rs/roe"
@@ -16,8 +16,7 @@ include = ["/src/**/*", "/generated/**/*", "/tests/**/*", "/LICENSE", "/LICENSE-
 
 [features]
 default = ["std"]
-# Enable dependency on `std`, the Rust standard library. This feature enables
-# `std::error::Error` implementations on the error types in `roe`.
+# Enable dependency on `std`, the Rust standard library, and the `alloc` feature.
 std = ["alloc"]
 # Enable a dependency on `alloc`, The Rust collections library. This feature
 # enables APIs that depend on `Vec` and `String`.

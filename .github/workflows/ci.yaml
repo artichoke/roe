@@ -188,7 +188,10 @@ jobs:
           ruby-version: ${{ steps.toolchains.outputs.ruby }}
 
       - name: Check Ruby syntax
-        run: ruby -c scripts/*.rb
+        run: |
+          for script in scripts/*.rb; do
+            ruby -c "$script"
+          done
 
   text:
     name: Lint and format text

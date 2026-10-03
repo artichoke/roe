@@ -46,7 +46,7 @@ pub(crate) fn lookup(c: char, mode: Mode) -> CaseMappingIter {
         };
         return CaseMappingIter::new([c, '\0', '\0']);
     }
-    let mode = super::georgian::capitalization_mode(c, mode);
+    let mode = crate::ruby::georgian::capitalization_mode(c, mode);
     let table = match mode {
         Mode::Lower | Mode::TurkicLower => LOWER,
         Mode::Upper | Mode::TurkicUpper => UPPER,

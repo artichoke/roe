@@ -67,10 +67,8 @@
 //!
 //! Roe has several Cargo features, all of which are enabled by default:
 //!
-//! - **std** - Adds a dependency on [`std`], the Rust Standard Library. This
-//!   feature enables [`std::error::Error`] implementations on error types in
-//!   this crate. Enabling the **std** feature also enables the **alloc**
-//!   feature.
+//! - **std** - Adds a dependency on [`std`], the Rust Standard Library, and
+//!   enables the **alloc** feature.
 //! - **alloc** - Adds a dependency on [`alloc`], the Rust allocation and
 //!   collections library. This feature enables APIs that allocate [`String`] or
 //!   [`Vec`].
@@ -78,10 +76,6 @@
 #![cfg_attr(
     not(feature = "std"),
     doc = "[`std`]: https://doc.rust-lang.org/std/index.html"
-)]
-#![cfg_attr(
-    not(feature = "std"),
-    doc = "[`std::error::Error`]: https://doc.rust-lang.org/std/error/trait.Error.html"
 )]
 #![cfg_attr(
     not(feature = "alloc"),
@@ -115,6 +109,7 @@ use core::str::FromStr;
 
 mod ascii;
 mod lowercase;
+pub mod ruby;
 mod swapcase;
 mod titlecase;
 mod unicode;
@@ -142,12 +137,14 @@ pub use lowercase::Lowercase;
 pub use swapcase::Swapcase;
 pub use titlecase::Titlecase;
 pub use unicode::to_titlecase;
+pub use unicode::UNICODE_VERSION;
 pub use uppercase::Uppercase;
 
 /// Error that indicates a failure to parse a [`LowercaseMode`],
 /// [`UppercaseMode`], [`SwapcaseMode`], or [`TitlecaseMode`].
 ///
 /// This error corresponds to the [Ruby `ArgumentError` Exception class].
+/// It implements [`core::error::Error`] in every feature configuration.
 ///
 /// # Examples
 ///
@@ -204,8 +201,7 @@ impl fmt::Display for InvalidCaseMappingMode {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for InvalidCaseMappingMode {}
+impl core::error::Error for InvalidCaseMappingMode {}
 
 /// Options to configure the behavior of [`lowercase`].
 ///
@@ -753,6 +749,8 @@ mod tests {
     fn test_invalid_case_mapping_mode_fmt() {
         let err = InvalidCaseMappingMode::new();
         assert_eq!(format!("{err}"), "invalid option");
+        let error: &dyn core::error::Error = &err;
+        assert!(error.source().is_none());
     }
 
     #[test]

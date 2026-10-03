@@ -26,3 +26,23 @@ MRI's Unicode mapping paths reject invalid input.
 When updating the Unicode data or MRI oracle, regenerate the results and review
 changes to the excluded repertoire as well as mapping behavior. Do not
 regenerate expected results from Roe.
+
+Run the generator under the pinned MRI Ruby:
+
+```sh
+mise exec ruby -- ruby scripts/gen_mri_fixtures.rb
+cargo test --test mri_compatibility
+```
+
+The script reads the bundled target UCD and downloads versioned Unicode files
+matching MRI's `RbConfig::CONFIG['UNICODE_VERSION']` into a temporary directory.
+Its independent raw-UCD parser determines exclusions before capturing expected
+outputs directly from MRI. It never loads Roe's generated tables or outputs.
+
+For offline regeneration, pass `--oracle-ucd /path/to/ucd`; that directory must
+contain `ReadMe.txt`, `UnicodeData.txt`, `SpecialCasing.txt`, and
+`CaseFolding.txt` from the Unicode version bundled by MRI. Use
+`--output /tmp/oracle.tsv` to review results before replacing the checked-in
+fixture. A different MRI version creates a separately named file; update the
+integration test's fixture path and this README when intentionally changing the
+oracle.
