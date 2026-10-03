@@ -1,9 +1,16 @@
+use core::convert::{TryFrom, TryInto};
 use core::iter::FusedIterator;
+use core::str::FromStr;
 
+use crate::InvalidCaseMappingMode;
 use crate::unicode::mapping::Mode;
 
 mod ascii;
 mod full;
+
+pub use ascii::make_ascii_uppercase;
+#[cfg(feature = "alloc")]
+pub use ascii::to_ascii_uppercase;
 
 #[derive(Debug, Clone)]
 #[allow(variant_size_differences)]
@@ -168,8 +175,131 @@ impl Iterator for Uppercase<'_> {
 
 impl FusedIterator for Uppercase<'_> {}
 
+/// Options to configure the behavior of [`uppercase`].
+///
+/// Which letters exactly are replaced, and by which other letters, depends on
+/// the given options.
+///
+/// See individual variants for a description of the available behaviors.
+///
+/// If you're not sure which mode to choose, [`UppercaseMode::Full`] is a a good
+/// default.
+///
+/// [`uppercase`]: crate::uppercase()
+#[derive(Default, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
+pub enum UppercaseMode {
+    /// Full Unicode case mapping, suitable for most languages.
+    ///
+    /// See the [Turkic] and [Lithuanian] variants for exceptions.
+    ///
+    /// Context-dependent case mapping as described in Table 3-14 of the Unicode
+    /// standard is currently not supported.
+    ///
+    /// [Turkic]: Self::Turkic
+    /// [Lithuanian]: Self::Lithuanian
+    #[default]
+    Full,
+    /// Only the ASCII region, i.e. the characters `'A'..='Z'` and `'a'..='z'`,
+    /// are affected.
+    ///
+    /// This option cannot be combined with any other option.
+    Ascii,
+    /// Full Unicode case mapping, adapted for Turkic languages (Turkish,
+    /// Azerbaijani, …).
+    ///
+    /// This means that upper case I is mapped to lower case dotless i, and so
+    /// on.
+    Turkic,
+    /// Currently, just [full Unicode case mapping].
+    ///
+    /// This matches MRI Ruby, which does not implement Lithuanian contextual
+    /// case mapping.
+    ///
+    /// [full Unicode case mapping]: Self::Full
+    Lithuanian,
+}
+
+impl TryFrom<&str> for UppercaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        value.as_bytes().try_into()
+    }
+}
+
+impl TryFrom<Option<&str>> for UppercaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: Option<&str>) -> Result<Self, Self::Error> {
+        value.map(str::as_bytes).try_into()
+    }
+}
+
+impl TryFrom<&[u8]> for UppercaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+        match value {
+            b"ascii" => Ok(Self::Ascii),
+            b"turkic" => Ok(Self::Turkic),
+            b"lithuanian" => Ok(Self::Lithuanian),
+            _ => Err(InvalidCaseMappingMode::new()),
+        }
+    }
+}
+
+impl TryFrom<Option<&[u8]>> for UppercaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: Option<&[u8]>) -> Result<Self, Self::Error> {
+        match value {
+            None => Ok(Self::Full),
+            Some(b"ascii") => Ok(Self::Ascii),
+            Some(b"turkic") => Ok(Self::Turkic),
+            Some(b"lithuanian") => Ok(Self::Lithuanian),
+            Some(_) => Err(InvalidCaseMappingMode::new()),
+        }
+    }
+}
+
+impl FromStr for UppercaseMode {
+    type Err = InvalidCaseMappingMode;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        s.try_into()
+    }
+}
+
+/// Returns an iterator that yields a copy of the bytes in the given slice with
+/// all lowercase letters replaced with their uppercase counterparts.
+///
+/// This function treats the given slice as a [conventionally UTF-8 string].
+/// UTF-8 byte sequences are converted to their Unicode uppercase equivalents.
+/// Invalid UTF-8 byte sequences are yielded as is.
+///
+/// The case mapping mode is determined by the given [`UppercaseMode`]. See its
+/// documentation for details on the available case mapping modes.
+///
+/// [conventionally UTF-8 string]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
+pub const fn uppercase(slice: &[u8], options: UppercaseMode) -> Uppercase<'_> {
+    match options {
+        UppercaseMode::Full | UppercaseMode::Lithuanian => Uppercase::with_slice(slice),
+        UppercaseMode::Ascii => Uppercase::with_ascii_slice(slice),
+        UppercaseMode::Turkic => Uppercase::with_mode(slice, Mode::TurkicUpper),
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use core::{convert::TryInto, str::FromStr};
+
+    use super::UppercaseMode;
+    use crate::InvalidCaseMappingMode;
     use alloc::vec::Vec;
     use bstr::ByteSlice;
 
@@ -290,5 +420,34 @@ mod tests {
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
+    }
+    #[test]
+    fn test_uppercase_mode_parsing() {
+        assert_eq!(UppercaseMode::from_str("ascii"), Ok(UppercaseMode::Ascii));
+        assert_eq!(UppercaseMode::from_str("turkic"), Ok(UppercaseMode::Turkic));
+        assert_eq!(
+            UppercaseMode::from_str("lithuanian"),
+            Ok(UppercaseMode::Lithuanian)
+        );
+        assert_eq!(
+            UppercaseMode::from_str("full"),
+            Err(InvalidCaseMappingMode::new())
+        );
+    }
+
+    #[test]
+    fn test_uppercase_mode_conversion() {
+        let mut mode: UppercaseMode;
+        mode = "turkic".try_into().unwrap();
+        assert_eq!(mode, UppercaseMode::Turkic);
+
+        mode = Some("turkic").try_into().unwrap();
+        assert_eq!(mode, UppercaseMode::Turkic);
+
+        mode = b"turkic"[..].try_into().unwrap();
+        assert_eq!(mode, UppercaseMode::Turkic);
+
+        mode = Some(&b"turkic"[..]).try_into().unwrap();
+        assert_eq!(mode, UppercaseMode::Turkic);
     }
 }

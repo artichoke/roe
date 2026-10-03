@@ -16,25 +16,8 @@
 //! too, avoiding mixed forms such as `Აბგ` and producing `აბგ` instead.
 //! See [Ruby issue #14839](https://bugs.ruby-lang.org/issues/14839) for the rationale.
 
-pub(crate) mod georgian;
+mod capitalize;
 
-/// Byte iterator for Ruby-style string capitalization.
-pub use crate::Titlecase as Capitalize;
-/// Options for Ruby-style string capitalization.
-pub use crate::TitlecaseMode as CapitalizeMode;
-
-/// Capitalize the first valid UTF-8 character and lowercase the remainder.
-///
-/// Full, Turkic, and Lithuanian modes follow Ruby's Georgian capitalization
-/// rule. ASCII mode only changes ASCII letters. Malformed UTF-8 is preserved.
-///
-/// ```
-/// use roe::ruby::{capitalize, CapitalizeMode};
-///
-/// assert_eq!(capitalize(b"hELLO wORLD", CapitalizeMode::Full).collect::<Vec<_>>(), b"Hello world");
-/// assert_eq!(capitalize("ᲐᲑᲒ".as_bytes(), CapitalizeMode::Full).collect::<Vec<_>>(), "აბგ".as_bytes());
-/// assert_eq!(roe::to_titlecase('Ა'), ['Ა', '\0', '\0']);
-/// ```
-pub const fn capitalize(slice: &[u8], mode: CapitalizeMode) -> Capitalize<'_> {
-    crate::titlecase(slice, mode)
-}
+#[cfg(feature = "alloc")]
+pub use capitalize::to_ascii_capitalize;
+pub use capitalize::{Capitalize, CapitalizeMode, capitalize, make_ascii_capitalize};
