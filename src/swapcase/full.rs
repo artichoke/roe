@@ -80,6 +80,14 @@ impl Iterator for Swapcase<'_> {
 
         self.swapcase = None;
 
+        // Buffered Unicode output must be drained before consuming a new byte.
+        if let Some((&byte, remainder)) = self.slice.split_first() {
+            if byte.is_ascii() && !(self.mode.is_turkic() && matches!(byte, b'I' | b'i')) {
+                self.slice = remainder;
+                return Some(super::ascii::swapcase_byte(byte));
+            }
+        }
+
         match bstr::decode_utf8(self.slice) {
             (_, 0) => None,
             (Some(ch), size) => {
