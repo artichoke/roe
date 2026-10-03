@@ -12,7 +12,7 @@ homepage = "https://github.com/artichoke/roe"
 description = "Unicode case conversion"
 keywords = ["capitalize", "case", "lowercase", "unicode", "uppercase"]
 categories = ["encoding", "internationalization", "no-std", "no-std::no-alloc", "text-processing"]
-include = ["/src/**/*", "/generated/**/*", "/tests/**/*", "/LICENSE", "/LICENSE-UNICODE", "/README.md"]
+include = ["/benches/**/*", "/src/**/*", "/generated/**/*", "/tests/**/*", "/LICENSE", "/LICENSE-UNICODE", "/README.md"]
 
 [features]
 default = ["alloc"]
@@ -28,3 +28,7 @@ bstr = { version = "1.0.1", default-features = false }
 # that target. `roe` has the same API and code on all targets.
 targets = ["x86_64-unknown-linux-gnu"]
 rustdoc-args = ["--cfg", "docsrs"]
+
+[[bench]]
+name = "case_mapping"
+harness = false
