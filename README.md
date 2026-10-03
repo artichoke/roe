@@ -73,7 +73,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-roe = "0.0.8"
+roe = "0.0.9"
 ```
 
 Then convert case like:
