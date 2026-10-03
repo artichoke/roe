@@ -1,9 +1,16 @@
+use core::convert::{TryFrom, TryInto};
 use core::iter::FusedIterator;
+use core::str::FromStr;
 
+use crate::InvalidCaseMappingMode;
 use crate::unicode::mapping::Mode;
 
 mod ascii;
 mod full;
+
+pub use ascii::make_ascii_lowercase;
+#[cfg(feature = "alloc")]
+pub use ascii::to_ascii_lowercase;
 
 #[derive(Debug, Clone)]
 #[allow(variant_size_differences)]
@@ -168,8 +175,140 @@ impl Iterator for Lowercase<'_> {
 
 impl FusedIterator for Lowercase<'_> {}
 
+/// Options to configure the behavior of [`lowercase`].
+///
+/// Which letters exactly are replaced, and by which other letters, depends on
+/// the given options.
+///
+/// See individual variants for a description of the available behaviors.
+///
+/// If you're not sure which mode to choose, [`LowercaseMode::Full`] is a a good
+/// default.
+///
+/// [`lowercase`]: crate::lowercase()
+#[derive(Default, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
+pub enum LowercaseMode {
+    /// Full Unicode case mapping, suitable for most languages.
+    ///
+    /// See the [Turkic] and [Lithuanian] variants for exceptions.
+    ///
+    /// Context-dependent case mapping as described in Table 3-14 of the Unicode
+    /// standard is currently not supported.
+    ///
+    /// [Turkic]: Self::Turkic
+    /// [Lithuanian]: Self::Lithuanian
+    #[default]
+    Full,
+    /// Only the ASCII region, i.e. the characters `'A'..='Z'` and `'a'..='z'`,
+    /// are affected.
+    ///
+    /// This option cannot be combined with any other option.
+    Ascii,
+    /// Full Unicode case mapping, adapted for Turkic languages (Turkish,
+    /// Azerbaijani, …).
+    ///
+    /// This means that upper case I is mapped to lower case dotless i, and so
+    /// on.
+    Turkic,
+    /// An alias for [full Unicode case mapping].
+    ///
+    /// This matches MRI Ruby, which does not implement Lithuanian contextual
+    /// case mapping.
+    ///
+    /// [full Unicode case mapping]: Self::Full
+    Lithuanian,
+    /// Unicode case **folding**, which is more far-reaching than Unicode case
+    /// mapping.
+    ///
+    /// This option currently cannot be combined with any other option (i.e.
+    /// there is currently no variant for turkic languages).
+    Fold,
+}
+
+impl TryFrom<&str> for LowercaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        value.as_bytes().try_into()
+    }
+}
+
+impl TryFrom<Option<&str>> for LowercaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: Option<&str>) -> Result<Self, Self::Error> {
+        value.map(str::as_bytes).try_into()
+    }
+}
+
+impl TryFrom<&[u8]> for LowercaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+        match value {
+            b"ascii" => Ok(Self::Ascii),
+            b"turkic" => Ok(Self::Turkic),
+            b"lithuanian" => Ok(Self::Lithuanian),
+            b"fold" => Ok(Self::Fold),
+            _ => Err(InvalidCaseMappingMode::new()),
+        }
+    }
+}
+
+impl TryFrom<Option<&[u8]>> for LowercaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: Option<&[u8]>) -> Result<Self, Self::Error> {
+        match value {
+            None => Ok(Self::Full),
+            Some(b"ascii") => Ok(Self::Ascii),
+            Some(b"turkic") => Ok(Self::Turkic),
+            Some(b"lithuanian") => Ok(Self::Lithuanian),
+            Some(b"fold") => Ok(Self::Fold),
+            Some(_) => Err(InvalidCaseMappingMode::new()),
+        }
+    }
+}
+
+impl FromStr for LowercaseMode {
+    type Err = InvalidCaseMappingMode;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        s.try_into()
+    }
+}
+
+/// Returns an iterator that yields a copy of the bytes in the given slice with
+/// all uppercase letters replaced with their lowercase counterparts.
+///
+/// This function treats the given slice as a [conventionally UTF-8 string].
+/// UTF-8 byte sequences are converted to their Unicode lowercase equivalents.
+/// Invalid UTF-8 byte sequences are yielded as is.
+///
+/// The case mapping mode is determined by the given [`LowercaseMode`]. See its
+/// documentation for details on the available case mapping modes.
+///
+/// [conventionally UTF-8 string]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
+pub const fn lowercase(slice: &[u8], options: LowercaseMode) -> Lowercase<'_> {
+    match options {
+        LowercaseMode::Full | LowercaseMode::Lithuanian => Lowercase::with_slice(slice),
+        LowercaseMode::Ascii => Lowercase::with_ascii_slice(slice),
+        LowercaseMode::Turkic => Lowercase::with_mode(slice, Mode::TurkicLower),
+        LowercaseMode::Fold => Lowercase::with_mode(slice, Mode::Fold),
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use core::{convert::TryInto, str::FromStr};
+
+    use super::LowercaseMode;
+    use crate::InvalidCaseMappingMode;
     use alloc::vec::Vec;
     use bstr::ByteSlice;
 
@@ -290,5 +429,35 @@ mod tests {
         let count = iter.count();
         assert!(min <= count);
         assert!(count <= max.unwrap());
+    }
+    #[test]
+    fn test_lowercase_mode_parsing() {
+        assert_eq!(LowercaseMode::from_str("ascii"), Ok(LowercaseMode::Ascii));
+        assert_eq!(LowercaseMode::from_str("turkic"), Ok(LowercaseMode::Turkic));
+        assert_eq!(
+            LowercaseMode::from_str("lithuanian"),
+            Ok(LowercaseMode::Lithuanian)
+        );
+        assert_eq!(LowercaseMode::from_str("fold"), Ok(LowercaseMode::Fold));
+        assert_eq!(
+            LowercaseMode::from_str("full"),
+            Err(InvalidCaseMappingMode::new())
+        );
+    }
+
+    #[test]
+    fn test_lowercase_mode_conversion() {
+        let mut mode: LowercaseMode;
+        mode = "turkic".try_into().unwrap();
+        assert_eq!(mode, LowercaseMode::Turkic);
+
+        mode = Some("turkic").try_into().unwrap();
+        assert_eq!(mode, LowercaseMode::Turkic);
+
+        mode = b"turkic"[..].try_into().unwrap();
+        assert_eq!(mode, LowercaseMode::Turkic);
+
+        mode = Some(&b"turkic"[..]).try_into().unwrap();
+        assert_eq!(mode, LowercaseMode::Turkic);
     }
 }

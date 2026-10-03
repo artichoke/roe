@@ -95,6 +95,7 @@ impl Iterator for Capitalize<'_> {
                 } else {
                     Mode::Lower
                 };
+                let mode = super::georgian::capitalization_mode(ch, mode);
                 let mut case_iter = lookup(ch, mode);
                 let ch = case_iter
                     .next()
