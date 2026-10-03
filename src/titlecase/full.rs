@@ -1,29 +1,11 @@
-use core::char::ToLowercase;
 use core::fmt;
 use core::iter::FusedIterator;
 use core::ops::Range;
 
 use bstr::ByteSlice;
 
-pub use crate::unicode::Titlecase as TitlecaseForChar;
-use crate::unicode::ToTitlecase;
-
-#[derive(Clone, Debug)]
-enum ToCase {
-    ToLowercase(ToLowercase),
-    ToTitlecase(ToTitlecase),
-}
-
-impl Iterator for ToCase {
-    type Item = char;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        match self {
-            ToCase::ToLowercase(iter) => iter.next(),
-            ToCase::ToTitlecase(iter) => iter.next(),
-        }
-    }
-}
+use crate::unicode::mapping::{lookup, Mode};
+use crate::unicode::std_case_mapping_iter::CaseMappingIter;
 
 #[derive(Clone)]
 #[must_use = "Titlecase is a Iterator and must be used"]
@@ -31,7 +13,8 @@ pub struct Titlecase<'a> {
     slice: &'a [u8],
     next_bytes: [u8; 4],
     next_range: Range<usize>,
-    case_iter: Option<ToCase>,
+    case_iter: Option<CaseMappingIter>,
+    mode: Mode,
     first: bool,
 }
 
@@ -43,6 +26,7 @@ impl fmt::Debug for Titlecase<'_> {
             .field("next_range", &self.next_range)
             .field("case", &self.case_iter)
             .field("first", &self.first)
+            .field("mode", &self.mode)
             .finish()
     }
 }
@@ -55,13 +39,26 @@ impl<'a> From<&'a [u8]> for Titlecase<'a> {
 
 impl<'a> Titlecase<'a> {
     pub const fn with_slice(slice: &'a [u8]) -> Self {
+        Self::with_mode(slice, Mode::Title)
+    }
+
+    pub const fn with_mode(slice: &'a [u8], mode: Mode) -> Self {
         Self {
             slice,
             next_bytes: [0; 4],
             next_range: 0..0,
             case_iter: None,
             first: true,
+            mode,
         }
+    }
+
+    fn buffered_len(&self) -> usize {
+        let mapped = self
+            .case_iter
+            .clone()
+            .map_or(0, |iter| iter.map(char::len_utf8).sum());
+        self.next_range.len() + mapped
     }
 }
 
@@ -90,15 +87,18 @@ impl Iterator for Titlecase<'_> {
             (_, 0) => None,
             (Some(ch), size) => {
                 self.slice = &self.slice[size..];
-                let mut case_iter = if self.first {
+                let mode = if self.first {
                     self.first = false;
-                    ToCase::ToTitlecase(TitlecaseForChar::to_titlecase(ch))
+                    self.mode
+                } else if self.mode.is_turkic() {
+                    Mode::TurkicLower
                 } else {
-                    ToCase::ToLowercase(ch.to_lowercase())
+                    Mode::Lower
                 };
+                let mut case_iter = lookup(ch, mode);
                 let ch = case_iter
                     .next()
-                    .expect("ToTitlecase or ToLowercase yields at least one char");
+                    .expect("case mapping yields at least one char");
                 let enc = ch.encode_utf8(&mut self.next_bytes);
 
                 self.next_range = 1..enc.len();
@@ -122,27 +122,27 @@ impl Iterator for Titlecase<'_> {
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        const TO_LOWER_OR_TITLE_EXPAND: usize = 3;
-        const UTF_8_CHAR_MAX_BYTES: usize = 4;
-        if self.slice.is_empty() {
-            (0, Some(0))
-        } else if self.slice.is_ascii() {
-            let len = self.slice.len();
+        const CASE_MAPPING_MAX_BYTES: usize = 3 * 4;
+        let buffered = self.buffered_len();
+        let len = self.slice.len();
+        if self.slice.is_ascii() && !self.mode.is_turkic() {
+            let len = buffered + len;
             (len, Some(len))
         } else {
-            let len = self.slice.len();
-            (
-                len,
-                Some(len * TO_LOWER_OR_TITLE_EXPAND * UTF_8_CHAR_MAX_BYTES),
-            )
+            // A decoded character consumes at most four input bytes and yields
+            // at least one output byte. Invalid UTF-8 is passed through. Input
+            // byte length is not a lower bound: e.g. dotless i maps to ASCII I.
+            let min = buffered.saturating_add(len.div_ceil(4));
+            let max = len
+                .checked_mul(CASE_MAPPING_MAX_BYTES)
+                .and_then(|len| len.checked_add(buffered));
+            (min, max)
         }
     }
 
     fn count(self) -> usize {
-        if self.slice.is_empty() {
-            0
-        } else if self.slice.is_ascii() {
-            self.slice.len()
+        if self.slice.is_ascii() && !self.mode.is_turkic() {
+            self.buffered_len() + self.slice.len()
         } else {
             self.fold(0, |acc, _| acc + 1)
         }
@@ -341,26 +341,26 @@ mod tests {
         assert_eq!(Titlecase::with_slice(b"abc, xyz").size_hint(), (8, Some(8)));
         assert_eq!(
             Titlecase::with_slice(b"abc, \xFF\xFE, xyz").size_hint(),
-            (12, Some(144))
+            (3, Some(144))
         );
         assert_eq!(
             Titlecase::with_slice("�".as_bytes()).size_hint(),
-            (3, Some(36))
+            (1, Some(36))
         );
         assert_eq!(
             Titlecase::with_slice("Έτος".as_bytes()).size_hint(),
-            (8, Some(96))
+            (2, Some(96))
         );
         assert_eq!(
             Titlecase::with_slice("ZȺȾ".as_bytes()).size_hint(),
-            (5, Some(60))
+            (2, Some(60))
         );
 
         let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
         utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
         assert_eq!(
             Titlecase::with_slice(&utf8_with_invalid_bytes).size_hint(),
-            (10, Some(120))
+            (3, Some(120))
         );
     }
 
@@ -431,7 +431,7 @@ mod tests {
         let iter = Titlecase::from(s);
         assert_eq!(
             format!("{iter:?}"),
-            "Titlecase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, case: None, first: true }"
+            "Titlecase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, case: None, first: true, mode: Title }"
         );
     }
 }

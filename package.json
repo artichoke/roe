@@ -10,12 +10,12 @@
     "rust"
   ],
   "repository": "github:artichoke/roe",
-  "packageManager": "pnpm@11.23.0+sha512.f00082e5b283a199b74e079da28d155c008fe232f44c8a06ea7ddfa014ecf719fc362f790ecc67b28106ddac2afb24c49a9a079159da560b2ce7d1e98efd11af",
+  "packageManager": "pnpm@12.5.1+sha512.e3f305bc784a2bc89f5ad3b6138889470fae8d2af5f36b61216ec91c2c3d64089775f9de38aac331044ea40f245cb0d5666392dfdf65824e1907ef6a2c62de5f",
   "author": "Ryan Lopopolo <rjl@hyperbo.la> (https://hyperbo.la/)",
   "homepage": "https://www.artichokeruby.org",
   "bugs": "https://github.com/artichoke/roe/issues",
   "devDependencies": {
-    "prettier": "3.9.6"
+    "prettier": "3.9.9"
   },
   "scripts": {
     "fmt": "prettier --write \"**/*\"",

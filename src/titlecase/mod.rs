@@ -1,5 +1,7 @@
 use core::iter::FusedIterator;
 
+use crate::unicode::mapping::Mode;
+
 mod ascii;
 mod full;
 
@@ -132,6 +134,12 @@ impl<'a> Titlecase<'a> {
             iter: Inner::Ascii(ascii::Titlecase::with_slice(slice)),
         }
     }
+
+    pub(crate) const fn with_mode(slice: &'a [u8], mode: Mode) -> Self {
+        Self {
+            iter: Inner::Full(full::Titlecase::with_mode(slice, mode)),
+        }
+    }
 }
 
 impl Iterator for Titlecase<'_> {
@@ -195,26 +203,26 @@ mod tests {
         assert_eq!(Titlecase::with_slice(b"abc, xyz").size_hint(), (8, Some(8)));
         assert_eq!(
             Titlecase::with_slice(b"abc, \xFF\xFE, xyz").size_hint(),
-            (12, Some(144))
+            (3, Some(144))
         );
         assert_eq!(
             Titlecase::with_slice("�".as_bytes()).size_hint(),
-            (3, Some(36))
+            (1, Some(36))
         );
         assert_eq!(
             Titlecase::with_slice("Έτος".as_bytes()).size_hint(),
-            (8, Some(96))
+            (2, Some(96))
         );
         assert_eq!(
             Titlecase::with_slice("ZȺȾ".as_bytes()).size_hint(),
-            (5, Some(60))
+            (2, Some(60))
         );
 
         let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
         utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
         assert_eq!(
             Titlecase::with_slice(&utf8_with_invalid_bytes).size_hint(),
-            (10, Some(120))
+            (3, Some(120))
         );
 
         assert_eq!(

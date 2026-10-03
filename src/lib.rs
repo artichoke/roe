@@ -29,12 +29,13 @@
 //! > to a particular form—uppercase, lowercase, or titlecase—possibly for
 //! > display to the user.
 //!
-//! This crate is currently a *work in progress*. When the API is complete, Roe
-//! will support lowercase, uppercase, titlecase, and case folding iterators for
-//! conventionally UTF-8 byte slices.
+//! Roe supports full Unicode, Turkic, and ASCII lowercase, uppercase, and
+//! capitalization and swapcase mappings. Full Unicode case folding is available through
+//! [`LowercaseMode::Fold`]. Invalid UTF-8 is preserved.
 //!
-//! Roe will implement support for full, Turkic, ASCII, and case folding
-//! transforms.
+//! Mappings use bundled Unicode 18.0.0 tables, independent of the Rust compiler.
+//! Like MRI Ruby, mappings are context-independent and Lithuanian mode is an
+//! alias for full Unicode mapping. The API is still evolving ahead of 1.0.
 //!
 //! # Usage
 //!
@@ -114,6 +115,7 @@ use core::str::FromStr;
 
 mod ascii;
 mod lowercase;
+mod swapcase;
 mod titlecase;
 mod unicode;
 mod uppercase;
@@ -131,16 +133,19 @@ mod uppercase;
 #[cfg_attr(docsrs, doc(cfg(doc)))]
 pub mod unicode_terms {}
 
-pub use ascii::{make_ascii_lowercase, make_ascii_titlecase, make_ascii_uppercase};
+pub use ascii::{
+    make_ascii_lowercase, make_ascii_swapcase, make_ascii_titlecase, make_ascii_uppercase,
+};
 #[cfg(feature = "alloc")]
-pub use ascii::{to_ascii_lowercase, to_ascii_titlecase, to_ascii_uppercase};
+pub use ascii::{to_ascii_lowercase, to_ascii_swapcase, to_ascii_titlecase, to_ascii_uppercase};
 pub use lowercase::Lowercase;
+pub use swapcase::Swapcase;
 pub use titlecase::Titlecase;
 pub use unicode::to_titlecase;
 pub use uppercase::Uppercase;
 
 /// Error that indicates a failure to parse a [`LowercaseMode`],
-/// [`UppercaseMode`], or [`TitlecaseMode`].
+/// [`UppercaseMode`], [`SwapcaseMode`], or [`TitlecaseMode`].
 ///
 /// This error corresponds to the [Ruby `ArgumentError` Exception class].
 ///
@@ -237,10 +242,10 @@ pub enum LowercaseMode {
     /// This means that upper case I is mapped to lower case dotless i, and so
     /// on.
     Turkic,
-    /// Currently, just [full Unicode case mapping].
+    /// An alias for [full Unicode case mapping].
     ///
-    /// In the future, full Unicode case mapping adapted for Lithuanian (keeping
-    /// the dot on the lower case i even if there is an accent on top).
+    /// This matches MRI Ruby, which does not implement Lithuanian contextual
+    /// case mapping.
     ///
     /// [full Unicode case mapping]: Self::Full
     Lithuanian,
@@ -320,22 +325,13 @@ impl FromStr for LowercaseMode {
 /// The case mapping mode is determined by the given [`LowercaseMode`]. See its
 /// documentation for details on the available case mapping modes.
 ///
-/// # Panics
-///
-/// Not all [`LowercaseMode`]s are currently implemented. This function will
-/// panic if the caller supplies [Turkic] or [case folding] lowercasing mode.
-///
-/// [conventionally UTF-8 string]: https://docs.rs/bstr/0.2.*/bstr/#when-should-i-use-byte-strings
-/// [Turkic]: LowercaseMode::Turkic
-/// [case folding]: LowercaseMode::Fold
-// TODO: make this const once we're no longer panicking.
-pub fn lowercase(slice: &[u8], options: LowercaseMode) -> Lowercase<'_> {
+/// [conventionally UTF-8 string]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
+pub const fn lowercase(slice: &[u8], options: LowercaseMode) -> Lowercase<'_> {
     match options {
         LowercaseMode::Full | LowercaseMode::Lithuanian => Lowercase::with_slice(slice),
         LowercaseMode::Ascii => Lowercase::with_ascii_slice(slice),
-        // TODO: implement `turkic` and `fold` modes.
-        LowercaseMode::Turkic => panic!("lowercase Turkic mode is not yet implemented"),
-        LowercaseMode::Fold => panic!("lowercase case folding mode is not yet implemented"),
+        LowercaseMode::Turkic => Lowercase::with_mode(slice, unicode::mapping::Mode::TurkicLower),
+        LowercaseMode::Fold => Lowercase::with_mode(slice, unicode::mapping::Mode::Fold),
     }
 }
 
@@ -376,8 +372,8 @@ pub enum UppercaseMode {
     Turkic,
     /// Currently, just [full Unicode case mapping].
     ///
-    /// In the future, full Unicode case mapping adapted for Lithuanian (keeping
-    /// the dot on the lower case i even if there is an accent on top).
+    /// This matches MRI Ruby, which does not implement Lithuanian contextual
+    /// case mapping.
     ///
     /// [full Unicode case mapping]: Self::Full
     Lithuanian,
@@ -449,20 +445,132 @@ impl FromStr for UppercaseMode {
 /// The case mapping mode is determined by the given [`UppercaseMode`]. See its
 /// documentation for details on the available case mapping modes.
 ///
-/// # Panics
-///
-/// Not all [`UppercaseMode`]s are currently implemented. This function will
-/// panic if the caller supplies [Turkic] uppercasing mode.
-///
-/// [conventionally UTF-8 string]: https://docs.rs/bstr/0.2.*/bstr/#when-should-i-use-byte-strings
-/// [Turkic]: LowercaseMode::Turkic
-// TODO: make this const once we're no longer panicking.
-pub fn uppercase(slice: &[u8], options: UppercaseMode) -> Uppercase<'_> {
+/// [conventionally UTF-8 string]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
+pub const fn uppercase(slice: &[u8], options: UppercaseMode) -> Uppercase<'_> {
     match options {
         UppercaseMode::Full | UppercaseMode::Lithuanian => Uppercase::with_slice(slice),
         UppercaseMode::Ascii => Uppercase::with_ascii_slice(slice),
-        // TODO: implement `turkic` mode.
-        UppercaseMode::Turkic => panic!("uppercase Turkic mode is not yet implemented"),
+        UppercaseMode::Turkic => Uppercase::with_mode(slice, unicode::mapping::Mode::TurkicUpper),
+    }
+}
+
+/// Options to configure the behavior of [`swapcase`].
+///
+/// Which letters exactly are replaced, and by which other letters, depends on
+/// the given options.
+///
+/// See individual variants for a description of the available behaviors.
+///
+/// If you're not sure which mode to choose, [`SwapcaseMode::Full`] is a a good
+/// default.
+///
+/// [`swapcase`]: crate::swapcase()
+#[derive(Default, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
+pub enum SwapcaseMode {
+    /// Full Unicode case mapping, suitable for most languages.
+    ///
+    /// See the [Turkic] and [Lithuanian] variants for exceptions.
+    ///
+    /// Context-dependent case mapping as described in Table 3-14 of the Unicode
+    /// standard is currently not supported.
+    ///
+    /// [Turkic]: Self::Turkic
+    /// [Lithuanian]: Self::Lithuanian
+    #[default]
+    Full,
+    /// Only the ASCII region, i.e. the characters `'A'..='Z'` and `'a'..='z'`,
+    /// are affected.
+    ///
+    /// This option cannot be combined with any other option.
+    Ascii,
+    /// Full Unicode case mapping, adapted for Turkic languages (Turkish,
+    /// Azerbaijani, …).
+    ///
+    /// This means that upper case I is mapped to lower case dotless i, and so
+    /// on.
+    Turkic,
+    /// Currently, just [full Unicode case mapping].
+    ///
+    /// This matches MRI Ruby, which does not implement Lithuanian contextual
+    /// case mapping.
+    ///
+    /// [full Unicode case mapping]: Self::Full
+    Lithuanian,
+}
+
+impl TryFrom<&str> for SwapcaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        value.as_bytes().try_into()
+    }
+}
+
+impl TryFrom<Option<&str>> for SwapcaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: Option<&str>) -> Result<Self, Self::Error> {
+        value.map(str::as_bytes).try_into()
+    }
+}
+
+impl TryFrom<&[u8]> for SwapcaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+        match value {
+            b"ascii" => Ok(Self::Ascii),
+            b"turkic" => Ok(Self::Turkic),
+            b"lithuanian" => Ok(Self::Lithuanian),
+            _ => Err(InvalidCaseMappingMode::new()),
+        }
+    }
+}
+
+impl TryFrom<Option<&[u8]>> for SwapcaseMode {
+    type Error = InvalidCaseMappingMode;
+
+    #[inline]
+    fn try_from(value: Option<&[u8]>) -> Result<Self, Self::Error> {
+        match value {
+            None => Ok(Self::Full),
+            Some(b"ascii") => Ok(Self::Ascii),
+            Some(b"turkic") => Ok(Self::Turkic),
+            Some(b"lithuanian") => Ok(Self::Lithuanian),
+            Some(_) => Err(InvalidCaseMappingMode::new()),
+        }
+    }
+}
+
+impl FromStr for SwapcaseMode {
+    type Err = InvalidCaseMappingMode;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        s.try_into()
+    }
+}
+
+/// Returns an iterator that yields a copy of the bytes in the given slice with
+/// the case of each character swapped.
+///
+/// This function treats the given slice as a [conventionally UTF-8 string].
+/// Uppercase characters are lowercased, lowercase characters are uppercased,
+/// and titlecase letters have the case of their components swapped.
+/// Invalid UTF-8 byte sequences are yielded as is.
+///
+/// The case mapping mode is determined by the given [`SwapcaseMode`]. See its
+/// documentation for details on the available case mapping modes.
+///
+/// [conventionally UTF-8 string]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
+pub const fn swapcase(slice: &[u8], options: SwapcaseMode) -> Swapcase<'_> {
+    match options {
+        SwapcaseMode::Full | SwapcaseMode::Lithuanian => Swapcase::with_slice(slice),
+        SwapcaseMode::Ascii => Swapcase::with_ascii_slice(slice),
+        SwapcaseMode::Turkic => Swapcase::with_mode(slice, unicode::mapping::Mode::TurkicSwap),
     }
 }
 
@@ -473,13 +581,22 @@ pub fn uppercase(slice: &[u8], options: UppercaseMode) -> Uppercase<'_> {
 ///
 /// See individual variants for a description of the available behaviors.
 ///
-/// If you're not sure which mode to choose, [`UppercaseMode::Full`] is a a good
+/// If you're not sure which mode to choose, [`TitlecaseMode::Full`] is a good
 /// default.
 ///
 /// [`titlecase`]: crate::titlecase()
 #[derive(Default, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum TitlecaseMode {
-    /// Full Unicode case mapping, suitable for most languages.
+    /// Full Unicode case mapping with Ruby string capitalization semantics.
+    ///
+    /// Georgian Mtavruli capitals are lowercased to Mkhedruli, including the
+    /// initial character: `ᲐᲑᲒ` becomes `აბგ`. Modern Georgian uses Mtavruli for
+    /// all-caps emphasis, without initial-letter capitalization. This avoids
+    /// producing mixed forms such as `Აბგ`.
+    ///
+    /// This differs from [`to_titlecase(char)`](crate::to_titlecase), which
+    /// follows Unicode's character mapping and leaves Mtavruli unchanged.
+    /// See [`titlecase`](crate::titlecase()) for an example and rationale.
     ///
     /// See the [Turkic] and [Lithuanian] variants for exceptions.
     ///
@@ -503,8 +620,8 @@ pub enum TitlecaseMode {
     Turkic,
     /// Currently, just [full Unicode case mapping].
     ///
-    /// In the future, full Unicode case mapping adapted for Lithuanian (keeping
-    /// the dot on the title case i even if there is an accent on top).
+    /// This matches MRI Ruby, which does not implement Lithuanian contextual
+    /// case mapping.
     ///
     /// [full Unicode case mapping]: Self::Full
     Lithuanian,
@@ -568,26 +685,42 @@ impl FromStr for TitlecaseMode {
 /// letters replaced with their lowercase counterparts.
 ///
 /// This function treats the given slice as a [conventionally UTF-8 string].
-/// UTF-8 byte sequences are converted to their Unicode titlecase equivalents.
+/// The first valid character is titlecased and the remainder is lowercased,
+/// following Ruby capitalization semantics, including Georgian Mtavruli.
 /// Invalid UTF-8 byte sequences are yielded as is.
 ///
 /// The case mapping mode is determined by the given [`TitlecaseMode`]. See its
 /// documentation for details on the available case mapping modes.
 ///
-/// # Panics
+/// # Georgian capitalization
 ///
-/// Not all [`TitlecaseMode`]s are currently implemented. This function will
-/// panic if the caller supplies [Turkic] titlecasing mode.
+/// Modern Georgian uses Mkhedruli for ordinary text and Mtavruli for all-caps
+/// emphasis, without capitalizing only the initial letter. Unicode's character
+/// titlecase mappings leave both forms unchanged. Titlecasing an initial
+/// Mtavruli character and lowercasing the rest would therefore produce an
+/// inappropriate mixed form such as `Აბგ`.
 ///
-/// [conventionally UTF-8 string]: https://docs.rs/bstr/0.2.*/bstr/#when-should-i-use-byte-strings
-/// [Turkic]: TitlecaseMode::Turkic
-// TODO: make this const once we're no longer panicking.
-pub fn titlecase(slice: &[u8], options: TitlecaseMode) -> Titlecase<'_> {
+/// Like MRI, this function instead lowercases the initial Mtavruli character,
+/// producing `აბგ`. This applies to [`TitlecaseMode::Full`],
+/// [`TitlecaseMode::Turkic`], and [`TitlecaseMode::Lithuanian`]. The character
+/// mapping function [`to_titlecase`] retains Unicode's unchanged Mtavruli mapping.
+/// See [Ruby issue #14839](https://bugs.ruby-lang.org/issues/14839) for the
+/// rationale and feedback from Georgian speakers.
+///
+/// ```
+/// use roe::{titlecase, to_titlecase, TitlecaseMode};
+///
+/// let capitalized: Vec<u8> = titlecase("ᲐᲑᲒ".as_bytes(), TitlecaseMode::Full).collect();
+/// assert_eq!(capitalized, "აბგ".as_bytes());
+/// assert_eq!(to_titlecase('Ა'), ['Ა', '\0', '\0']);
+/// ```
+///
+/// [conventionally UTF-8 string]: https://docs.rs/bstr/1.*/bstr/#when-should-i-use-byte-strings
+pub const fn titlecase(slice: &[u8], options: TitlecaseMode) -> Titlecase<'_> {
     match options {
         TitlecaseMode::Full | TitlecaseMode::Lithuanian => Titlecase::with_slice(slice),
         TitlecaseMode::Ascii => Titlecase::with_ascii_slice(slice),
-        // TODO: implement `turkic` mode.
-        TitlecaseMode::Turkic => panic!("titlecase Turkic mode is not yet implemented"),
+        TitlecaseMode::Turkic => Titlecase::with_mode(slice, unicode::mapping::Mode::TurkicTitle),
     }
 }
 

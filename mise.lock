@@ -58,48 +58,43 @@ version = "0.19.0"
 backend = "cargo:cargo-outdated"
 specifiers = ["0.19.0"]
 
-[[tools."cargo:ucd-generate"]]
-version = "0.3.0"
-backend = "cargo:ucd-generate"
-specifiers = ["0.3.0"]
-
 [[tools.node]]
-version = "24.21.0"
+version = "24.20.0"
 backend = "core:node"
-specifiers = ["24.21.0"]
+specifiers = ["24.20.0"]
 
 [tools.node."platforms.linux-arm64"]
-checksum = "sha256:724282c3b43aec998aa9527380465b45d229e021b58035f5f4f63095eabfe5d5"
-url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-arm64.tar.gz"
+checksum = "sha256:3515603e2487879a39bc75716f1a2affd027500c64ba50e845cf72cb33219013"
+url = "https://nodejs.org/dist/v24.20.0/node-v24.20.0-linux-arm64.tar.gz"
 
 [tools.node."platforms.linux-arm64-musl"]
-checksum = "sha256:3048b0811e158ca0d8672b59c839861763e144492980d8d29b369dfee45747e4"
-url = "https://unofficial-builds.nodejs.org/download/release/v24.21.0/node-v24.21.0-linux-arm64-musl.tar.gz"
+checksum = "sha256:2c8c507ccb0f20812d9526ba8ca454b1652aadef68fc8bad06f07fb1122dd1ef"
+url = "https://unofficial-builds.nodejs.org/download/release/v24.20.0/node-v24.20.0-linux-arm64-musl.tar.gz"
 
 [tools.node."platforms.linux-x64"]
-checksum = "sha256:6e1db87ef58b8819e5d5402eff1536491b18edd8eb7bee5ef7897876e88dc5ff"
-url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-x64.tar.gz"
+checksum = "sha256:855d581f8a4eb1a8117e3426de25fe02770592febcfb31369aee1ffbfee9e8ec"
+url = "https://nodejs.org/dist/v24.20.0/node-v24.20.0-linux-x64.tar.gz"
 
 [tools.node."platforms.linux-x64-musl"]
-checksum = "sha256:01a713e34da98e7b4d2a3191ee7ca3f93dd0384d1a2ef23c379b2161ee6e133a"
-url = "https://unofficial-builds.nodejs.org/download/release/v24.21.0/node-v24.21.0-linux-x64-musl.tar.gz"
+checksum = "sha256:9ae1399fef4bd8990e15773ce1327b336a20b9e97d8c7549f4f42ca73c43f562"
+url = "https://unofficial-builds.nodejs.org/download/release/v24.20.0/node-v24.20.0-linux-x64-musl.tar.gz"
 
 [tools.node."platforms.macos-arm64"]
-checksum = "sha256:bed7eea5325e1108f32ce5228ddd6a5f0f08a499ee42aa7442aea583702f6057"
-url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-darwin-arm64.tar.gz"
+checksum = "sha256:40e5607e5ecb3db9192723776da2d75d966260fc74a7a9e731c1bd67dda96bc8"
+url = "https://nodejs.org/dist/v24.20.0/node-v24.20.0-darwin-arm64.tar.gz"
 
 [tools.node."platforms.macos-x64"]
-checksum = "sha256:1462cb3b3046b815cf8ea436d3da450ec1a9f11dac7e5a46b0ada5305d7e8097"
-url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-darwin-x64.tar.gz"
+checksum = "sha256:9e5b2644cf107befb6aefca676b96d3296bc10138096f022ed378d6233ed81f4"
+url = "https://nodejs.org/dist/v24.20.0/node-v24.20.0-darwin-x64.tar.gz"
 
 [tools.node."platforms.windows-x64"]
-checksum = "sha256:158f7685b44de51f6c0df1d153526cbcd3e1bc739a8dfc607721cef75de9e541"
-url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-win-x64.zip"
+checksum = "sha256:6cac9ffbca8f6a47091e4b5c772e0606049c3871cb67d900c0cedde630e545ba"
+url = "https://nodejs.org/dist/v24.20.0/node-v24.20.0-win-x64.zip"
 
 [[tools.ruby]]
-version = "3.4.10"
+version = "4.0.7"
 backend = "core:ruby"
-specifiers = ["3.4.10"]
+specifiers = ["4.0.7"]
 
 [tools.ruby.options]
 compile = "false"
@@ -108,40 +103,40 @@ ruby_build_repo = "https://github.com/rbenv/ruby-build.git"
 ruby_install = "false"
 
 [tools.ruby."platforms.linux-arm64"]
-checksum = "sha256:c0a3e9f1d7847e66b044aeeab394ba5d41f63c3da7ad99017c4b2578e31b205a"
-url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.arm64_linux.tar.gz"
+checksum = "sha256:ed4a403f5cd7eb5941cb96e52e4382eaa81660715e4ce7c9c5dbb4bf77fcde37"
+url = "https://github.com/jdx/ruby/releases/download/4.0.7-2/ruby-4.0.7.arm64_linux.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.linux-arm64-musl"]
-checksum = "sha256:ecee2d072a14f2d14347dd56dfd8fe5c3130abf5117bfaacbda0f4ef9cc429ec"
-url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.gz"
+checksum = "sha256:911ace20f90d068ca0e4dda6d0e4f0f81e52e52f2dd4f4004c721e253412e82d"
+url = "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.7.tar.gz"
 
 [tools.ruby."platforms.linux-x64"]
-checksum = "sha256:81ce58b056ee2765e46785b4c6befb9852d9c3e50ff9385e7eb1cf3e0314d0bd"
-url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.x86_64_linux.tar.gz"
+checksum = "sha256:659c4c80138145f3be439b3e4275b616cc87022e9488b823d708ab75a77558a9"
+url = "https://github.com/jdx/ruby/releases/download/4.0.7-2/ruby-4.0.7.x86_64_linux.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.linux-x64-musl"]
-checksum = "sha256:ecee2d072a14f2d14347dd56dfd8fe5c3130abf5117bfaacbda0f4ef9cc429ec"
-url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.gz"
+checksum = "sha256:911ace20f90d068ca0e4dda6d0e4f0f81e52e52f2dd4f4004c721e253412e82d"
+url = "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.7.tar.gz"
 
 [tools.ruby."platforms.macos-arm64"]
-checksum = "sha256:5aac8b6e16b0938a14f6d23346b5487020d1fea6b5856a33392e5eb37fa1ef62"
-url = "https://github.com/jdx/ruby/releases/download/3.4.10-2/ruby-3.4.10.macos.tar.gz"
+checksum = "sha256:6ad0acc5b0c437a2514679ff9a0f925e8b66ad4e96357e9ae2764b622f5d88d4"
+url = "https://github.com/jdx/ruby/releases/download/4.0.7-2/ruby-4.0.7.macos.tar.gz"
 provenance = "github-attestations"
 
 [tools.ruby."platforms.macos-x64"]
-checksum = "sha256:ecee2d072a14f2d14347dd56dfd8fe5c3130abf5117bfaacbda0f4ef9cc429ec"
-url = "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.gz"
+checksum = "sha256:911ace20f90d068ca0e4dda6d0e4f0f81e52e52f2dd4f4004c721e253412e82d"
+url = "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.7.tar.gz"
 
 [[tools.ruby]]
-version = "3.4.10"
+version = "4.0.7"
 backend = "core:ruby"
-specifiers = ["3.4.10"]
+specifiers = ["4.0.7"]
 
 [tools.ruby."platforms.windows-x64"]
-checksum = "sha256:89e3c5e235ac88b9b7e8daaf639eaaab74d7c470667354f6bf0f7432f3191ebb"
-url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.4.10-1/rubyinstaller-3.4.10-1-x64.7z"
+checksum = "sha256:7a9be96d3448ecbd9a81eccae1f619131dfcc761f2c98dded03ece6c05d0474f"
+url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-4.0.7-1/rubyinstaller-4.0.7-1-x64.7z"
 
 [[tools.rust]]
 version = "stable"

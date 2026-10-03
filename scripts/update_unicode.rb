@@ -34,17 +34,45 @@
 require 'fileutils'
 require 'open-uri'
 
-repo = File.expand_path('..', __dir__)
-downloads = {
-  'https://www.unicode.org/license.txt' => 'LICENSE-UNICODE',
-  'https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt' => 'generated/ucd/UnicodeData.txt',
-  'https://www.unicode.org/Public/UCD/latest/ucd/SpecialCasing.txt' => 'generated/ucd/SpecialCasing.txt',
-  'https://www.unicode.org/Public/UCD/latest/ucd/PropList.txt' => 'generated/ucd/PropList.txt'
-}.freeze
+class UnicodeUpdater
+  LATEST_README_URL = 'https://www.unicode.org/Public/UCD/latest/ucd/ReadMe.txt'
+  LICENSE_URL = 'https://www.unicode.org/license.txt'
+  UCD_FILES = %w[UnicodeData SpecialCasing CaseFolding ReadMe PropList].freeze
 
-FileUtils.mkdir_p(File.join(repo, 'generated', 'ucd'))
-downloads.each_pair do |url, destination|
-  URI.open(url) do |data|
-    IO.copy_stream(data, File.join(repo, destination))
+  def initialize(repo:)
+    @repo = repo
+  end
+
+  def update
+    version = latest_final_version
+    FileUtils.mkdir_p(File.join(@repo, 'generated', 'ucd'))
+    downloads(version).each_pair { |url, destination| download(url, destination) }
+  end
+
+  private
+
+  def latest_final_version
+    # Resolve the latest final release once so all inputs use the same version.
+    readme = URI.open(LATEST_README_URL, &:read)
+    version = readme[/final data files for version (\d+\.\d+\.\d+)/, 1]
+    raise 'Could not identify a final Unicode release.' unless version
+
+    version
+  end
+
+  def downloads(version)
+    files = { LICENSE_URL => 'LICENSE-UNICODE' }
+    UCD_FILES.each do |name|
+      files["https://www.unicode.org/Public/#{version}/ucd/#{name}.txt"] = "generated/ucd/#{name}.txt"
+    end
+    files
+  end
+
+  def download(url, destination)
+    URI.open(url) do |data|
+      IO.copy_stream(data, File.join(@repo, destination))
+    end
   end
 end
+
+UnicodeUpdater.new(repo: File.expand_path('..', __dir__)).update if $PROGRAM_NAME == __FILE__

@@ -1,9 +1,11 @@
-use core::char::ToLowercase;
 use core::fmt;
 use core::iter::FusedIterator;
 use core::ops::Range;
 
 use bstr::ByteSlice;
+
+use crate::unicode::mapping::{lookup, Mode};
+use crate::unicode::std_case_mapping_iter::CaseMappingIter;
 
 #[derive(Clone)]
 #[must_use = "Lowercase is a Iterator and must be used"]
@@ -11,7 +13,8 @@ pub struct Lowercase<'a> {
     slice: &'a [u8],
     next_bytes: [u8; 4],
     next_range: Range<usize>,
-    lowercase: Option<ToLowercase>,
+    lowercase: Option<CaseMappingIter>,
+    mode: Mode,
 }
 
 impl fmt::Debug for Lowercase<'_> {
@@ -21,6 +24,7 @@ impl fmt::Debug for Lowercase<'_> {
             .field("next_bytes", &self.next_bytes)
             .field("next_range", &self.next_range)
             .field("lowercase", &self.lowercase)
+            .field("mode", &self.mode)
             .finish()
     }
 }
@@ -33,12 +37,25 @@ impl<'a> From<&'a [u8]> for Lowercase<'a> {
 
 impl<'a> Lowercase<'a> {
     pub const fn with_slice(slice: &'a [u8]) -> Self {
+        Self::with_mode(slice, Mode::Lower)
+    }
+
+    pub const fn with_mode(slice: &'a [u8], mode: Mode) -> Self {
         Self {
             slice,
             next_bytes: [0; 4],
             next_range: 0..0,
             lowercase: None,
+            mode,
         }
+    }
+
+    fn buffered_len(&self) -> usize {
+        let mapped = self
+            .lowercase
+            .clone()
+            .map_or(0, |iter| iter.map(char::len_utf8).sum());
+        self.next_range.len() + mapped
     }
 }
 
@@ -67,10 +84,10 @@ impl Iterator for Lowercase<'_> {
             (_, 0) => None,
             (Some(ch), size) => {
                 self.slice = &self.slice[size..];
-                let mut lowercase = ch.to_lowercase();
+                let mut lowercase = lookup(ch, self.mode);
                 let ch = lowercase
                     .next()
-                    .expect("ToLowercase yields at least one char");
+                    .expect("case mapping yields at least one char");
                 let enc = ch.encode_utf8(&mut self.next_bytes);
 
                 self.next_range = 1..enc.len();
@@ -94,24 +111,27 @@ impl Iterator for Lowercase<'_> {
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        const TO_LOWER_EXPAND: usize = 3;
-        const UTF_8_CHAR_MAX_BYTES: usize = 4;
-        if self.slice.is_empty() {
-            (0, Some(0))
-        } else if self.slice.is_ascii() {
-            let len = self.slice.len();
+        const CASE_MAPPING_MAX_BYTES: usize = 3 * 4;
+        let buffered = self.buffered_len();
+        let len = self.slice.len();
+        if self.slice.is_ascii() && !self.mode.is_turkic() {
+            let len = buffered + len;
             (len, Some(len))
         } else {
-            let len = self.slice.len();
-            (len, Some(len * TO_LOWER_EXPAND * UTF_8_CHAR_MAX_BYTES))
+            // A decoded character consumes at most four input bytes and yields
+            // at least one output byte. Invalid UTF-8 is passed through. Input
+            // byte length is not a lower bound: e.g. the Kelvin sign maps to k.
+            let min = buffered.saturating_add(len.div_ceil(4));
+            let max = len
+                .checked_mul(CASE_MAPPING_MAX_BYTES)
+                .and_then(|len| len.checked_add(buffered));
+            (min, max)
         }
     }
 
     fn count(self) -> usize {
-        if self.slice.is_empty() {
-            0
-        } else if self.slice.is_ascii() {
-            self.slice.len()
+        if self.slice.is_ascii() && !self.mode.is_turkic() {
+            self.buffered_len() + self.slice.len()
         } else {
             self.fold(0, |acc, _| acc + 1)
         }
@@ -124,6 +144,8 @@ impl FusedIterator for Lowercase<'_> {}
 mod tests {
     use alloc::{format, vec::Vec};
     use bstr::ByteSlice;
+
+    use crate::unicode::mapping::{lookup, Mode};
     use core::char;
 
     use super::Lowercase;
@@ -268,10 +290,10 @@ mod tests {
         // there are no such characters
         for ch in '\0'..char::MAX {
             assert!(
-                ch.to_lowercase().count() < 3,
+                lookup(ch, Mode::Lower).count() < 3,
                 "Expected no characters that downcase to three or more characters, found: '{}', which expands to: {:?}",
                 ch,
-                ch.to_lowercase().collect::<Vec<_>>()
+                lookup(ch, Mode::Lower).collect::<Vec<_>>()
             );
         }
     }
@@ -282,26 +304,26 @@ mod tests {
         assert_eq!(Lowercase::with_slice(b"abc, xyz").size_hint(), (8, Some(8)));
         assert_eq!(
             Lowercase::with_slice(b"abc, \xFF\xFE, xyz").size_hint(),
-            (12, Some(144))
+            (3, Some(144))
         );
         assert_eq!(
             Lowercase::with_slice("�".as_bytes()).size_hint(),
-            (3, Some(36))
+            (1, Some(36))
         );
         assert_eq!(
             Lowercase::with_slice("Έτος".as_bytes()).size_hint(),
-            (8, Some(96))
+            (2, Some(96))
         );
         assert_eq!(
             Lowercase::with_slice("ZȺȾ".as_bytes()).size_hint(),
-            (5, Some(60))
+            (2, Some(60))
         );
 
         let mut utf8_with_invalid_bytes = b"\xFF\xFE".to_vec();
         utf8_with_invalid_bytes.extend_from_slice("Έτος".as_bytes());
         assert_eq!(
             Lowercase::with_slice(&utf8_with_invalid_bytes).size_hint(),
-            (10, Some(120))
+            (3, Some(120))
         );
     }
 
@@ -372,7 +394,7 @@ mod tests {
         let iter = Lowercase::from(s);
         assert_eq!(
             format!("{iter:?}"),
-            "Lowercase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, lowercase: None }"
+            "Lowercase { slice: \"Αύριο\", next_bytes: [0, 0, 0, 0], next_range: 0..0, lowercase: None, mode: Lower }"
         );
     }
 }
