@@ -82,8 +82,8 @@ jobs:
         run: |
           set -euo pipefail
           rustup set profile minimal
-          rustup toolchain install 1.76.0 --no-self-update
-          rustup default 1.76.0
+          rustup toolchain install 1.81.0 --no-self-update
+          rustup default 1.81.0
           rustc -Vv
           cargo -V
 
