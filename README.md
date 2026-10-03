@@ -108,7 +108,7 @@ The **alloc** feature is enabled by default and provides APIs that allocate
 
 ### Minimum Supported Rust Version
 
-This crate requires at least Rust 1.81.0. This version can be bumped in minor
+This crate requires at least Rust 1.85.0. This version can be bumped in minor
 releases.
 
 ## Unicode Version

@@ -124,8 +124,8 @@ pub use ascii::{to_ascii_lowercase, to_ascii_swapcase, to_ascii_titlecase, to_as
 pub use lowercase::Lowercase;
 pub use swapcase::Swapcase;
 pub use titlecase::Titlecase;
-pub use unicode::to_titlecase;
 pub use unicode::UNICODE_VERSION;
+pub use unicode::to_titlecase;
 pub use uppercase::Uppercase;
 
 /// Error that indicates a failure to parse a [`LowercaseMode`],

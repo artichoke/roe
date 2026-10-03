@@ -1,5 +1,5 @@
 use roe::{
-    lowercase, titlecase, uppercase, LowercaseMode, SwapcaseMode, TitlecaseMode, UppercaseMode,
+    LowercaseMode, SwapcaseMode, TitlecaseMode, UppercaseMode, lowercase, titlecase, uppercase,
 };
 
 fn check_remaining(mut iter: impl Iterator<Item = u8> + Clone) {

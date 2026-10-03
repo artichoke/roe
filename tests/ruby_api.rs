@@ -1,4 +1,4 @@
-use roe::ruby::{capitalize, Capitalize, CapitalizeMode};
+use roe::ruby::{Capitalize, CapitalizeMode, capitalize};
 
 #[test]
 fn capitalization_modes_match_existing_byte_iterators() {
