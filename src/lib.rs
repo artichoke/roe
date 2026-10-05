@@ -61,6 +61,15 @@
 //!
 //! Roe provides fast path routines that assume the byte slice is ASCII-only.
 //!
+//! To detect a change without allocating, compare the mapped byte iterator with
+//! the original bytes:
+//!
+//! ```
+//! # use roe::{LowercaseMode, lowercase};
+//! let input = b"artichoke";
+//! assert!(lowercase(input, LowercaseMode::Full).eq(input.iter().copied()));
+//! ```
+//!
 //! # Crate Features
 //!
 //! Roe is `no_std` compatible with an optional dependency on the [`alloc`]
@@ -94,6 +103,8 @@ extern crate alloc;
 
 use core::fmt;
 
+#[cfg(feature = "alloc")]
+mod collect;
 mod lowercase;
 pub mod ruby;
 mod swapcase;
@@ -113,17 +124,17 @@ mod uppercase;
 #[cfg_attr(docsrs, doc(cfg(doc)))]
 pub mod unicode_terms {}
 
-#[cfg(feature = "alloc")]
-pub use lowercase::to_ascii_lowercase;
 pub use lowercase::{Lowercase, LowercaseMode, lowercase, make_ascii_lowercase};
 #[cfg(feature = "alloc")]
-pub use swapcase::to_ascii_swapcase;
+pub use lowercase::{to_ascii_lowercase, try_to_lowercase};
 pub use swapcase::{Swapcase, SwapcaseMode, make_ascii_swapcase, swapcase};
+#[cfg(feature = "alloc")]
+pub use swapcase::{to_ascii_swapcase, try_to_swapcase};
 pub use unicode::UNICODE_VERSION;
 pub use unicode::to_titlecase;
-#[cfg(feature = "alloc")]
-pub use uppercase::to_ascii_uppercase;
 pub use uppercase::{Uppercase, UppercaseMode, make_ascii_uppercase, uppercase};
+#[cfg(feature = "alloc")]
+pub use uppercase::{to_ascii_uppercase, try_to_uppercase};
 
 /// Error that indicates a failure to parse a [`LowercaseMode`],
 /// [`UppercaseMode`], [`SwapcaseMode`], or [`ruby::CapitalizeMode`].

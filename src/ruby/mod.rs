@@ -18,6 +18,6 @@
 
 mod capitalize;
 
-#[cfg(feature = "alloc")]
-pub use capitalize::to_ascii_capitalize;
 pub use capitalize::{Capitalize, CapitalizeMode, capitalize, make_ascii_capitalize};
+#[cfg(feature = "alloc")]
+pub use capitalize::{to_ascii_capitalize, try_to_capitalize};
