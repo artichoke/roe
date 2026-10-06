@@ -39,3 +39,40 @@ implementations.
 
 Keep measurements in pull request descriptions or local artifacts. Benchmark
 output belongs under the ignored `target/` directory.
+
+## Unchanged mappings
+
+```sh
+cargo bench --bench case_mapping_changes > target/benchmarks/changes.csv
+cargo bench --bench case_mapping_allocations > target/benchmarks/allocations.csv
+BENCH_FILTER=lower/late_change cargo bench --bench case_mapping_changes
+```
+
+These `alloc`-only benchmarks compare the fallible `try_to_*` helpers with
+iterator collection followed by byte comparison. They include an
+Artichoke-shaped fallible collector that reserves spare NUL capacity, the same
+collector without that consumer policy, ordinary `Vec` collection, and an
+allocation-free detection pass followed by collection when changed. The
+detection experiment restarts the mapping iterator; the Roe helpers continue
+from the first differing output byte. A second helper strategy adds spare NUL
+capacity to owned results, providing a comparison with the same consumer policy
+on both sides. The timing executable also measures the existing ASCII
+convenience APIs.
+
+Workloads cover empty, short and long ASCII, already-capitalized text,
+punctuation, uncased Unicode, mixed text, expansions, Turkic mappings, malformed
+UTF-8, and changes near the beginning and end. Names describe inputs; whether an
+input changes depends on the operation. The allocation CSV reports that outcome
+and output length explicitly.
+
+Timing and allocation counting use separate executables. Timing uses the normal
+allocator without instrumentation. Allocation counts include initial allocations
+and reallocations; allocated bytes sum requested sizes, including the full new
+size of reallocations, rather than measuring peak or retained memory. Fixtures
+and formatting are excluded. The counting executable also checks that unchanged
+helper results allocate nothing and that initial reservation and growth failures
+are returned without changing the input.
+
+Unchanged mutation can retain its existing buffer. Methods that require a
+distinct result object may still need to allocate. Spare NUL capacity and string
+encoding remain consumer policies; the Roe helpers do not provide either.

@@ -2,6 +2,11 @@ use core::convert::{TryFrom, TryInto};
 use core::iter::FusedIterator;
 use core::str::FromStr;
 
+#[cfg(feature = "alloc")]
+use alloc::borrow::Cow;
+#[cfg(feature = "alloc")]
+use alloc::collections::TryReserveError;
+
 use crate::InvalidCaseMappingMode;
 use crate::unicode::mapping::Mode;
 
@@ -337,6 +342,42 @@ pub const fn capitalize(slice: &[u8], options: CapitalizeMode) -> Capitalize<'_>
         CapitalizeMode::Ascii => Capitalize::with_ascii_slice(slice),
         CapitalizeMode::Turkic => Capitalize::with_mode(slice, Mode::TurkicTitle),
     }
+}
+
+/// Fallibly capitalize a byte string, borrowing it when no bytes change.
+///
+/// Uses the same mappings and malformed UTF-8 preservation as [`capitalize`].
+/// Returns [`Cow::Borrowed`] with the original slice exactly when the output
+/// bytes equal the input. Otherwise, returns [`Cow::Owned`] with the mapped bytes.
+///
+/// Allocation starts at the first differing output byte. The matching prefix
+/// is copied without restarting the mapping iterator. No allocation or copying
+/// occurs for unchanged input; determining this still scans the mapping output.
+/// The input is never modified, including on allocation failure.
+///
+/// # Errors
+///
+/// Returns an error if reserving storage for changed output fails.
+///
+/// # Examples
+///
+/// ```
+/// # use std::borrow::Cow;
+/// # use roe::ruby::{CapitalizeMode, try_to_capitalize};
+/// let input = b"Artichoke";
+/// let result = try_to_capitalize(input, CapitalizeMode::Full)?;
+/// assert!(matches!(result, Cow::Borrowed(_)));
+/// assert_eq!(result.as_ptr(), input.as_ptr());
+/// # Ok::<(), std::collections::TryReserveError>(())
+/// ```
+#[cfg(feature = "alloc")]
+#[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
+#[inline]
+pub fn try_to_capitalize(
+    slice: &[u8],
+    options: CapitalizeMode,
+) -> Result<Cow<'_, [u8]>, TryReserveError> {
+    crate::collect::try_collect(slice, capitalize(slice, options))
 }
 
 #[cfg(test)]

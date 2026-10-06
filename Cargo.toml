@@ -32,3 +32,13 @@ rustdoc-args = ["--cfg", "docsrs"]
 [[bench]]
 name = "case_mapping"
 harness = false
+
+[[bench]]
+name = "case_mapping_changes"
+harness = false
+required-features = ["alloc"]
+
+[[bench]]
+name = "case_mapping_allocations"
+harness = false
+required-features = ["alloc"]
