@@ -39,8 +39,8 @@ and cargo-installed development tools must be pinned to exact versions. Rust
 tracks `stable` by design.
 
 Node.js should track the latest LTS line after cooldown. Local bootstrap uses
-Corepack to select pnpm from the exact `package.json#packageManager` pin. CI
-uses the pinned `pnpm/action-setup` action.
+mise to select pnpm from the exact `package.json#packageManager` pin. CI uses
+the pinned `pnpm/action-setup` action.
 
 Node dependencies are limited to deterministic text formatting. Rust
 dependencies should stay close to the standard library unless a dependency is
