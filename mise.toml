@@ -1,5 +1,7 @@
+min_version = "2026.10.21"
+
 [tools]
-node = "24.22.0"
+node = "26.13.0"
 # Security exception: Ruby 4.0.9 fixes the October 2026 Regexp vulnerabilities.
 ruby = "4.0.9"
 # Rust intentionally tracks the stable channel for this Rust library.
@@ -10,10 +12,8 @@ rust = { version = "stable", profile = "minimal", components = "clippy,rustfmt" 
 "cargo:cargo-mutants" = "27.1.0"
 "cargo:cargo-outdated" = "0.19.0"
 
-[hooks]
-postinstall = "corepack enable"
-
 [settings]
+idiomatic_version_file_enable_tools = ["pnpm"]
 experimental = true
 use_versions_host_track = false
 
