@@ -106,6 +106,7 @@ use core::fmt;
 #[cfg(feature = "alloc")]
 mod collect;
 mod lowercase;
+mod scalar;
 pub mod ruby;
 mod swapcase;
 mod unicode;
@@ -127,6 +128,7 @@ pub mod unicode_terms {}
 pub use lowercase::{Lowercase, LowercaseMode, lowercase, make_ascii_lowercase};
 #[cfg(feature = "alloc")]
 pub use lowercase::{to_ascii_lowercase, try_to_lowercase};
+pub use scalar::{CaseMapping, lowercase_char, swapcase_char, uppercase_char};
 pub use swapcase::{Swapcase, SwapcaseMode, make_ascii_swapcase, swapcase};
 #[cfg(feature = "alloc")]
 pub use swapcase::{to_ascii_swapcase, try_to_swapcase};
