@@ -106,8 +106,8 @@ use core::fmt;
 #[cfg(feature = "alloc")]
 mod collect;
 mod lowercase;
-mod scalar;
 pub mod ruby;
+mod scalar;
 mod swapcase;
 mod unicode;
 mod uppercase;
