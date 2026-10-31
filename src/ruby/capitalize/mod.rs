@@ -7,8 +7,9 @@ use alloc::borrow::Cow;
 #[cfg(feature = "alloc")]
 use alloc::collections::TryReserveError;
 
-use crate::InvalidCaseMappingMode;
-use crate::unicode::mapping::Mode;
+use crate::unicode::mapping::{self, Mode};
+use crate::unicode::std_case_mapping_iter::CaseMappingIter;
+use crate::{CaseMapping, InvalidCaseMappingMode};
 
 mod ascii;
 mod full;
@@ -342,6 +343,32 @@ pub const fn capitalize(slice: &[u8], options: CapitalizeMode) -> Capitalize<'_>
         CapitalizeMode::Ascii => Capitalize::with_ascii_slice(slice),
         CapitalizeMode::Turkic => Capitalize::with_mode(slice, Mode::TurkicTitle),
     }
+}
+
+/// Capitalize one decoded Unicode scalar with Ruby string semantics.
+///
+/// This is the first-character mapping used by [`capitalize`]. Map subsequent
+/// characters with [`crate::lowercase_char`] to capitalize a decoded string.
+/// No encoding or allocation is performed. Georgian Mtavruli follows Ruby's
+/// lowercase capitalization rule rather than Unicode character titlecase.
+///
+/// ```
+/// use roe::ruby::{CapitalizeMode, capitalize_char};
+///
+/// assert!(capitalize_char('ß', CapitalizeMode::Full).eq(['S', 's']));
+/// assert!(capitalize_char('i', CapitalizeMode::Turkic).eq(['İ']));
+/// assert!(capitalize_char('Ა', CapitalizeMode::Full).eq(['ა']));
+/// ```
+pub fn capitalize_char(character: char, mode: CapitalizeMode) -> CaseMapping {
+    let mode = match mode {
+        CapitalizeMode::Ascii => {
+            return CaseMapping(CaseMappingIter::One(character.to_ascii_uppercase()));
+        }
+        CapitalizeMode::Full | CapitalizeMode::Lithuanian => Mode::Title,
+        CapitalizeMode::Turkic => Mode::TurkicTitle,
+    };
+    let mode = georgian::capitalization_mode(character, mode);
+    CaseMapping(mapping::lookup(character, mode))
 }
 
 /// Fallibly capitalize a byte string, borrowing it when no bytes change.

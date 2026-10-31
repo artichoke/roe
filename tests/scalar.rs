@@ -1,6 +1,7 @@
 use core::array;
 use core::iter::Take;
 
+use roe::ruby::{CapitalizeMode, capitalize, capitalize_char};
 use roe::{
     LowercaseMode, SwapcaseMode, UppercaseMode, lowercase, lowercase_char, swapcase, swapcase_char,
     uppercase, uppercase_char,
@@ -20,6 +21,19 @@ fn scalar_mappings_match_byte_iterators_for_every_unicode_scalar() {
         };
         let mut bytes = [0; 4];
         let source = character.encode_utf8(&mut bytes).as_bytes();
+        for mode in [
+            CapitalizeMode::Full,
+            CapitalizeMode::Ascii,
+            CapitalizeMode::Turkic,
+            CapitalizeMode::Lithuanian,
+        ] {
+            assert!(
+                capitalize_char(character, mode)
+                    .flat_map(utf8)
+                    .eq(capitalize(source, mode)),
+                "U+{point:04X}: {mode:?}"
+            );
+        }
         for mode in [
             LowercaseMode::Full,
             LowercaseMode::Ascii,

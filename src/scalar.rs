@@ -12,7 +12,7 @@ use crate::{LowercaseMode, SwapcaseMode, UppercaseMode};
 /// This iterator owns its state, borrows no input, and does not allocate.
 #[derive(Debug, Clone)]
 #[must_use = "iterators are lazy and do nothing unless consumed"]
-pub struct CaseMapping(CaseMappingIter);
+pub struct CaseMapping(pub(crate) CaseMappingIter);
 
 impl Default for CaseMapping {
     fn default() -> Self {
