@@ -13,7 +13,8 @@ The sweep owns:
 
 - exact non-Rust tool versions in `mise.toml`, including Node.js, Ruby, Zizmor,
   and cargo-installed development tools;
-- the pnpm `packageManager` pin in `package.json`;
+- the matching pnpm versions in `package.json#packageManager` and the
+  `aqua:pnpm/pnpm` entry in `mise.toml`;
 - pnpm lockfile refreshes and transitive Node updates;
 - `pnpm-workspace.yaml` hardening settings;
 - documentation required to keep this posture accurate.
